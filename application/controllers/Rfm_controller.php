@@ -574,11 +574,15 @@ class Rfm_controller extends CI_Controller {
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = null;
+        $project_id = $this->input->post('project_id');
 
         if ($request_type == 2) {
             $problem_type = $this->input->post('problem_type1');
         } else if ($request_type == 3) {
             $problem_type = $this->input->post('problem_type2');
+            if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
+                $project_id = $this->input->post('project_id2');
+            }
         }
 
         $subject = $this->input->post('subject');
@@ -586,7 +590,7 @@ class Rfm_controller extends CI_Controller {
         $user_id = $this->input->post('user_id');
         $kode_cabang = $this->input->post('kode_cabang');
         $head_id = $this->input->post('head_id');
-        $project_id = $this->input->post('project_id');
+        
         $array_crud = array(
             'table' => TB_PARAMETER,
             'where' => array('id' => 'RFM_EXTENSI_FILE'),
@@ -847,6 +851,19 @@ class Rfm_controller extends CI_Controller {
                 $head_id = '207';
             }
 
+            if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
+                $array_insert = array(
+                    'task_name'         => $subject,
+                    'description'       => $detail,
+                    'status'            => STT_ON_QUEUE,
+                    'create_date'       => $date_now,
+                    'project_id'        => $project_id,
+                    'create_by'         => $user_id
+                );
+    
+                $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
+            }
+
             $array_insert = array(
                 'no_rfm'            => $no_rfm,
                 'problem_type'      => $problem_type,
@@ -862,7 +879,6 @@ class Rfm_controller extends CI_Controller {
                 'assign_date'       => $assign_date,
                 'project_id'        => $project_id
             );
-            // print_r($array_insert);die();
 
             if(empty($_FILES['attachment']['name'])) {
                 $insert_data = $this->db->insert($table_destination, $array_insert);
@@ -941,7 +957,7 @@ class Rfm_controller extends CI_Controller {
                 }
                 
                 $isValid = 1;
-                $isPesan = "<div class='alert alert-success'>Berhasil Membuat RFM</div>". $project_id;
+                $isPesan = "<div class='alert alert-success'>Berhasil Membuat RFM</div>";
             }
             
         }

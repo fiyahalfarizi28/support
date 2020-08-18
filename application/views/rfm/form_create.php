@@ -58,6 +58,24 @@
                     </div>
                 </div>
 
+                <div id="collapseApplicationForProject" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="project_id2">APPLICATION :</label>
+                                    <select id="project_id2" class="form-control" name="project_id2" style="margin-bottom: 15px">
+                                        <option disabled value="" selected="selected">- SELECT APPLICATION -</option>
+                                        <?php foreach($projectList->result() as $r): ?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                                        <?php endforeach ?>   
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -123,6 +141,7 @@
                 })
 
                 $('#collapseMaintenance').collapse('show');
+                $('#collapseApplicationForProject').collapse('hide');
                 $('#collapseProject').collapse('hide');
 
             } else if (optionSelected == "REQUEST FOR PROJECT") {
@@ -134,6 +153,14 @@
                 
                 $('#collapseMaintenance').collapse('hide');
                 $('#collapseProject').collapse('show');
+
+                $('#problem_type2').on('change', function() {
+                    if ($('#problem_type2 :selected').val() == <?php echo KODE_PERUBAHAN_APLIKASI?>) {
+                        $('#collapseApplicationForProject').collapse('show');
+                    } else {
+                        $('#collapseApplicationForProject').collapse('hide');
+                    }
+                });
             }
         } else {
             $('#collapseMaintenance').collapse('hide');

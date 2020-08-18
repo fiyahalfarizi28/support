@@ -75,6 +75,7 @@ class dailyreport_controller extends ci_controller{
         $rfm_id = null;
         $status = $this->input->post('status');
         $keterangan = $this->input->post('keterangan');
+        $projectFlag = $this->input->post('projectFlag');
 
         if ($this->input->post('project_id') !== "") {
             $project_id = $this->input->post('project_id');
@@ -86,6 +87,15 @@ class dailyreport_controller extends ci_controller{
 
         if ($this->input->post('rfm_id') !== "") {
             $rfm_id = $this->input->post('rfm_id');
+        }
+
+        if ($projectFlag == "RFM") {
+            $project_id = null;
+        } elseif ($projectFlag == "Project") {
+            $rfm_id = null;
+        } else {
+            $project_id = null;
+            $rfm_id = null;
         }
         
         if(empty($project_id) && empty($rfm_id)  && empty($keterangan) ) {

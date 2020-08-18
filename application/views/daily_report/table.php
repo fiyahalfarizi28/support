@@ -150,8 +150,8 @@
 
 					<div class="form-group">
 						<label for="projectFlag">Jenis task :</label>
-						<select id="projectFlag" class="form-control">
-							<option disabled selected="selected">- Pilih Task -</option>
+						<select id="projectFlag" name="projectFlag" class="form-control">
+							<option disabled selected="selected" value="">- Pilih Task -</option>
 							<option>Project</option>
 							<option >RFM</option>
 							<option>Other</option>
