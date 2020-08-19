@@ -18,9 +18,9 @@ class dailyreport_controller extends ci_controller{
             $array_crud = array(
                 'select' => '*',
                 'table' => TB_DETAIL,
-                // 'where' => array(
-                //     'assign_to' => $this->session->userdata('USER_ID')
-                // )
+                'where' => array(
+                    'request_type' => REQUEST_TYPE_MAINTENANCE
+                )
             );
 
             // $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
