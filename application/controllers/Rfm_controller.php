@@ -995,7 +995,8 @@ class Rfm_controller extends CI_Controller {
         $date_now = date('Y-m-d h:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
-        $problem_type = $this->input->post('problem_type');;
+        $problem_type = $this->input->post('problem_type');
+        $project_id = $this->input->post('project_id');
 
         $subject = $this->input->post('subject');
         $detail = $this->input->post('detail');
@@ -1417,7 +1418,8 @@ class Rfm_controller extends CI_Controller {
                 'rfm_detail' => $detail,
                 'request_status' => $req_stt,
                 'assign_to' => $assign_to,
-                'assign_date' => $assign_date
+                'assign_date' => $assign_date,
+                'project_id' => $project_id
             );
             $this->db->where('id', $id_rfm);
             $insert_data = $this->db->update(TB_DETAIL, $array_insert);
