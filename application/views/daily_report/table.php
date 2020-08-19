@@ -210,7 +210,6 @@
 						<label for="Status">Status</label>
 						<select type="text" class="form-control" id="status" name="status">
 							<option disabled selected="selected">- Pilih Status -</option>
-							<option value="CANCEL">CANCEL</option>
 							<option value="ON PROGRESS">ON PROGRESS</option>
 							<option value="DONE">DONE</option>
 						</select>

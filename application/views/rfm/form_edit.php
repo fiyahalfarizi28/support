@@ -23,56 +23,87 @@
             </div>
             
             <?php if ($rows->request_type == 2) {?>
-            <div class="col-md-6">
-                <label style="margin-top: 8px">APPLICATION :</label>
-                <select name="project_id" class="form-control" required>
-                    <?php
-                        $this->db->where('id', $rows->project_id);
-                        $application = $this->db->get(TB_PROJECT)->row();
-                        echo "<script>console.log(". $rows->project_id .")</script>"
-                    ?>
-                    <option value="<?php echo $rows->project_id ?>"><?php echo $application->project_name ?></option>
-                    <?php foreach($project_list->result() as $r): ?>
-                        <?php if ($r->id !== $rows->project_id) {?>
-                            <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
-                        <?php } ?>
-                    <?php endforeach ?>
-                </select>
-            </div>
-            <?php } ?>
+                <div class="col-md-6">
+                    <label style="margin-top: 8px">APPLICATION :</label>
+                    <select name="project_id" class="form-control" required>
+                        <?php
+                            $this->db->where('id', $rows->project_id);
+                            $application = $this->db->get(TB_PROJECT)->row();
+                        ?>
+                        <option value="<?php echo $rows->project_id ?>"><?php echo $application->project_name ?></option>
+                        <?php foreach($project_list->result() as $r): ?>
+                            <?php if ($r->id !== $rows->project_id) {?>
+                                <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                            <?php } ?>
+                        <?php endforeach ?>
+                    </select>
+                </div>
 
-            <?php if ($rows->request_type ==2) {?>
-            <div class="col-md-6">
-            <?php } else {?>
-            <div class="col-md-12">
-            <?php }?>
-                <label style="margin-top: 8px">PROBLEM TYPE :</label> 
-                <select name="problem_type" class="form-control" required>
-                    <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
-                    <?php foreach($problem_type->result() as $r): ?>
-                        <?php if ($r->id !== $pt_id->id) {?>
+                <div class="col-md-6">           
+                    <label style="margin-top: 8px">PROBLEM TYPE :</label> 
+                    <select name="problem_type" class="form-control" required>
+                        <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
+                        <?php foreach($problem_type->result() as $r): ?>
+                            <?php if ($r->id !== $pt_id->id) {?>
 
-                            <?php if ($rt_id->id == 2) {?>
+                                <?php if ($rt_id->id == 2) {?>
 
-                                <?php if ($r->id <= 7) {?>
-                                    <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
-                                <?php } ?>
+                                    <?php if ($r->id <= 7) {?>
+                                        <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                    <?php } ?>
 
-                            <?php } elseif ($rt_id->id == 3) {?>
-
-                                <?php if ($r->id > 7) {?>
-                                    <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
                                 <?php } ?>
 
                             <?php } ?>
+                        <?php endforeach ?>
+                    </select>
+                </div>
 
-                        <?php } ?>
-                    <?php endforeach ?>
-                </select>
-            </div>
+            <?php }  else {?>
+                <div class="col-md-12">
+                    <label style="margin-top: 8px">PROBLEM TYPE :</label> 
+                    <select name="problem_type" class="form-control" required>
+                        <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
+                        <?php foreach($problem_type->result() as $r): ?>
+                            <?php if ($r->id !== $pt_id->id) {?>
+
+                                <?php if ($rt_id->id == 3) {?>
+
+                                    <?php if ($r->id > 7) {?>
+                                        <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                        
+                                        <?php if ($pt_id->id == 9) {?>
+                                            
+                                            <div class="col-md-12">
+                                                <label style="margin-top: 8px">APPLICATION :</label>
+                                                <select name="project_id" class="form-control" required>
+                                                    <?php
+                                                        $this->db->where('id', $rows->project_id);
+                                                        $application = $this->db->get(TB_PROJECT)->row();
+                                                    ?>
+                                                    <option value="<?php echo $rows->project_id ?>"><?php echo $application->project_name ?></option>
+                                                    <?php foreach($project_list->result() as $r): ?>
+                                                        <?php if ($r->id !== $rows->project_id) {?>
+                                                            <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                                                        <?php } ?>
+                                                    <?php endforeach ?>
+                                                </select>
+                                            </div>
+
+                                        <?php } ?>
+
+                                    <?php } ?>
+
+                                <?php } ?>
+
+                            <?php } ?>
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
 
-        <div class="form-group">
+        <div style ="margin-top: 8px"class="form-group">
             <label>SUBJECT :</label>
             <input type="text" name="subject" class="form-control" placeholder="Subject. . ." value="<?php echo $rows->subject ?>" required>
         </div>
