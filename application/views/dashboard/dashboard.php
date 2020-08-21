@@ -472,7 +472,7 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <!-- <tbody>
                 <?php 
                     $ITList = $this->db->get(TB_USER)->result();
                     $projectList = $this->db->get(TB_PROJECT)->result();
@@ -691,7 +691,7 @@
                         </tr>
                     <?php } ?>
                 <?php endforeach ?>
-            </tbody>
+            </tbody> -->
 
         </table>
     </div>
