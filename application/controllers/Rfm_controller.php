@@ -858,7 +858,8 @@ class Rfm_controller extends CI_Controller {
                     'status'            => STT_ON_QUEUE,
                     'create_date'       => $date_now,
                     'project_id'        => $project_id,
-                    'create_by'         => $user_id
+                    'create_by'         => $user_id,
+                    'no_rfm'            => $no_rfm
                 );
     
                 $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
@@ -1006,6 +1007,10 @@ class Rfm_controller extends CI_Controller {
         $removeAtt = $this->input->post('removeAtt');
         $extensionList = array("jpg", "jpeg", "png", "bmp", "gif", "JPG", "JPEG", "PNG", "BMP", "GIF", "pdf", "docx", "xlsx", "pptx", "txt", "TXT");
         $id_rfm = $this->input->post('id_rfm');
+
+        if ($problem_type == KODE_PENAMBAHAN_APLIKASI) {
+            $project_id = null;
+        }
         
         $array_crud = array(
             'table' => TB_PARAMETER,
@@ -1636,15 +1641,24 @@ class Rfm_controller extends CI_Controller {
         $notes = $this->input->post('notes');
         $date_now = date('Y-m-d h:i:s');
         $app_it = $this->db->where('id', 'RFM_AKSES_IT_APP')->get(TB_PARAMETER)->row();
-        
+        $problem_type = $this->input->post('problem_type');
+        $project_id = $this->input->post('project_id');
+
+        if ($problem_type == KODE_PENAMBAHAN_APLIKASI) {
+            $project_id = null;
+        }
+
         $array_insert = array(
             'request_status' => STT_APPROVED,
             'approve_by'     => $SESSION_USER_ID,
             'approve_date'   => $date_now,
             'approve_notes'  => $notes,
             'receive_by'     => $app_it->value,
+            'project_id'     => $project_id,
+            'problem_type'   => $problem_type
         );
         
+
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
 
         if(!$insert_data) {
@@ -1685,6 +1699,11 @@ class Rfm_controller extends CI_Controller {
         $assign_pic = $this->input->post('assign_pic');
         $target_date = $this->input->post('target_date');
         $date_now = date('Y-m-d h:i:s');
+        $project_id = $this->input->post('project_id');
+
+        if ($problem_type == KODE_PENAMBAHAN_APLIKASI) {
+            $project_id = null;
+        }
 
         if(empty($assign_pic) || empty($target_date))
         {
@@ -1706,8 +1725,21 @@ class Rfm_controller extends CI_Controller {
             'assign_to'      => $assign_pic,
             'assign_date'    => $date_now,
             'target_date'    => $target_date,
+            'project_id'     => $project_id
         );
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
+
+        if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
+            $array_insert = array(
+                'assign_to'      => $assign_pic,
+                'assign_date'    => $date_now,
+                'target_date'    => $target_date,
+                'status'         => STT_PENDING,
+            );
+    
+            $no_rfm = $this->db->where('id', $id_rfm)->get(TB_DETAIL)->row()->no_rfm;
+            $update_data = $this->db->where('no_rfm', $no_rfm)->update(TB_TASK, $array_insert);
+        }
 
         if(!$insert_data) {
             $isValid = 0;

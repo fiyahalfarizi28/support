@@ -64,8 +64,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="project_id2">APPLICATION :</label>
-                                    <select id="project_id2" class="form-control" name="project_id2" style="margin-bottom: 15px">
-                                        <option disabled value="" selected="selected">- SELECT APPLICATION -</option>
+                                    <select size ="3" id="project_id2" class="form-control" name="project_id2" style="margin-bottom: 15px">
                                         <?php foreach($projectList->result() as $r): ?>
                                             <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
                                         <?php endforeach ?>   

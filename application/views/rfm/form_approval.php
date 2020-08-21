@@ -45,48 +45,69 @@
             </div>
 
             <?php if ($rows->request_type == 2) {?>
-            <div class="col-md-6">
-                <label style="margin-top: 8px">APPLICATION :</label>
-                <?php echo $selectProjectType ?>
-                    <?php
-                        $this->db->where('id', $rows->project_id);
-                        $application = $this->db->get(TB_PROJECT)->row();
-                    ?>
-                    <option value="<?php echo $rows->project_id ?>"><?php echo $application->project_name ?></option>
-                </select>
-            </div>
-            <?php } ?>
-
-            <?php if ($rows->request_type ==2) {?>
-            <div class="col-md-6">
-            <?php } else {?>
-            <div class="col-md-12">
-            <?php }?>
-                <label style="margin-top: 8px">PROBLEM TYPE :</label> 
-                <?php echo $selectProblemType ?>
-                    <option value="<?php echo $rows->problem_type ?>"><?php echo $pt_id->problem_type ?></option>
-                    <?php foreach($problem_type->result() as $r): ?>
-                        <?php if ($r->id !== $pt_id->id) {?>
-
-                            <?php if ($rt_id->id == 2) {?>
-
-                                <?php if ($r->id <= 7) {?>
-                                    <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                    <div class="col-md-6">
+                        <label style="margin-top: 8px">APPLICATION :</label>
+                        <select name="project_id" class="form-control" required>
+                            <?php
+                                $this->db->where('id', $rows->project_id);
+                                $application = $this->db->get(TB_PROJECT)->row();
+                            ?>
+                            <option value="<?php echo $rows->project_id ?>"><?php echo $application->project_name ?></option>
+                            <?php foreach($project_list->result() as $r): ?>
+                                <?php if ($r->id !== $rows->project_id) {?>
+                                    <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
                                 <?php } ?>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
 
-                            <?php } elseif ($rt_id->id == 3) {?>
-
-                                <?php if ($r->id > 7) {?>
-                                    <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                    <div class="col-md-6">           
+                        <label style="margin-top: 8px">PROBLEM TYPE :</label> 
+                        <select name="problem_type" class="form-control"  id="problem_type" required>
+                            <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
+                            <?php foreach($problem_type->result() as $r): ?>
+                                <?php if ($r->id !== $pt_id->id) {?>
+                                    <?php if ($r->id <= 7) {?>
+                                        <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                    <?php } ?>
                                 <?php } ?>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
 
-                            <?php } ?>
+                <?php }  else {?>
+                    <div class="col-md-12">
+                        <label style="margin-top: 8px">PROBLEM TYPE :</label> 
+                        <select name="problem_type" class="form-control" id="problem_type" required>
+                            <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
+                            <?php foreach($problem_type->result() as $r): ?>
+                                <?php if ($r->id !== $pt_id->id) {?>
+                                        <?php if ($r->id > 7) {?>
+                                    <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
 
+                <div class="col-md-12 collapse" id="collapseApplicationForProject">
+                    <label style="margin-top: 8px">APPLICATION :</label>
+                    <select name="project_id" class="form-control" required>
+                        <?php
+                            $this->db->where('id', $rows->project_id);
+                            $application = $this->db->get(TB_PROJECT)->row();
+                        ?>
+                        <?php if ($rows->project_id !== null) { ?>
+                            <option value="<?php echo $rows->project_id ?>"><?php echo $application->project_name ?></option>
                         <?php } ?>
-                    <?php endforeach ?>
-                </select>
-            </div>
-            
+                        <?php foreach($project_list->result() as $r): ?>
+                            <?php if ($r->id !== $rows->project_id) {?>
+                                <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                            <?php } ?>
+                        <?php endforeach ?>
+                    </select>
+                </div>
+            <?php } ?>
         </div>
 
         <div class="form-group">
@@ -202,3 +223,21 @@
 
     </form>
 </div>
+
+<script>
+
+console.log('<?php echo $rows->problem_type ?>');
+
+if ( <?php echo $rows->request_type == REQUEST_TYPE_PROJECT?> && <?php echo $rows->problem_type == KODE_PERUBAHAN_APLIKASI ? $rows->problem_type == KODE_PERUBAHAN_APLIKASI : 0 ?> ) {
+    $('#collapseApplicationForProject').collapse('show');
+}
+
+$('#problem_type').on('change', function() {
+    if ($('#problem_type :selected').val() == <?php echo KODE_PERUBAHAN_APLIKASI?>) {
+        $('#collapseApplicationForProject').collapse('show');
+    } else {
+        $('#collapseApplicationForProject').collapse('hide');
+    }
+});
+
+</script>

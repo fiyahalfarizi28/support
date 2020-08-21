@@ -113,6 +113,7 @@
 								foreach($rfmList->result() as $row):
 									if ($r->rfm_id == $row->id) {
 										$tableDataNoRFM = $row->no_rfm;
+										// echo "<script>console.log('masuk sini, ". $tableDataNoRFM."')</script>";
 										break;
 									}
 								endforeach;
@@ -178,6 +179,11 @@
 												<div class="form-group">
 													<label for="task_id">Task :</label>
 													<select id="task_id" class="form-control" name="task_id" style="margin-bottom: 15px">
+														<?php foreach($taskList->result() as $r): ?>
+															<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && !($r->status == STT_DONE)) {?>
+																<option value=<?php echo $r->id ?> ><?php echo $r->task_name ?></option>
+															<?php } ?>
+														<?php endforeach ?>
 														
 													</select>
 												</div>

@@ -18,9 +18,6 @@ class dailyreport_controller extends ci_controller{
             $array_crud = array(
                 'select' => '*',
                 'table' => TB_DETAIL,
-                'where' => array(
-                    'request_type' => REQUEST_TYPE_MAINTENANCE
-                )
             );
 
             // $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
@@ -35,7 +32,15 @@ class dailyreport_controller extends ci_controller{
 
             $array_crud = array(
                 'select' => '*',
-                'table' => TB_TASK
+                'table' => TB_TASK,
+                'where' => array(
+                    'assign_to' => $this->session->userdata('USER_ID'),
+                    'status' => STT_ON_PROGRESS,
+                ),
+                'where' => array(
+                    'assign_to' => $this->session->userdata('USER_ID'),
+                    'status' => STT_PENDING
+                )
             );
 
             $data['taskList'] = $this->daily_report_model->get_crud($array_crud);
@@ -88,15 +93,6 @@ class dailyreport_controller extends ci_controller{
         if ($this->input->post('rfm_id') !== "") {
             $rfm_id = $this->input->post('rfm_id');
         }
-
-        if ($projectFlag == "RFM") {
-            $project_id = null;
-        } elseif ($projectFlag == "Project") {
-            $rfm_id = null;
-        } else {
-            $project_id = null;
-            $rfm_id = null;
-        }
         
         if(empty($project_id) && empty($rfm_id)  && empty($keterangan) ) {
             $isValid = 0;
@@ -115,11 +111,21 @@ class dailyreport_controller extends ci_controller{
             );
 
             $sql = $this->daily_report_model->get_crud($array_crud);
+            
+            if (!empty($task_id)) {
+                if($status == STT_DONE) {
+                    $status = STT_ON_PROGRESS;
+                }
 
-            if (!empty($project_id)) {
-                $rfm_id = null;
-            } elseif(!empty($rfm_id)) {
-                $project_id = null;
+                $array_update_task = array(
+                    'status' => $status,
+                );
+    
+                $this->db->where('id', $task_id);
+                $update_task = $this->db->update(TB_TASK, $array_update_task);
+
+                $no_rfm = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfm;
+                $rfm_id = $this->db->where('no_rfm', $no_rfm)->get(TB_DETAIL)->row()->id;
             }
 
             $array_insert = array(
@@ -133,13 +139,13 @@ class dailyreport_controller extends ci_controller{
             );
         
 	    	$insert_data = $this->db->insert(TB_DAILY_ACTIVITY, $array_insert);
-            
-            $array_update = array(
+
+            $array_update_rfm = array(
                 'result_status' => $status,
             );
 
             $this->db->where('id', $rfm_id);
-            $update_rfm = $this->db->update(TB_DETAIL, $array_update);
+            $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
 
             if(!$insert_data) {
                 $isValid = 0;
@@ -150,7 +156,7 @@ class dailyreport_controller extends ci_controller{
                 die(); 
             }else {
                 $isValid = 1;
-                $isPesan = "<div class='alert alert-success'>Berhasil menambahkan daily activity</div>";
+                $isPesan = "<div class='alert alert-success'>Berhasil menambahkan daily activity</div><div class='alert alert-success'>Harap lapor ke HEAD IT/SUPERVISOR IT jika sudah menyelesaikan task tersebut!</div>";
             }
             
         }
