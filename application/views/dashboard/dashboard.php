@@ -463,235 +463,64 @@
             <thead>
                 <tr>
                     <th style="text-align: center">#</th>
-                    <th>HARI</th>
-                    <th>TANGGAL</th>
-                    <th>WAKTU</th>
-                    <th>PROJECT</th>
+                    <th>NAMA PROJECT</th>
                     <th>STATUS</th>
-                    <th>KETERANGAN</th>
                 </tr>
             </thead>
 
-            <!-- <tbody>
-                <?php 
-                    $ITList = $this->db->get(TB_USER)->result();
-                    $projectList = $this->db->get(TB_PROJECT)->result();
-                    $taskList = $this->db->get(TB_TASK)->result();
-                    $rfmList = $this->db->get(TB_DETAIL)->result();
-                ?>
-
-                <?php foreach($ITList as $r): ?>
+            <tbody>
+                <?php foreach($filteredProjectList as $r): ?>
                     
                     <?php 
-                        $this->db->where('user_id', $r->user_id);
-                        $this->db->where('tanggal', date('Y-m-d'));
+                        $this->db->where('project_id', $r->id);
                         $this->db->order_by('last_update DESC');
-                        $specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
+                        $specificTask = $this->db->get(TB_TASK)->result();
                     ?>
                     
-                    <?php if (count($specificDailyActivity) > 0) { ?>
-                        <?php foreach($specificDailyActivity as $row): ?>
-                            <?php if (array_search($row, $specificDailyActivity) == 0) {?>
-                                <tr>
-                                    <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->user_id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
-                                    <td>
-                                        <?php
-                                            $hari = date('l',strtotime($row->tanggal));
-                                            switch($hari){
-                                                case 'Sunday':
-                                                    $hari = "Minggu";
-                                                break;
-                                        
-                                                case 'Monday':			
-                                                    $hari = "Senin";
-                                                break;
-                                        
-                                                case 'Tuesday':
-                                                    $hari = "Selasa";
-                                                break;
-                                        
-                                                case 'Wednesday':
-                                                    $hari = "Rabu";
-                                                break;
-                                        
-                                                case 'Thursday':
-                                                    $hari = "Kamis";
-                                                break;
-                                        
-                                                case 'Friday':
-                                                    $hari = "Jumat";
-                                                break;
-                                        
-                                                case 'Saturday':
-                                                    $hari = "Sabtu";
-                                                break;
-                                                
-                                                default:
-                                                    $hari= "Tidak di ketahui";		
-                                                break;
-                                            }
-                                            echo $hari;
-                                        ?>
-                                    </td>
-                                    <td><?php echo date("d/m/Y",strtotime( $row->tanggal)) ?></td>
-                                    <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
-                                    <td>
-                                        <?php 
-                                            // $data = json_encode($projectList->result());
-                                            // echo "<script>console.log($data);</script>";
-                                            $tableDataProjectName = null;
-                                            if (!empty($row->project_id))
-                                            {
-                                                foreach($projectList as $rowProject):
-                                                    if ($row->project_id == $rowProject->id) {
-                                                        $tableDataProjectName = $rowProject->project_name;
-                                                        break;
-                                                    }
-                                                endforeach;
-                                            }
-                                            else {
-                                                $tableDataProjectName = "-";
-                                            }
-                                            echo $tableDataProjectName;
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php $tableTaskName = null;
-                                            if (!empty($row->task_id))
-                                            {
-                                                foreach($taskList as $rowTask):
-                                                    if ($row->task_id == $rowTask->id) {
-                                                        $tableTaskName = $rowTask->task_name;
-                                                        break;
-                                                    }
-                                                endforeach;
-                                            }
-                                            else {
-                                                $tableTaskName = "-";
-                                            }
-                                            echo $tableTaskName;
-                                        ?>
-                                    </td>            
-                                    <td><?php echo $row->status ?></td>
-                                    <td><?php echo $row->keterangan ?></td>
-                                </tr>
-                            <?php } ?>
-                        <?php endforeach ?>
-                        <tr id=<?php echo $r->user_id?> class="collapse">
-                            <td colspan="10">
+                    <tr>
+                        <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
+                        <td><?php echo $r->project_name?></td>
+                        <td>
+                            <?php echo STT_ON_PROGRESS?>
+                        </td>
+                    </tr>
+
+                    <tr id=<?php echo $r->id?> class="collapse">
+                            <td colspan="3">
                                 <p>
                                     <table style="width: 100%">
-                                        <?php foreach($specificDailyActivity as $row): ?>
-                                            <?php if (array_search($row, $specificDailyActivity) !== 0) {?>
+                                        <thead>
+                                            <tr>
+                                                <th>NAMA TASK</th>
+                                                <th>TANGGAL DIBUAT</th>
+                                                <th>UPDATE TERAKHIR</th>
+                                                <th>STATUS</th>
+                                                <th>PIC</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($specificTask as $row): ?>
                                                 <tr>
-                                                    <td>
-                                                        <?php
-                                                            $hari = date('l',strtotime($row->tanggal));
-                                                            switch($hari){
-                                                                case 'Sunday':
-                                                                    $hari = "Minggu";
-                                                                break;
-                                                        
-                                                                case 'Monday':			
-                                                                    $hari = "Senin";
-                                                                break;
-                                                        
-                                                                case 'Tuesday':
-                                                                    $hari = "Selasa";
-                                                                break;
-                                                        
-                                                                case 'Wednesday':
-                                                                    $hari = "Rabu";
-                                                                break;
-                                                        
-                                                                case 'Thursday':
-                                                                    $hari = "Kamis";
-                                                                break;
-                                                        
-                                                                case 'Friday':
-                                                                    $hari = "Jumat";
-                                                                break;
-                                                        
-                                                                case 'Saturday':
-                                                                    $hari = "Sabtu";
-                                                                break;
-                                                                
-                                                                default:
-                                                                    $hari= "Tidak di ketahui";		
-                                                                break;
-                                                            }
-                                                            echo $hari;
-                                                        ?>
-                                                    </td>
-                                                    <td><?php echo date("d/m/Y",strtotime( $row->tanggal)) ?></td>
-                                                    <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
+                                                    <td><?php echo $row->task_name?></td>
+                                                    <td><?php echo date("d/m/Y",strtotime( $row->create_date)) ?></td>
+                                                    <td><?php echo date("d/m/Y H:i",strtotime( $row->last_update)) ?></td>
+                                                    <td><?php echo $row->status?></td>
                                                     <td>
                                                         <?php 
-                                                            // $data = json_encode($projectList->result());
-                                                            // echo "<script>console.log($data);</script>";
-                                                            $tableDataProjectName = null;
-                                                            if (!empty($row->project_id))
-                                                            {
-                                                                foreach($projectList as $rowProject):
-                                                                    if ($row->project_id == $rowProject->id) {
-                                                                        $tableDataProjectName = $rowProject->project_name;
-                                                                        break;
-                                                                    }
-                                                                endforeach;
-                                                            }
-                                                            else {
-                                                                $tableDataProjectName = "-";
-                                                            }
-                                                            echo $tableDataProjectName;
+                                                            $this->db->where('user_id', $row->assign_to);
+                                                            echo $this->db->get(TB_USER)->row()->nama;
                                                         ?>
                                                     </td>
-                                                    <td>
-                                                        <?php $tableTaskName = null;
-                                                            if (!empty($row->task_id))
-                                                            {
-                                                                foreach($taskList as $rowTask):
-                                                                    if ($row->task_id == $rowTask->id) {
-                                                                        $tableTaskName = $rowTask->task_name;
-                                                                        break;
-                                                                    }
-                                                                endforeach;
-                                                            }
-                                                            else {
-                                                                $tableTaskName = "-";
-                                                            }
-                                                            echo $tableTaskName;
-                                                        ?>
-                                                    </td>
-                                                    
-                                                    <td>
-                                                        <?php $tableDataNoRFM = null;
-                                                            if (!empty($row->rfm_id))
-                                                            {   
-                                                                foreach($rfmList as $rowRfm):
-                                                                    if ($row->rfm_id == $rowRfm->id) {
-                                                                        $tableDataNoRFM = $rowRfm->no_rfm;
-                                                                        break;
-                                                                    }
-                                                                endforeach;
-                                                            }
-                                                            else {
-                                                                $tableDataNoRFM = "-";
-                                                            }
-                                                            echo $tableDataNoRFM;
-                                                        ?>
-                                                    </td>
-                                                    <td><?php echo $row->status ?></td>
-                                                    <td><?php echo $row->keterangan ?></td>
                                                 </tr>
-                                            <?php } ?>
-                                        <?php endforeach ?>
+                                            <?php endforeach ?>
+                                        </tbody>
                                     </table>
                                 </p>
                             </td>
                         </tr>
-                    <?php } ?>
+
                 <?php endforeach ?>
-            </tbody> -->
+            </tbody>
 
         </table>
     </div>
@@ -903,58 +732,6 @@
 </div>
 
 <script>
-    // var lineChartData = {
-    //     labels: [
-    //         <?php
-    //             foreach($chart_line as $r):
-    //                 $data = array();
-    //                 $data =  date('d', strtotime($r->tgl));
-    //                 echo json_encode($data).",";
-    //             endforeach;
-    //         ?>
-    //     ],
-    //     datasets: [{
-    //     label: 'All RFM',
-    //     borderColor: 'rgb(255, 255, 0, 1)',
-    //     borderWidth: 1,
-    //     backgroundColor: 'rgb(255, 255, 0, 0.4)',
-    //     data: [
-    //         <?php
-    //             foreach($chart_line as $r):
-    //                 echo $r->a.",";
-    //             endforeach;
-    //         ?>
-    //     ]
-	// 	},
-    //     {
-    //         label: 'On Progress',
-    //         borderColor: 'rgb(0, 0, 0, 1)',
-    //         borderWidth: 1,
-    //         backgroundColor: 'rgb(0, 0, 0, 0.6)',
-    //         data: [
-    //             <?php
-    //                 foreach($chart_line as $r):
-    //                     echo $r->b.",";
-    //                 endforeach;
-    //             ?>
-    //         ]
-    //     },
-    //     {
-    //         label: 'Done',
-    //         borderColor: 'rgb(0, 204, 0, 1)',
-    //         borderWidth: 1,
-    //         backgroundColor: 'rgb(0, 204, 0, 0.4)',
-    //         data: [
-    //             <?php
-    //                 foreach($chart_line as $r):
-    //                     echo $r->c.",";
-    //                 endforeach;
-    //             ?>
-    //         ]
-    //     }]
-	// }
-
-    
     var ctx_ = document.getElementById("myChart1").getContext("2d");
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
@@ -1007,6 +784,7 @@
                 "rgb(208,149,130)",
                 "rgb(198,208,102)",
                 "rgb(221,187,148)",
+                "rgb(23,24,27)",
                 "rgb(179,135,102)"],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -1084,6 +862,7 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
                 "rgb(208,149,130)",
                 "rgb(198,208,102)",
                 "rgb(221,187,148)",
+                "rgb(23,24,27)",
                 "rgb(179,135,102)"],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -1125,6 +904,100 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
 </script>
 
 <div class="row pt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">JUMLAH REQUEST BERDASARKAN KANTOR</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" id="dt_dashboard">
+                        <thead class="bg-primary text-light">
+                            <tr>
+                                <!-- <th>KODE KANTOR</th> -->
+                                <th>NAMA KANTOR</th>
+                                <th>JUMLAH REQUEST</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                                $Q = 'SELECT kode_kantor, COUNT(*) as total_by_kk
+                                FROM ticket_support.rfm_new_detail
+                                GROUP BY kode_kantor';
+                                $rfmGrouped = $this->db->query($Q)->result();
+                                
+                                foreach($rfmGrouped as $r): 
+                            ?>
+                                <tr>
+                                    <!-- <td style="text-align: left"><?php echo $r->kode_kantor ?></td> -->
+                                    <td>
+                                        <?php 
+                                            $this->db->where('kode_kantor', $r->kode_kantor);
+                                            echo $this->db->get(TB_KODE_KANTOR)->row()->nama_kantor;
+                                        ?>
+                                    </td>
+                                    <td style="text-align: right"><?php echo $r->total_by_kk ?></td>
+                                </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><b>JUMLAH</b></td>
+                                <td style="text-align: right"><?php echo "<b>$total_semua</b>" ?></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">JUMLAH REQUEST BERDASARKAN DIVISI</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" id="dt_dashboard">
+                    <thead class="bg-primary text-light">
+                            <tr>
+                                <th>DIVISI</th>
+                                <th>JUMLAH REQUEST</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                               $divisi = 'SELECT dpm_online.user.divisi_id as divisi_id, COUNT(*) as total_by_div
+                                FROM ticket_support.rfm_new_detail
+                                INNER JOIN dpm_online.user
+                                ON ticket_support.rfm_new_detail.request_by = dpm_online.user.user_id
+                                GROUP BY dpm_online.user.divisi_id';
+                                $rfmDivisi = $this->db->query($divisi)->result();
+                                
+                                foreach($rfmDivisi as $r): 
+                            ?>
+                                <tr>
+                                    <td>
+                                        <?php 
+                                            echo $r->divisi_id;
+                                        ?>
+                                    </td>
+                                    <td style="text-align: right"><?php echo $r->total_by_div ?></td>
+                                </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><b>JUMLAH</b></td>
+                                <td style="text-align: right"><?php echo "<b>$total_semua</b>" ?></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                
+<!-- <div class="row pt-3">
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">ACCEPTED RFM RATIO</div>
@@ -1165,4 +1038,4 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
             </div>
         </div>
     </div>
-</div>
+</div> -->

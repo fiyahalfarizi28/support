@@ -71,8 +71,6 @@
 
 					<td>
 						<?php 
-							// $data = json_encode($projectList->result());
-							// echo "<script>console.log($data);</script>";
 							$tableDataProjectName = null;
 							if (!empty($r->project_id))
 							{
@@ -165,8 +163,9 @@
 							<div id="collapseProject" class="panel-collapse collapse">
 								<div class="panel-body">
 									<label for="projectList">Daftar project :</label>
-									<select size= "5" id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px">
-										<?php foreach($projectList->result() as $r): ?>
+									<select  id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px">
+										<option disabled value="" selected="selected">- SELECT PROJECT -</option>
+										<?php foreach($filteredProjectList as $r): ?>
 											<option value=<?php echo $r->id ?> ><?php echo $r->project_name ?></option>
 										<?php endforeach ?>
 									</select>
@@ -201,7 +200,7 @@
 										<select id="rfm_id" class="form-control" name="rfm_id" style="margin-bottom: 15px">
 											<option disabled selected="selected" value="">- Pilih No. RFM -</option>
 											<?php foreach($rfmList->result() as $r): ?>
-												<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && !($r->result_status == STT_DONE || $r->result_status == STT_SOLVED )) {?>
+												<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && ($r->request_type == 2) && !($r->result_status == STT_DONE || $r->result_status == STT_SOLVED )) {?>
 													<option value=<?php echo $r->id ?> ><?php echo $r->no_rfm ?></option>
 												<?php } ?>
 											<?php endforeach ?>
@@ -242,6 +241,8 @@
 </div>
 
 <script>
+	console.log(<?php echo json_encode($taskList->result()) ?>);
+
     document.addEventListener("DOMContentLoaded", function (event) {
 
     	$('#tb_detail_dr').DataTable({
@@ -256,12 +257,24 @@
             if (valueSelected === "Project") {
                 $('#collapseProject').collapse('show');
 				$('#collapseRFM').collapse('hide');
+
+				$('#rfm_id').prop('disabled', 'disabled');
+				$('#project_id').prop('disabled', false);
+				$('#task_id').prop('disabled', false);
             } else if (valueSelected === "RFM") {
                 $('#collapseProject').collapse('hide');
 				$('#collapseRFM').collapse('show');
+
+				$('#rfm_id').prop('disabled', false);
+				$('#project_id').prop('disabled', 'disabled');
+				$('#task_id').prop('disabled', 'disabled');
             } else{
 				$('#collapseProject').collapse('hide');
 				$('#collapseRFM').collapse('hide');
+
+				$('#rfm_id').prop('disabled', 'disabled');
+				$('#project_id').prop('disabled', 'disabled');
+				$('#task_id').prop('disabled', 'disabled');
 			}
         });
 

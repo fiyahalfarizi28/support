@@ -79,6 +79,13 @@ class Dashboard_controller extends CI_Controller {
             $this->db->where("problem_type IN($rfp_id)", NULL, FALSE);
             $data['jumlah_reject_rfp'] = $this->db->get(TB_DETAIL)->row()->jml_reject;
 
+            $Q = 'SELECT DISTINCT ticket_support.task.project_id AS id, ticket_support.project.project_name AS project_name
+            FROM ticket_support.task
+            INNER JOIN ticket_support.project
+            ON ticket_support.task.project_id=ticket_support.project.id;
+            ';
+            $data['filteredProjectList'] = $this->db->query($Q)->result();
+
             //===================================================
 
             $tb_detail = TB_DETAIL;

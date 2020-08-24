@@ -55,6 +55,8 @@ class Rfm_model extends ci_model{
         $this->db->join('dpm_online.'.TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
         $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
         $this->db->order_by("request_status");
+        $this->db->order_by("result_status");
+        $this->db->order_by("request_date");
         // $this->db->where("result_status NOT IN('SOLVED', 'REJECT')", NULL, FALSE);
  
         $i = 0;

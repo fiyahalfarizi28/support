@@ -316,6 +316,7 @@ class Rfm_controller extends CI_Controller {
                 'result_status' => STT_PENDING
             )
         );
+        
         $check = $this->rfm_model->get_crud($array_crud)->num_rows();
         if($check >= 1) {
             $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa memberi kami penilaian. Terima kasih';
@@ -566,6 +567,7 @@ class Rfm_controller extends CI_Controller {
             echo json_encode($data);
             die();
         }
+
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
@@ -577,12 +579,9 @@ class Rfm_controller extends CI_Controller {
         $project_id = $this->input->post('project_id');
 
         if ($request_type == 2) {
-            $problem_type = $this->input->post('problem_type1');
+            $problem_type = $this->input->post('problem_type');
         } else if ($request_type == 3) {
-            $problem_type = $this->input->post('problem_type2');
-            if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
-                $project_id = $this->input->post('project_id2');
-            }
+            $problem_type = $this->input->post('problem_type');
         }
 
         $subject = $this->input->post('subject');
@@ -851,20 +850,6 @@ class Rfm_controller extends CI_Controller {
                 $head_id = '207';
             }
 
-            if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
-                $array_insert = array(
-                    'task_name'         => $subject,
-                    'description'       => $detail,
-                    'status'            => STT_ON_QUEUE,
-                    'create_date'       => $date_now,
-                    'project_id'        => $project_id,
-                    'create_by'         => $user_id,
-                    'no_rfm'            => $no_rfm
-                );
-    
-                $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
-            }
-
             $array_insert = array(
                 'no_rfm'            => $no_rfm,
                 'problem_type'      => $problem_type,
@@ -1007,10 +992,6 @@ class Rfm_controller extends CI_Controller {
         $removeAtt = $this->input->post('removeAtt');
         $extensionList = array("jpg", "jpeg", "png", "bmp", "gif", "JPG", "JPEG", "PNG", "BMP", "GIF", "pdf", "docx", "xlsx", "pptx", "txt", "TXT");
         $id_rfm = $this->input->post('id_rfm');
-
-        if ($problem_type == KODE_PENAMBAHAN_APLIKASI) {
-            $project_id = null;
-        }
         
         $array_crud = array(
             'table' => TB_PARAMETER,
@@ -1641,12 +1622,8 @@ class Rfm_controller extends CI_Controller {
         $notes = $this->input->post('notes');
         $date_now = date('Y-m-d h:i:s');
         $app_it = $this->db->where('id', 'RFM_AKSES_IT_APP')->get(TB_PARAMETER)->row();
-        $problem_type = $this->input->post('problem_type');
-        $project_id = $this->input->post('project_id');
-
-        if ($problem_type == KODE_PENAMBAHAN_APLIKASI) {
-            $project_id = null;
-        }
+        $problem_type = $this->input->post('problem_type_hidden');
+        $project_id = $this->input->post('project_id_hidden');
 
         $array_insert = array(
             'request_status' => STT_APPROVED,
@@ -1693,17 +1670,14 @@ class Rfm_controller extends CI_Controller {
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $id_rfm = $this->input->post('id_rfm');
-        $problem_type = $this->input->post('problem_type');
-        $request_type = $this->input->post('request_type');
         $notes = $this->input->post('notes');
         $assign_pic = $this->input->post('assign_pic');
         $target_date = $this->input->post('target_date');
         $date_now = date('Y-m-d h:i:s');
+        $problem_type = $this->input->post('problem_type');
         $project_id = $this->input->post('project_id');
-
-        if ($problem_type == KODE_PENAMBAHAN_APLIKASI) {
-            $project_id = null;
-        }
+        $subject = $this->input->post('subject');
+        $detail = $this->input->post('detail');
 
         if(empty($assign_pic) || empty($target_date))
         {
@@ -1716,8 +1690,6 @@ class Rfm_controller extends CI_Controller {
         }
         
         $array_insert = array(
-            'problem_type'   => $problem_type,
-            'request_type'   => $request_type,
             'request_status' => STT_ASSIGNED,
             'receive_by'     => $SESSION_USER_ID,
             'receive_date'   => $date_now,
@@ -1725,20 +1697,29 @@ class Rfm_controller extends CI_Controller {
             'assign_to'      => $assign_pic,
             'assign_date'    => $date_now,
             'target_date'    => $target_date,
+            'problem_type'   => $problem_type,
             'project_id'     => $project_id
         );
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
 
-        if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
+
+        if ($problem_type == KODE_PERUBAHAN_APLIKASI || $problem_type == KODE_PENAMBAHAN_APLIKASI) {
+            $no_rfm = $this->db->where('id', $id_rfm)->get(TB_DETAIL)->row()->no_rfm;
+
             $array_insert = array(
-                'assign_to'      => $assign_pic,
-                'assign_date'    => $date_now,
-                'target_date'    => $target_date,
-                'status'         => STT_PENDING,
+                'task_name'         => $subject,
+                'description'       => $detail,
+                'create_date'       => $date_now,
+                'project_id'        => $project_id,
+                'create_by'         => $SESSION_USER_ID,
+                'no_rfm'            => $no_rfm,
+                'assign_to'         => $assign_pic,
+                'assign_date'       => $date_now,
+                'target_date'       => $target_date,
+                'status'            => STT_PENDING,
             );
     
-            $no_rfm = $this->db->where('id', $id_rfm)->get(TB_DETAIL)->row()->no_rfm;
-            $update_data = $this->db->where('no_rfm', $no_rfm)->update(TB_TASK, $array_insert);
+            $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
         }
 
         if(!$insert_data) {
@@ -1748,7 +1729,7 @@ class Rfm_controller extends CI_Controller {
             $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
             echo json_encode($data);
             die(); 
-        }else {
+        } else {
             $target_date = date('d-m-Y', strtotime($target_date));
             $arr = array(
                 'user_id'     => $assign_pic,

@@ -28,7 +28,14 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_PROJECT
             );
 
+            $Q = 'SELECT DISTINCT ticket_support.task.project_id AS id, ticket_support.project.project_name AS project_name
+            FROM ticket_support.task
+            INNER JOIN ticket_support.project
+            ON ticket_support.task.project_id=ticket_support.project.id;
+            ';
+
             $data['projectList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['filteredProjectList'] = $this->db->query($Q)->result();
 
             $array_crud = array(
                 'select' => '*',
@@ -36,14 +43,12 @@ class dailyreport_controller extends ci_controller{
                 'where' => array(
                     'assign_to' => $this->session->userdata('USER_ID'),
                     'status' => STT_ON_PROGRESS,
-                ),
-                'where' => array(
-                    'assign_to' => $this->session->userdata('USER_ID'),
-                    'status' => STT_PENDING
                 )
             );
 
-            $data['taskList'] = $this->daily_report_model->get_crud($array_crud);
+            $QTask = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING') AND assign_to = ". $this->session->userdata('USER_ID') ."";
+
+            $data['taskList'] = $this->db->query($QTask);
 			
             $this->template->load('template','daily_report/table', $data);
         }else {
@@ -156,7 +161,10 @@ class dailyreport_controller extends ci_controller{
                 die(); 
             }else {
                 $isValid = 1;
-                $isPesan = "<div class='alert alert-success'>Berhasil menambahkan daily activity</div><div class='alert alert-success'>Harap lapor ke HEAD IT/SUPERVISOR IT jika sudah menyelesaikan task tersebut!</div>";
+                $isPesan = "<div class='alert alert-success'>Berhasil menambahkan daily activity</div>";
+                if ($status == STT_DONE) {
+                    $isPesan = $isPesan . "<div class='alert alert-success'>Harap lapor ke HEAD IT/SUPERVISOR IT jika sudah menyelesaikan task tersebut!</div>";
+                }
             }
             
         }

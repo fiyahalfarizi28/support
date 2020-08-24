@@ -112,6 +112,7 @@ define('TB_SYS_PESAN','dpm_online.sys_pesan');
 define('TB_DAILY_ACTIVITY', 'daily_activity');
 define('TB_PROJECT', 'project');
 define('TB_TASK', 'task');
+define('TB_KODE_KANTOR', 'view_app_kode_kantor');
 
 define('REQUEST_TYPE_MAINTENANCE', 2);
 define('REQUEST_TYPE_PROJECT', 3);
