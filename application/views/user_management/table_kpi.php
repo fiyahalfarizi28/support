@@ -71,7 +71,6 @@
                                     echo "<option value='$y'>$y</option>";
                                 endif;
                             ?>
-                            <option value="2019">2019</option>
                         </select>
                     </div>
                     <div class="col-md-1">
@@ -83,9 +82,10 @@
                 <thead class="text-center">
                 <tr>
                     <th width="3%">#</th>
-                    <th width="10%">NAMA</th>
+                    <th width="15%">NAMA</th>
                     <th width="10%">ON PROGRESS</th>
                     <th width="10%">DONE</th>
+                    <th width="10%">MELEWATI TARGET DATE</th>
                     <th width="10%">TOTAL</th>
                     <th width="10%">%</th>
                 </tr>
@@ -107,11 +107,21 @@
                                 $persen = ROUND(ROUND($persen))." %";
                             }
                     ?>
+
+                    <?php
+                        $target_date = $this->input->post('target_date');
+                        $done_date = $this->input->post('done_date');
+                        $isOverDue = $done_date > $target_date;
+
+
+
+                    ?>
                         <tr>
-                            <td><?php echo $no++ ?></td>
+                            <td style ="text-align: center"><?php echo $no++ ?></td>
                             <td><?php echo $r->nama ?></td>
                             <td class="text-right"><?php echo $sisa ?></td>
                             <td class="text-right"><?php echo $query_done->DONE ?></td>
+                            <td></td>
                             <td class="text-right"><?php echo $query_progress->ASSIGN ?></td>
                             <td class="text-right"><?php echo $persen ?></td>
                         </tr>

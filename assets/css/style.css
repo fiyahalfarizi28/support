@@ -118,7 +118,7 @@ vertical-align: middle;
       width: 100%;
       height: 100%;
       z-index: 999999;
-      background-color: #fff;
+      background-color: transparent;
     }
     .preloader .loading {
       position: absolute;
@@ -126,6 +126,7 @@ vertical-align: middle;
       top: 50%;
       transform: translate(-50%,-50%);
       font: 14px arial;
+      background-color: transparent;
     }
     .wrapper{
 		margin: 6em 2em 0 2em;
@@ -213,6 +214,7 @@ vertical-align: middle;
         }
         .colapse-table tbody tr:hover th,
         .colapse-table tbody tr:hover td {
+            color:#000000;
             background-color: #ffffa2;
             border-color: #ffff0f;
             transition: all .2s;

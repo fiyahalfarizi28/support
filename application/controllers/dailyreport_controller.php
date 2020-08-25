@@ -11,8 +11,11 @@ class dailyreport_controller extends ci_controller{
     function index()
     {
         if($this->auth_model->logged_id()) {
+            $data['SESSION_USER_JABATAN'] = $this->session->userdata('USER_JABATAN');
+            $data['SESSION_USER_JABATAN'] = $this->session->userdata('USER_JABATAN');
             $data['SESSION_USER_ID'] = $this->session->userdata('USER_ID');
             $data['daily_activities'] = $this->getDailyActivity();
+            $data['alldaily'] = $this->getAllDaily();
 
             // Validasi daftar rfm, bisa dimasukkan ke $array_crud
             $array_crud = array(
@@ -55,7 +58,15 @@ class dailyreport_controller extends ci_controller{
             $this->load->view('login/form_login');
         }
     }
-	
+    
+    public function getAllDaily()
+    {
+        $array_crud = array(
+            'table' => TB_DAILY_ACTIVITY,
+            'order_by' => "last_update DESC"
+        );
+        return $this->daily_report_model->get_crud($array_crud);
+    }
 	public function getDailyActivity()
     {
         
@@ -162,9 +173,7 @@ class dailyreport_controller extends ci_controller{
             }else {
                 $isValid = 1;
                 $isPesan = "<div class='alert alert-success'>Berhasil menambahkan daily activity</div>";
-                if ($status == STT_DONE) {
-                    $isPesan = $isPesan . "<div class='alert alert-success'>Harap lapor ke HEAD IT/SUPERVISOR IT jika sudah menyelesaikan task tersebut!</div>";
-                }
+                
             }
             
         }

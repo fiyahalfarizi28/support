@@ -272,7 +272,7 @@
                                             echo $hari;
                                         ?>
                                     </td>
-                                    <td><?php echo date("d/m/Y",strtotime( $row->tanggal)) ?></td>
+                                    <td><?php echo date("d-m-Y",strtotime( $row->tanggal)) ?></td>
                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                     <td>
                                         <?php 
@@ -338,8 +338,21 @@
                             <td colspan="10">
                                 <p>
                                     <table style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th>HARI</th>
+                                            <th>TANGGAL</th>
+                                            <th>WAKTU</th>
+                                            <th>PROJECT</th>
+                                            <th>TASK</th>
+                                            <th>RFM</th>
+                                            <th>STATUS</th>
+                                            <th>KETERANGAN</th>
+                                        </tr>
+                                    </thead>
                                         <?php foreach($specificDailyActivity as $row): ?>
                                             <?php if (array_search($row, $specificDailyActivity) !== 0) {?>
+                                                
                                                 <tr>
                                                     <td>
                                                         <?php
@@ -380,7 +393,7 @@
                                                             echo $hari;
                                                         ?>
                                                     </td>
-                                                    <td><?php echo date("d/m/Y",strtotime( $row->tanggal)) ?></td>
+                                                    <td><?php echo date("d-m-Y",strtotime( $row->tanggal)) ?></td>
                                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                                     <td>
                                                         <?php 
@@ -502,8 +515,8 @@
                                             <?php foreach($specificTask as $row): ?>
                                                 <tr>
                                                     <td><?php echo $row->task_name?></td>
-                                                    <td><?php echo date("d/m/Y",strtotime( $row->create_date)) ?></td>
-                                                    <td><?php echo date("d/m/Y H:i",strtotime( $row->last_update)) ?></td>
+                                                    <td><?php echo date("d-m-Y",strtotime( $row->create_date)) ?></td>
+                                                    <td><?php echo date("d-m-Y H:i",strtotime( $row->last_update)) ?></td>
                                                     <td><?php echo $row->status?></td>
                                                     <td>
                                                         <?php 
@@ -621,10 +634,10 @@
     echo "
         <div class='row mt-3'>
             <div class='col-md-12'>
-                <form action='' method='post'>
+                <form action=" . $_SERVER['PHP_SELF'] . " method='POST'>
                     <div class='row'>
-                        <div class='col-md-5'>
-                            <select name='month' class='form-control'>
+                        <div class='col-md-3'>
+                            <select name='monthAwal' id='monthAwal' class='form-control'>
                                 <option value='$val_bulan'>$text_bulan</option>
     ";
                             foreach($query as $row):
@@ -683,8 +696,12 @@
     echo "
                             </select>
                         </div>
-                        <div class='col-md-5'>
-                            <select name='year' class='form-control'>
+                        <div class='col-md-3'>
+                            <select name='monthAkhir' id='monthAkhir' class='form-control'>
+                            </select>
+                        </div>
+                        <div class='col-md-4'>
+                            <select name='year' id='year' class='form-control'>
                                 <option value='$val_tahun'>$text_tahun</option>
                                 ";
                             foreach($queryyear as $row):
@@ -696,7 +713,7 @@
                             </select>
                         </div>
                         <div class='col-md-2'>
-                            <input type='submit' name='btnSearch' class='btn btn-primary btn-block' value='CARI'>
+                        <button name='btnSearch' type='submit' id='btnSearch' class='btn btn-primary btn-block' >CARI</button>
                         </div>
                     </div>
                 </form>
@@ -732,13 +749,13 @@
 </div>
 
 <script>
-    var ctx_ = document.getElementById("myChart1").getContext("2d");
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
-        
-        $this->db->where('request_type', REQUEST_TYPE_MAINTENANCE);
+        $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
         $rfmList = $this->db->get(TB_DETAIL)->result();
     ?>
+
+    var ctx_ = document.getElementById("myChart1").getContext("2d");
     var data_ = {
         labels: [
             <?php
@@ -761,37 +778,41 @@
                                 $counter += 1;
                             }
                         endforeach;
-                        $divider = count($rfmList);
-                        $data = $counter / $divider * 100;
+                        // $divider = count($rfmList);
+                        // $data = $counter / $divider * 100;
+                        $data = $counter;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
             ],
             backgroundColor: [
-                "rgb(128,189,157)",
-                "rgb(136,217,88)",
-                "rgb(249,135,102)",
-                "rgb(51,106,134)",
-                "rgb(117,53,36)",
-                "rgb(173,189,55)",
-                "rgb(79,80,96)",
-                "rgb(7,87,91)",
-                "rgb(46,69,0)",
-                "rgb(32,63,73)",
-                "rgb(182,184,181)",,
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
                 "rgb(243,204,111)",
-                "rgb(140,35,14)",
-                "rgb(208,149,130)",
-                "rgb(198,208,102)",
-                "rgb(221,187,148)",
-                "rgb(23,24,27)",
-                "rgb(179,135,102)"],
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
         }]
     };
-
-    var myBarChart = new Chart(ctx_, {
+    var myBarChartApplication = new Chart(ctx_, {
         type: 'pie',
         data: data_,
         options: {
@@ -807,8 +828,9 @@
                 callbacks: {
                     label: function(tooltipItem, data) {
                     var dataLabel = data.labels[tooltipItem.index];
-                    var value = ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].toLocaleString()+'%';
-
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
+                        // $divider = count($rfmList);
+                        // $data = $counter / $divider * 100;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
                         dataLabel[0] += value;
@@ -821,13 +843,15 @@
             }
         }
     });
+
+
 //==================================================
 
-var ctx_ = document.getElementById("myChart2").getContext("2d");
+    var ctx_ = document.getElementById("myChart2").getContext("2d");
     var data_ = {
         labels: [
             <?php
-                foreach($chart_pie as $r):
+                foreach($problemTypeList as $r):
                     $data = array();
                     $data = $r->problem_type;
                     echo json_encode($data).",";
@@ -838,38 +862,49 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
         [{
             data: [
                 <?php
-                    foreach($chart_pie as $r):
+                    foreach($problemTypeList as $r):
                         $data = array();
-                        $data = $r->rasio_rfm_accepted;
+                        $counter = 0;
+                        foreach($rfmList as $eachrfm):
+                            if ($eachrfm->problem_type == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        // $divider = count($rfmList);
+                        // $data = $counter / $divider * 100;
+                        $data = $counter;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
             ],
             backgroundColor: [
-                "rgb(128,189,157)",
-                "rgb(136,217,88)",
-                "rgb(249,135,102)",
-                "rgb(51,106,134)",
-                "rgb(117,53,36)",
-                "rgb(173,189,55)",
-                "rgb(79,80,96)",
-                "rgb(7,87,91)",
-                "rgb(46,69,0)",
-                "rgb(32,63,73)",
-                "rgb(182,184,181)",,
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
                 "rgb(243,204,111)",
-                "rgb(140,35,14)",
-                "rgb(208,149,130)",
-                "rgb(198,208,102)",
-                "rgb(221,187,148)",
-                "rgb(23,24,27)",
-                "rgb(179,135,102)"],
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
         }]
     };
-
-    var myBarChart = new Chart(ctx_, {
+    var myBarChartProblemType = new Chart(ctx_, {
         type: 'pie',
         data: data_,
         options: {
@@ -885,7 +920,7 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
                 callbacks: {
                     label: function(tooltipItem, data) {
                     var dataLabel = data.labels[tooltipItem.index];
-                    var value = ': ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].toLocaleString()+'%';
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
 
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
@@ -901,12 +936,96 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
             }
         }
     });
+
+//==================================================
+
+    document.getElementById("monthAwal").addEventListener("change", function(){
+        var e = document.getElementById("monthAwal");
+        document.getElementById("monthAkhir").innerHTML = "";
+
+        function getBulan(angka) {
+            var monthText;
+            switch (angka) {
+                case 1:
+                    monthText = 'Januari' 
+                    break;
+                case 2:
+                    monthText = 'Februari' 
+                    break;
+                case 3:
+                    monthText = 'Maret' 
+                    break;
+                case 4:
+                    monthText = 'April' 
+                    break;
+                case 5:
+                    monthText = 'Mei' 
+                    break;
+                case 6:
+                    monthText = 'Juni' 
+                    break;
+                case 7:
+                    monthText = 'Juli' 
+                    break;
+                case 8:
+                    monthText = 'Agustus' 
+                    break;
+                case 9:
+                    monthText = 'September' 
+                    break;
+                case 10:
+                    monthText = 'Oktober' 
+                    break;
+                case 11:
+                    monthText = 'November' 
+                    break;
+                case 12:
+                    monthText = 'Desember' 
+                    break;
+            }
+            return monthText;
+        }
+
+        for (var i= Number(e.options[e.selectedIndex].value); i<=12; i++) {
+            if (i > 0) {
+                document.getElementById("monthAkhir").innerHTML = document.getElementById("monthAkhir").innerHTML + `<option value='${i}'>${getBulan(i)}</option>`;
+            }
+        }
+        
+    });
+
+    document.getElementById("btnSearch").addEventListener("click", function(e) {
+        e.preventDefault();
+        var monthAwal = document.getElementById("monthAwal");
+        var monthAkhir = document.getElementById("monthAkhir");  
+
+        if (monthAwal.options[monthAwal.selectedIndex].value == "" || monthAkhir.options[monthAkhir.selectedIndex].value == "") {
+            alert('Bulan awal atau bulan akhir tidak boleh kosong!')
+        } else {
+            var startDate = `${year.options[year.selectedIndex].value}-${monthAwal.options[monthAwal.selectedIndex].value}-01`
+            var endDate = `${year.options[year.selectedIndex].value}-${monthAwal.options[monthAwal.selectedIndex].value == monthAkhir.options[monthAkhir.selectedIndex].value ? Number(monthAkhir.options[monthAkhir.selectedIndex].value)+2 : monthAkhir.options[monthAkhir.selectedIndex].value}-01`
+
+            console.log(startDate);
+            console.log(endDate);
+
+            <?php 
+                    
+                // $this->db->where('request_date >=', );
+                // $this->db->where('request_date <=', "");
+                // $filteredRFMList = $this->db->get(TB_DETAIL)->result();
+
+                // echo "console.log(". json_encode($_POST['monthAwal']) .")";
+            ?>
+
+        }
+        console.log('kepencet tu wa ga')
+    });
 </script>
 
 <div class="row pt-3">
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header">JUMLAH REQUEST BERDASARKAN KANTOR</div>
+            <div class="card-header"><b>REQUEST BERDASARKAN KANTOR</b></div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" width="100%" id="dt_dashboard">
@@ -952,7 +1071,7 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
 
     <div class="col-md-6">
         <div class="card">
-            <div class="card-header">JUMLAH REQUEST BERDASARKAN DIVISI</div>
+            <div class="card-header"><b>REQUEST BERDASARKAN DIVISI</b></div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" width="100%" id="dt_dashboard">
@@ -1039,3 +1158,4 @@ var ctx_ = document.getElementById("myChart2").getContext("2d");
         </div>
     </div>
 </div> -->
+

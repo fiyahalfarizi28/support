@@ -313,7 +313,7 @@ class Rfm_controller extends CI_Controller {
             'where' => array(
                 'request_by' => $id,
                 'request_status' => STT_DONE,
-                'result_status' => STT_PENDING
+                'result_status' => STT_DONE
             )
         );
         
@@ -321,7 +321,7 @@ class Rfm_controller extends CI_Controller {
         if($check >= 1) {
             $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa memberi kami penilaian. Terima kasih';
             $this->load->view('modal/notify', $data);
-        }else {
+        } else {
             $array_crud = array(
                 'table' => TB_PROBLEM_TYPE,
                 'where' => array('system_type' => NULL),
@@ -525,6 +525,11 @@ class Rfm_controller extends CI_Controller {
             'table' => TB_REQUEST_TYPE,
         );
         $data['request_type'] = $this->rfm_model->get_crud($array_crud);
+        
+        $array_crud = array(
+            'table' => TB_PROJECT,
+        );
+        $data['projectList'] = $this->rfm_model->get_crud($array_crud);
         
         // nama yang tulis notes
         $explode_notes_name = explode(":", $row->approve_by);

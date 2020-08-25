@@ -14,7 +14,7 @@
 
     <div class="preloader">
         <div class="loading">
-            <img src="<?php echo base_url('assets/img/loading.gif') ?>" width="80">
+            <img src="<?php echo base_url('assets/img/loading.gif') ?>" width="80" style="background-color: transparent">
             <p>MEMUAT</p>
         </div>
     </div>
