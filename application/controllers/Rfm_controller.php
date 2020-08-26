@@ -301,13 +301,13 @@ class Rfm_controller extends CI_Controller {
                 if ($SESSION_USER_ID == $field->assign_to) {
                     array_push($array_my_rfm, $row);
                 } else {
-                    array_push($array_other_user, $row)
+                    array_push($array_other_user, $row);
                 }
             } else {
                 if ($SESSION_USER_ID == $field->request_by) {
                     array_push($array_my_rfm, $row);
                 } else {
-                    array_push($array_other_user, $row)
+                    array_push($array_other_user, $row);
                 }
             }
 
