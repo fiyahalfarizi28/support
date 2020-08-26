@@ -310,15 +310,14 @@ class Rfm_controller extends CI_Controller {
                     array_push($array_other_user, $row);
                 }
             }
+        }
 
-            foreach($array_my_rfm as $rowMyRfm) {
-                array_push($data, $rowMyRfm);
-            }
+        foreach($array_my_rfm as $rowMyRfm) {
+            array_push($data, $rowMyRfm);
+        }
 
-            foreach($array_other_user as $rowOtherRfm) {
-                array_push($data, $rowOtherRfm);
-            }
-
+        foreach($array_other_user as $rowOtherRfm) {
+            array_push($data, $rowOtherRfm);
         }
  
         $output = array(
