@@ -67,8 +67,8 @@ class Rfm_controller extends CI_Controller {
         $no = $_POST['start'];
         
         $data = array();
-        $array_my_rfm = array();
-        $array_other_user = array();
+        // $array_my_rfm = array();
+        // $array_other_user = array();
         
         foreach ($list as $field) {
 
@@ -296,35 +296,37 @@ class Rfm_controller extends CI_Controller {
             $row[] = $field->id;
             $row[] = $field->jabatan;
             $row[] = $projectName;
+            $data[] = $row;
 
-            if ($SESSION_USER_DIVISI == 'IT') {
-                if ($SESSION_USER_ID == $field->assign_to) {
-                    array_push($array_my_rfm, $row);
-                } else {
-                    array_push($array_other_user, $row);
-                }
-            } else {
-                if ($SESSION_USER_ID == $field->request_by) {
-                    array_push($array_my_rfm, $row);
-                } else {
-                    array_push($array_other_user, $row);
-                }
-            }
+            // if ($SESSION_USER_DIVISI == 'IT') {
+            //     if ($SESSION_USER_ID == $field->assign_to) {
+            //         $array_my_rfm[] = $row;
+            //     } else {
+            //         $array_other_user[] = $row;
+            //     }
+            // } else {
+            //     if ($SESSION_USER_ID == $field->request_by) {
+            //         $array_my_rfm[] = $row;
+            //     } else {
+            //         $array_other_user[] = $row;
+            //     }
+            // }
+
         }
 
-        foreach($array_my_rfm as $rowMyRfm) {
-            array_push($data, $rowMyRfm);
-        }
+        // foreach($array_my_rfm as $rowMyRfm) {
+        //     array_push($data, $rowMyRfm);
+        // }
 
-        foreach($array_other_user as $rowOtherRfm) {
-            array_push($data, $rowOtherRfm);
-        }
+        // foreach($array_other_user as $rowOtherRfm) {
+        //     array_push($data, $rowOtherRfm);
+        // }
  
         $output = array(
             "draw" => $_POST['draw'],
             "recordsTotal" => $this->rfm_model->count_all(),
             "recordsFiltered" => $this->rfm_model->count_filtered($SESSION_UPLINE),
-            "data" => $data,
+            "data" => $data
         );
         
         echo json_encode($output);
