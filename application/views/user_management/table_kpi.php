@@ -10,7 +10,7 @@
                     <!-- <span class="text-danger"><i>(belum ada aksi pencariannya)</i></span> -->
                 </label>
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <select name="m" class="form-control">
                             <?php
                             $m = $this->input->post('m');
@@ -78,6 +78,7 @@
                     </div>
                 </div>
             </form>
+
             <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                 <thead class="text-center">
                 <tr>

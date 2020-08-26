@@ -24,7 +24,7 @@
             
                 <div class="col-md-6">
                     <label style="margin-top: 8px">APPLICATION :</label>
-                    <select name="project_id" class="form-control" required>
+                    <select id="project_id"name="project_id" class="form-control" required>
                         <?php
                             $this->db->where('id', $rows->project_id);
                             $projectList = $this->db->get(TB_PROJECT)->row();
@@ -44,14 +44,24 @@
 
                 <div class="col-md-6">           
                     <label style="margin-top: 8px">PROBLEM TYPE :</label> 
-                    <select name="problem_type" class="form-control"  id="problem_type" required>
+                    <select id ="problem_type"name="problem_type" class="form-control"  id="problem_type" required>
                         <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
                         <?php foreach($problem_type->result() as $r): ?>
                             <?php if ($rows->problem_type !== $r->id) {?>
                                 <?php if ($rows->request_type == 2) {?>
-                                    <?php if ($r->id <= 7) {?>
-                                        <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                    
+                                    <?php if ($rows->project_id == 54) { ?>
+                                        <?php if ($r->id > 5 && $r->id < 9 ) {?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                        <?php } ?>
+                                    
+                                    <?php } else { ?>
+                                        <?php if ($r->id <=5 ) {?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                        <?php } ?>
+
                                     <?php } ?>
+                                    
                                 <?php } else if ($rows->request_type == 3) { ?>
                                     <?php if ($r->id > 7) {?>
                                         <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
@@ -158,5 +168,37 @@ $('.supx').click(function(){
     var name_id = "#name_id"+ data_id;
     $(name_id).hide();
 })
+
+    var activities = document.getElementById("project_id");
+    activities.addEventListener("change", function() {
+
+    var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
+
+    var optionSelected = $("option:selected", this).text();
+    console.log(optionSelected);
+
+    if  (optionSelected == "LAINNYA") {
+
+        $('#problem_type').empty();
+        $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
+
+        arrayProblem2.forEach( (problemType) => {
+            if (problemType.id > 5 && problemType.id < 9) {
+                $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+            }
+        });
+    } else {
+        $('#problem_type').empty();
+        $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
+
+        arrayProblem2.forEach( (problemType) => {
+            if (problemType.id <= 5) {
+                $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+            }
+        });
+
+    }
+    });
+
 
 </script>

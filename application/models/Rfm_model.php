@@ -27,7 +27,7 @@ class Rfm_model extends ci_model{
                     ) 
                     OR (
                         assign_to = '$SESSION_USER_ID' 
-                        AND request_status = 'ON PROGRESS'
+                        AND request_status = 'ASSIGNED'
                     )
                 THEN 1
                 WHEN
@@ -45,7 +45,7 @@ class Rfm_model extends ci_model{
                 THEN 4
                 WHEN
                     request_by != '$SESSION_USER_ID'
-                    AND request_status IN ('ON PROGRESS')
+                    AND request_status IN ('ASSIGNED')
                 THEN 4
             ELSE 99 
             END AS jumlah
@@ -54,6 +54,7 @@ class Rfm_model extends ci_model{
         $this->db->from($this->table);
         $this->db->join('dpm_online.'.TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
         $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
+        // $this->db->order_by("SESSION_USER_ID");
         $this->db->order_by("request_status");
         $this->db->order_by("result_status");
         $this->db->order_by("request_date");

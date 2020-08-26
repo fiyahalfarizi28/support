@@ -3,6 +3,80 @@
 	
 		<div class="card-body">
 			<div class="pesan"></div>
+				<form class="mb-2" action="" method="post">
+					<label>
+						Cari berdasarkan bulan dan tahun
+						<!-- <span class="text-danger"><i>(belum ada aksi pencariannya)</i></span> -->
+					</label>
+					<div class="row">
+						<div class="col-md-2">
+							<select name="m" class="form-control">
+								<?php
+								$m = $this->input->post('m');
+								$y = $this->input->post('Y');
+
+								if(empty($m && $y)) {
+									$m = date('m');
+									$y = date('Y');
+								}
+									if($m=='01'):
+										$mm = 'Januari';
+									elseif($m=='02'):
+										$mm = 'Februari';
+									elseif($m=='03'):
+										$mm = 'Maret';
+									elseif($m=='04'):
+										$mm = 'April';
+									elseif($m=='05'):
+										$mm = 'Mei';
+									elseif($m=='06'):
+										$mm = 'Juni';
+									elseif($m=='07'):
+										$mm = 'Juli';
+									elseif($m=='08'):
+										$mm = 'Agustus';
+									elseif($m=='09'):
+										$mm = 'September';
+									elseif($m=='10'):
+										$mm = 'Oktober';
+									elseif($m=='11'):
+										$mm = 'November';
+									elseif($m=='12'):
+										$mm = 'Desember';
+									endif;
+
+									if($m):
+										echo "<option value='$m'>$mm</option>";
+									endif;
+								?>
+								<option value="01">Januari</option>
+								<option value="02">Februari</option>
+								<option value="03">Maret</option>
+								<option value="04">April</option>
+								<option value="05">Mei</option>
+								<option value="06">Juni</option>
+								<option value="07">Juli</option>
+								<option value="08">Agustus</option>
+								<option value="09">September</option>
+								<option value="10">Oktober</option>
+								<option value="11">November</option>
+								<option value="12">Desember</option>
+							</select>
+						</div>
+						<div class="col-md-2">
+							<select name="y" class="form-control">
+								<?php
+									if($y):
+										echo "<option value='$y'>$y</option>";
+									endif;
+								?>
+							</select>
+						</div>
+						<div class="col-md-1">
+							<input type="submit" name="" value="Cari" class="btn btn-block btn-outline-secondary">
+						</div>
+					</div>
+				</form>
 
 				<table class="colapse-table res3" width="100%" cellspacing="0">
 					<thead>

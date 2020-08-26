@@ -7,13 +7,13 @@
 
     <?php     
         if ( $rows->request_status == STT_APPROVED) {
-            $selectProjectType = '<select name="project_id" class="form-control" required>';
-            $selectRequestType = '<select name="request_type" class="form-control" required>';
-            $selectProblemType = '<select name="problem_type" class="form-control" required>';
+            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required>';
+            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
+            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
         } else {
-            $selectProjectType = '<select name="project_id" class="form-control" required disabled>';
-            $selectRequestType = '<select name="request_type" class="form-control" required disabled>';
-            $selectProblemType = '<select name="problem_type" class="form-control" required disabled>';
+            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required disabled>';
+            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required disabled>';
+            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required disabled>';
         }
     ?>
 
@@ -63,8 +63,17 @@
                         <?php foreach($problem_type->result() as $r): ?>
                             <?php if ($rows->problem_type !== $r->id) {?>
                                 <?php if ($rows->request_type == 2) {?>
-                                    <?php if ($r->id <= 7) {?>
-                                        <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                    
+                                    <?php if ($rows->project_id == 54) { ?>
+                                        <?php if ($r->id > 5 && $r->id < 9 ) {?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                        <?php } ?>
+                                    
+                                    <?php } else { ?>
+                                        <?php if ($r->id <=5 ) {?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
+                                        <?php } ?>
+
                                     <?php } ?>
                                 <?php } else if ($rows->request_type == 3) { ?>
                                     <?php if ($r->id > 7) {?>
@@ -141,6 +150,13 @@
             <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->receive_notes ?></textarea>
         </div>
         <?php endif ?>
+
+        <?php if(!empty($rows->confirm_notes)): ?>
+        <div class="form-group">
+            <label>Notes Revisi: <?php echo $notes_name_confirm->nama." | ".$rows->confirm_date ?></label>
+            <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->confirm_notes ?></textarea>
+        </div>
+        <?php endif ?>
         
         <div class="form-group">
             <label>Tulis Notes :</label>
@@ -209,5 +225,36 @@ $('#problem_type').on('change', function() {
         $('#collapseApplicationForProject').collapse('hide');
     }
 });
+
+var activities = document.getElementById("project_id");
+    activities.addEventListener("change", function() {
+
+    var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
+
+    var optionSelected = $("option:selected", this).text();
+    console.log(optionSelected);
+
+    if  (optionSelected == "LAINNYA") {
+
+        $('#problem_type').empty();
+        $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
+
+        arrayProblem2.forEach( (problemType) => {
+            if (problemType.id > 5 && problemType.id < 9) {
+                $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+            }
+        });
+    } else {
+        $('#problem_type').empty();
+        $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
+
+        arrayProblem2.forEach( (problemType) => {
+            if (problemType.id <= 5) {
+                $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+            }
+        });
+
+    }
+    });
 
 </script>

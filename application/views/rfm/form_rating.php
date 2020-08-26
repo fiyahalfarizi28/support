@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">BERI ULASAN</h4>
+    <h4 class="modal-title">KONFIRMASI PERMINTAAN</h4>
     <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
 
@@ -38,8 +38,6 @@
                     <option value="<?php echo $rows->problem_type ?>"><?php echo $pt_id->problem_type ?></option>
                 </select>
             </div>
-            
-            
         </div>
 
         <div style ="margin-top: 15px"class="form-group">
@@ -114,12 +112,26 @@
         </div>
         <?php endif ?>
         
-        <div class="form-group">
-            <label>Tulis Notes :</label>
+        <div>
+            Konfirmasi :
+        </div>
+
+        <div class="row" style="margin-top: 8px">
+            <div class="col-md-6">
+                <button name="iya" id="iya" type="button" class="btn btn-success btn-block"><i class="far fa-times-circle"></i> IYA </button>
+            </div>
+
+            <div class="col-md-6">
+                <button name="tidak" id="tidak" type="button" class="btn btn-danger btn-block"><i class="far fa-times-circle"></i> TIDAK </button>
+            </div>
+        </div> 
+
+        <div class="form-group collapse" style="margin-top: 15px" id="collapseNo">
+            <label id="notesID">Tulis Notes :</label>
             <textarea name="notes" placeholder="Notes..." rows="2" style="resize: none" class="form-control" require></textarea>
         </div>
 
-        <div class="form-group text-center">
+        <div class="form-group text-center collapse" style="margin-top: 15px" id="collapseYes">
             <span class="star-rating star-5">
                 <input type="radio" name="rates" value="1"><i></i>
                 <input type="radio" name="rates" value="2"><i></i>
@@ -129,12 +141,35 @@
             </span>
         </div>
 
-        <div class="form-group">
+        <div class="form-group collapse" style="margin-top: 30px" id="collapseKirim">
             <input type="hidden" name="id_rfm" value="<?php echo $rows->id ?>">
+            <input type="hidden" name="isOk" id="isOk" value="tidak">
             <div class="btn_post_request">
-                <a href="javascript:void(0)" onclick="set_rating_request()" class="btn btn-primary btn-block"><i class="far fa-check-circle"></i> Simpan</a>
+                <a href="javascript:void(0)" onclick="set_rating_request()" class="btn btn-primary btn-block"><i class="far fa-check-circle"></i> Kirim</a>
             </div>
         </div>
 
     </form>
 </div>
+
+<script>
+    var buttonYes = document.getElementById('iya');
+    var buttonNo = document.getElementById('tidak');
+
+    buttonYes.addEventListener('click', function() {
+        $('#isOk').val("iya");
+        $('#notesID').text('Tulis Notes :');
+        $('#collapseYes').collapse('show');
+        $('#collapseNo').collapse('show');
+        $('#collapseKirim').collapse('show');
+    });
+
+    buttonNo.addEventListener('click', function() {
+        $('#isOk').val("tidak");
+        $('#notesID').text('Tulis Notes Revisi :');
+        $('#collapseYes').collapse('hide');
+        $('#collapseNo').collapse('show');
+        $('#collapseKirim').collapse('show');
+    });
+</script>
+
