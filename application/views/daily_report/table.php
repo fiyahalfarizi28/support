@@ -499,7 +499,7 @@
 				<div class="modal-body">
 					<form method="post" enctype="multipart/form-data" id="frm-create-task">
 						<div class="form-group text-primary">
-							<i class="far fa-clock"></i> <?php echo date(' d-m-Y') ?>
+							<i class="far fa-clock"></i> <?php echo date(' d-m-Y | H:i') ?>
 						</div>
 
 						<div class="form-group">
@@ -521,7 +521,9 @@
 										<select  id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px">
 											<option disabled value="" selected="selected">- SELECT PROJECT -</option>
 											<?php foreach($filteredProjectList as $r): ?>
-												<option value=<?php echo $r->id ?> ><?php echo $r->project_name ?></option>
+												<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && !($r->status == STT_DONE)) {?>
+													<option value=<?php echo $r->id ?> ><?php echo $r->project_name ?></option>
+												<?php } ?>
 											<?php endforeach ?>
 										</select>
 									</div>
@@ -549,14 +551,16 @@
 								</div>
 
 								<div id="collapseRFM" class="panel-collapse collapse">
-								<div class="panel-body">
+									<div class="panel-body">
 										<div class="form-group">
 											<label for="rfm_id">No. RFM:</label>
 											<select id="rfm_id" class="form-control" name="rfm_id" style="margin-bottom: 15px">
 												<option disabled selected="selected" value="">- Pilih No. RFM -</option>
 												<?php foreach($rfmList->result() as $r): ?>
 													<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && ($r->request_type == 2) && !($r->result_status == STT_DONE || $r->result_status == STT_SOLVED )) {?>
-														<option value=<?php echo $r->id ?> ><?php echo $r->no_rfm ?></option>
+														<option id="no_rfm" value=<?php echo $r->id ?> >
+															<?php echo $r->no_rfm ?> - <?php echo $r->subject?>
+														</option>
 													<?php } ?>
 												<?php endforeach ?>
 											</select>
@@ -565,13 +569,18 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="form-group collapse" id="collapseRfmDetail">
+							<label for="textAreaRfmDetail">Detail RFM :</label>
+							<textarea class="form-control" id="textAreaRfmDetail" rows="3" style="resize: none"></textarea>
+						</div>
 			
 						<div class="form-group">
 							<label for="Status">Status</label>
 							<select type="text" class="form-control" id="status" name="status">
 								<option disabled selected="selected">- Pilih Status -</option>
-								<option value="ON PROGRESS">ON PROGRESS</option>
-								<option value="DONE">DONE</option>
+								<option id="on_progress" value="ON PROGRESS">ON PROGRESS</option>
+								<option id="done" value="DONE">DONE</option>
 							</select>
 						</div>
 
@@ -597,7 +606,6 @@
 </div>
 
 <script>
-	console.log(<?php echo json_encode($taskList->result()) ?>);
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
@@ -612,16 +620,20 @@
         $('#projectFlag').on('change', function (e) {
 			// TODO: Get project list
             var optionSelected = $("option:selected", this);
-            var valueSelected = this.value;
+			var valueSelected = this.value;
+
+			$('#textAreaRfmDetail').val("");
+			$("#collapseRfmDetail").collapse('hide');
 
             if (valueSelected === "Project") {
                 $('#collapseProject').collapse('show');
 				$('#collapseRFM').collapse('hide');
-
+				
 				$('#rfm_id').prop('disabled', 'disabled');
 				$('#project_id').prop('disabled', false);
 				$('#task_id').prop('disabled', false);
             } else if (valueSelected === "RFM") {
+				
                 $('#collapseProject').collapse('hide');
 				$('#collapseRFM').collapse('show');
 
@@ -657,9 +669,34 @@
             } else {
                 $('#collapseTask').collapse('hide');
             }
-        });
-    });
+		});
 
+		$('#rfm_id').on('change', function (e){
+			
+			$('#textAreaRfmDetail').val("");
+			$("#textAreaRfmDetail").prop('disabled', 'disabled');
+
+			var optionSelected = $("option:selected", this);
+			var valueSelected = this.value;	
+
+			if (valueSelected !== null) {
+				var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+
+				for (var i=0; i<rfmList.length; i++) {
+					if (rfmList[i].id == valueSelected) {
+						$('#textAreaRfmDetail').val(rfmList[i].rfm_detail);
+					}
+				}
+
+				$("#collapseRfmDetail").collapse('show');
+            } else {
+				$("#collapseRfmDetail").collapse('hide');
+            }	
+
+		});
+		
+	});
+	
 	function post_request_dr() {
 		var form = $('#frm-create-task')[0];
 		var data = new FormData(form);

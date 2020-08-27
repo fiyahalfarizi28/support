@@ -104,12 +104,12 @@ class Rfm_controller extends CI_Controller {
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
             
-            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND $field->request_status === STT_ON_QUEUE) {
+            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID) ) {
                 $btn_option = $btn_option;
             }elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
                 $btn_option = $btn_option;
-            }elseif($field->assign_to === $SESSION_USER_ID AND $field->request_status === STT_ASSIGNED) {
-                $btn_option = $btn_option;
+            // }elseif($field->assign_to === $SESSION_USER_ID AND $field->request_status === STT_ASSIGNED) {
+            //     $btn_option = $btn_option;
             }else {
                 $btn_option = "";
             }
@@ -147,7 +147,14 @@ class Rfm_controller extends CI_Controller {
             // btn edit di status on queue
             $btn_edit = "<a class='btn btn-warning text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-edit-rfm' data-id='$field->id' title='Edit RFM'><i class='fa fa-edit'></i></a>";
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
-                $btn_option = $btn_edit;
+                $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+                if($SESSION_USER_JABATAN==="HEAD IT" || $SESSION_USER_JABATAN==="SUPERVISOR IT" || $SESSION_USER_JABATAN==="DIREKSI")
+                {
+                    $btn_option = $btn_edit.$btn_option;
+                }
+                else {
+                    $btn_option = $btn_edit;
+                }
             }
 
             //txt color
@@ -591,13 +598,17 @@ class Rfm_controller extends CI_Controller {
         $date_now = date('Y-m-d h:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
-        $problem_type = null;
+        $problem_type = NULL;
         $project_id = $this->input->post('project_id');
 
         if ($request_type == 2) {
             $problem_type = $this->input->post('problem_type');
         } else if ($request_type == 3) {
-            $problem_type = $this->input->post('problem_type');
+            if ($project_id !== 1){
+                $problem_type = $this->input->post('problem_type');
+            } else {
+            $problem_type = NULL;
+            }
         }
 
         $subject = $this->input->post('subject');
@@ -641,7 +652,7 @@ class Rfm_controller extends CI_Controller {
         if(empty($request_type)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Request Type Harus Diisi !!!</div>";
-        }elseif(empty($problem_type)) {
+        }elseif(empty($problem_type) && !($project_id == 1)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Problem Type Harus Diisi !!!</div>";
         }elseif(empty($subject)) {
@@ -868,8 +879,8 @@ class Rfm_controller extends CI_Controller {
 
             $array_insert = array(
                 'no_rfm'            => $no_rfm,
-                'problem_type'      => $problem_type,
                 'request_type'      => $request_type,
+                'problem_type'      => $problem_type,
                 'request_by'        => $user_id,
                 'request_date'      => $date_now,
                 'request_upline_by' => $head_id,
@@ -2017,12 +2028,12 @@ class Rfm_controller extends CI_Controller {
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
-                    'request_upline_by !=' => NULL,
+                    'request_by' => $SESSION_USER_ID,
                     'request_status' => STT_DONE,
+                    'result_status' => STT_DONE,
                     'approve_by !=' => NULL,
                     'receive_by !=' => NULL,
-                    'assign_to' => $SESSION_USER_ID,
-                    "problem_type NOT IN($rfp_id)" => NULL,
+                    'assign_to !=' => NULL,
                 )
         );
         $done = $this->rfm_model->get_crud($array_crud)->row()->total;

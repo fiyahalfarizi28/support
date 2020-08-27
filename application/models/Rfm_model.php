@@ -8,6 +8,9 @@ class Rfm_model extends ci_model{
     private function _get_datatables_query($SESSION_UPLINE)
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+        
         $this->db->where('id', 'RFM_RFP_ID');
         $row_rfp = $this->db->get(TB_PARAMETER)->row()->value;
         $rfp_id = explode(":", $row_rfp);
@@ -54,12 +57,17 @@ class Rfm_model extends ci_model{
         $this->db->from($this->table);
         $this->db->join('dpm_online.'.TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
         $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
-        // $this->db->order_by("SESSION_USER_ID");
+        
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
+        } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT' || $SESSION_USER_JABATAN == 'DIREKSI'){ 
+            // $this->db->order_by("request_status");        
+        }   else {
+            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
+        }
+
         $this->db->order_by("request_status");
-        $this->db->order_by("result_status");
         $this->db->order_by("request_date");
-        // $this->db->where("result_status NOT IN('SOLVED', 'REJECT')", NULL, FALSE);
- 
         $i = 0;
      
         foreach ($this->column_search as $item)

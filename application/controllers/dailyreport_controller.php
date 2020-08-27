@@ -12,7 +12,6 @@ class dailyreport_controller extends ci_controller{
     {
         if($this->auth_model->logged_id()) {
             $data['SESSION_USER_JABATAN'] = $this->session->userdata('USER_JABATAN');
-            $data['SESSION_USER_JABATAN'] = $this->session->userdata('USER_JABATAN');
             $data['SESSION_USER_ID'] = $this->session->userdata('USER_ID');
             $data['daily_activities'] = $this->getDailyActivity();
             $data['alldaily'] = $this->getAllDaily();
@@ -25,6 +24,14 @@ class dailyreport_controller extends ci_controller{
 
             // $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
             $data['rfmList'] = $this->daily_report_model->get_crud($array_crud);
+
+            $array_crud = array(
+                'select' => '*',
+                'table' => TB_DETAIL,
+            );
+
+            // $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
+            $data['statusList'] = $this->daily_report_model->get_crud($array_crud);
 			
 			$array_crud = array(
                 'select' => '*',

@@ -63,7 +63,7 @@
                                     <?php } ?>
                                     
                                 <?php } else if ($rows->request_type == 3) { ?>
-                                    <?php if ($r->id > 7) {?>
+                                    <?php if ($r->id > 8) {?>
                                         <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
                                     <?php } ?>
                                 <?php } ?>

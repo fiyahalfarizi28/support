@@ -25,7 +25,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="project_id">APPLICATION :</label>
-                                <select id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px">
+                                <select id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px" required>
                                     <option disabled value="" selected="selected">- SELECT APPLICATION -</option>
                                 </select>
                             </div>
@@ -88,13 +88,13 @@
 
     activities.addEventListener("change", function() {
 
+        $('#problem_type').prop('disabled', false);
+
         var arrayProblem = <?php echo json_encode($problem_type->result()) ?>;
         var arrayProject = <?php echo json_encode($projectList->result()) ?>;  
 
         var optionSelected = $("option:selected", this).text();
         console.log(optionSelected);
-
-        if (optionSelected != "REQUEST TYPE") {
 
             $('#problem_type').empty();
             $('#project_id').empty();
@@ -109,12 +109,6 @@
                 $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
                 $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>')
 
-                arrayProblem.forEach( (problemType) => {
-                    if (problemType.id <= 5) {
-                        $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
-                    }
-                });
-
                 arrayProject.forEach( (Project) => {
                     if (Project.id > 1) {
                         
@@ -122,27 +116,34 @@
                     }
                 });
 
-            } else if (optionSelected == "REQUEST FOR PROJECT") {
+                arrayProblem.forEach( (problemType) => {
+                    if (problemType.id <= 5) {
+                        $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+                    }
+                });
+
+               
+            } else {
                 $('#problem_type').empty();
                 $('#project_id').empty();
 
                 $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
                 $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>')
 
-                 arrayProblem.forEach( (problemType) => {
-                    if (problemType.id > 8) {
-                        $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
-                    }
-                });
-
                 arrayProject.forEach( (Project) => {
                     if (Project.id < 54) {
                         $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                     }
                 });
+
+                arrayProblem.forEach( (problemType) => {
+                    if (problemType.id > 8) {
+                        $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+                    }
+                });
+  
     
             }
-        }
        
     });
 
@@ -151,7 +152,7 @@
         var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
 
         var optionSelected = $("option:selected", this).text();
-        console.log(optionSelected);
+        $('#problem_type').prop('disabled', false);
 
         if  (optionSelected == "LAINNYA") {
 
@@ -163,16 +164,11 @@
                     $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
                 }
             });
-        } else {
-            $('#problem_type').empty();
-            $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
+        } else if (optionSelected == "APLIKASI BARU" && Number($('#request_type').children("option:selected").val()) == <?php echo REQUEST_TYPE_PROJECT ?>) {
+            $('#problem_type').prop('disabled', 'disabled');
+            $problem_type == NULL;
 
-            arrayProblem2.forEach( (problemType) => {
-                if (problemType.id <= 5) {
-                    $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
-                }
-            });
-  
+            <?php ?>
         }
     });
 
