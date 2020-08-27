@@ -88,8 +88,6 @@
 
     activities.addEventListener("change", function() {
 
-        $('#problem_type').prop('disabled', false);
-
         var arrayProblem = <?php echo json_encode($problem_type->result()) ?>;
         var arrayProject = <?php echo json_encode($projectList->result()) ?>;  
 
@@ -110,7 +108,11 @@
                 $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>')
 
                 arrayProject.forEach( (Project) => {
-                    if (Project.id > 1) {
+                    if (Project.id < 2) {
+                        
+                        $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
+                    }
+                    if (Project.id > 2) {
                         
                         $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                     }
@@ -131,20 +133,17 @@
                 $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>')
 
                 arrayProject.forEach( (Project) => {
-                    if (Project.id < 54) {
+                    if (Project.id > 1) {
                         $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                     }
                 });
 
                 arrayProblem.forEach( (problemType) => {
-                    if (problemType.id > 8) {
+                    if (problemType.id > 8 && problemType.id < 11) {
                         $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
                     }
                 });
-  
-    
             }
-       
     });
 
     activities2.addEventListener("change", function() {
@@ -152,7 +151,6 @@
         var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
 
         var optionSelected = $("option:selected", this).text();
-        $('#problem_type').prop('disabled', false);
 
         if  (optionSelected == "LAINNYA") {
 
@@ -164,11 +162,15 @@
                     $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
                 }
             });
-        } else if (optionSelected == "APLIKASI BARU" && Number($('#request_type').children("option:selected").val()) == <?php echo REQUEST_TYPE_PROJECT ?>) {
-            $('#problem_type').prop('disabled', 'disabled');
-            $problem_type == NULL;
+        } else if (optionSelected == "APLIKASI BARU") {
 
-            <?php ?>
+            $('#problem_type').empty();
+           
+            arrayProblem2.forEach( (problemType) => {
+                if (problemType.id > 10) {
+                    $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
+                }
+            });
         }
     });
 

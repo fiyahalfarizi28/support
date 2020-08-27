@@ -43,16 +43,16 @@
                         ?>
                         <option value="<?php echo $rows->project_id ?>"><?php echo $projectList->project_name ?></option>
                         <?php foreach($project_list->result() as $r): ?>
-                            <?php if ($rows->project_id !== $r->id) {?>
-                                <?php if ($rows->request_type == 2) {?>
-                                    <?php if ($r->id > 1) {?>
-                                        <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                                    <?php if ($rows->request_type == 2) {?>
+                                        <?php if ($r->id > 2) {?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        <?php if ($r->id > 2) {?>
+                                            <option value="<?php echo $r->id ?>"><?php echo $r->project_name ?></option>
+                                        <?php } ?>
                                 <?php } ?>
-                            <?php } ?>
-                        <?php endforeach ?>
+                            <?php endforeach ?>
                     </select>
                 </div>
 
@@ -75,8 +75,9 @@
                                         <?php } ?>
 
                                     <?php } ?>
-                                <?php } else if ($rows->request_type == 3) { ?>
-                                    <?php if ($r->id > 8) {?>
+                                    
+                                <?php } else  { ?>
+                                    <?php if ($r->id > 8 && $r->id < 11) {?>
                                         <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
                                     <?php } ?>
                                 <?php } ?>
@@ -185,7 +186,7 @@
                     </div>
                     <div class="col-md-6">
                         <label>TARGET DATE :</label>
-                        <input type="date" name="target_date" class="form-control">
+                        <input type="date" name="target_date" class="form-control" ></input>
                     </div>
                 </div>
                 <?php endif ?>
@@ -227,12 +228,12 @@ $('#problem_type').on('change', function() {
 });
 
 var activities = document.getElementById("project_id");
-    activities.addEventListener("change", function() {
+
+activities.addEventListener("change", function() {
 
     var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
 
     var optionSelected = $("option:selected", this).text();
-    console.log(optionSelected);
 
     if  (optionSelected == "LAINNYA") {
 
@@ -244,17 +245,15 @@ var activities = document.getElementById("project_id");
                 $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
             }
         });
-    } else {
-        $('#problem_type').empty();
-        $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>')
+    } else if (optionSelected == "APLIKASI BARU") {
 
+        $('#problem_type').empty();
+    
         arrayProblem2.forEach( (problemType) => {
-            if (problemType.id <= 5) {
+            if (problemType.id > 10) {
                 $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
             }
         });
-
     }
-    });
-
+});
 </script>

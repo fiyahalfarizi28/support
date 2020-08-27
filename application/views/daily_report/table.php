@@ -521,7 +521,7 @@
 										<select  id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px">
 											<option disabled value="" selected="selected">- SELECT PROJECT -</option>
 											<?php foreach($filteredProjectList as $r): ?>
-												<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && !($r->status == STT_DONE)) {?>
+												<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && ($r->status != STT_DONE)) {?>
 													<option value=<?php echo $r->id ?> ><?php echo $r->project_name ?></option>
 												<?php } ?>
 											<?php endforeach ?>
@@ -551,7 +551,7 @@
 								</div>
 
 								<div id="collapseRFM" class="panel-collapse collapse">
-									<div class="panel-body">
+								<div class="panel-body">
 										<div class="form-group">
 											<label for="rfm_id">No. RFM:</label>
 											<select id="rfm_id" class="form-control" name="rfm_id" style="margin-bottom: 15px">
@@ -568,11 +568,6 @@
 									</div>
 								</div>
 							</div>
-						</div>
-
-						<div class="form-group collapse" id="collapseRfmDetail">
-							<label for="textAreaRfmDetail">Detail RFM :</label>
-							<textarea class="form-control" id="textAreaRfmDetail" rows="3" style="resize: none"></textarea>
 						</div>
 			
 						<div class="form-group">
@@ -620,20 +615,16 @@
         $('#projectFlag').on('change', function (e) {
 			// TODO: Get project list
             var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;
-
-			$('#textAreaRfmDetail').val("");
-			$("#collapseRfmDetail").collapse('hide');
+            var valueSelected = this.value;
 
             if (valueSelected === "Project") {
                 $('#collapseProject').collapse('show');
 				$('#collapseRFM').collapse('hide');
-				
+
 				$('#rfm_id').prop('disabled', 'disabled');
 				$('#project_id').prop('disabled', false);
 				$('#task_id').prop('disabled', false);
             } else if (valueSelected === "RFM") {
-				
                 $('#collapseProject').collapse('hide');
 				$('#collapseRFM').collapse('show');
 
@@ -669,30 +660,6 @@
             } else {
                 $('#collapseTask').collapse('hide');
             }
-		});
-
-		$('#rfm_id').on('change', function (e){
-			
-			$('#textAreaRfmDetail').val("");
-			$("#textAreaRfmDetail").prop('disabled', 'disabled');
-
-			var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;	
-
-			if (valueSelected !== null) {
-				var rfmList = <?php echo json_encode($rfmList->result()) ?>;
-
-				for (var i=0; i<rfmList.length; i++) {
-					if (rfmList[i].id == valueSelected) {
-						$('#textAreaRfmDetail').val(rfmList[i].rfm_detail);
-					}
-				}
-
-				$("#collapseRfmDetail").collapse('show');
-            } else {
-				$("#collapseRfmDetail").collapse('hide');
-            }	
-
 		});
 		
 	});
