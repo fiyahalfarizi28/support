@@ -106,11 +106,15 @@ class Rfm_controller extends CI_Controller {
             
             if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID) AND $field->problem_type != KODE_APLIKASI_BARU ) {
                 $btn_option = $btn_option;
-            }elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
+            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
                 $btn_option = $btn_option;
-            } 
-            else {
+            
+            } elseif ($field->request_status === STT_APPROVED AND $field->problem_type == KODE_APLIKASI_BARU){
+                $btn_option ="";
+               
+            } else {
                 $btn_option = "";
+               
             }
 
             // nama yg harus approve
@@ -147,7 +151,7 @@ class Rfm_controller extends CI_Controller {
             $btn_edit = "<a class='btn btn-warning text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-edit-rfm' data-id='$field->id' title='Edit RFM'><i class='fa fa-edit'></i></a>";
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
                 $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
-                if($SESSION_USER_JABATAN==="HEAD IT" || $SESSION_USER_JABATAN==="SUPERVISOR IT" || $SESSION_USER_JABATAN==="DIREKSI")
+                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI' && $field->problem_type === KODE_APLIKASI_BARU)
                 {
                     $btn_option = $btn_edit.$btn_option;
                 }
@@ -2001,7 +2005,7 @@ class Rfm_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by' => $SESSION_UPLINE,
                     'assign_to' => NULL,
-                    "problem_type NOT IN($rfp_id)" => NULL,
+                    'problem_type !=' => KODE_APLIKASI_BARU,
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;

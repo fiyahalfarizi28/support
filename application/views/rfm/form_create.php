@@ -92,7 +92,6 @@
         var arrayProject = <?php echo json_encode($projectList->result()) ?>;  
 
         var optionSelected = $("option:selected", this).text();
-        console.log(optionSelected);
 
             $('#problem_type').empty();
             $('#project_id').empty();
@@ -108,18 +107,13 @@
                 $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>')
 
                 arrayProject.forEach( (Project) => {
-                    if (Project.id < 2) {
-                        
-                        $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
-                    }
-                    if (Project.id > 2) {
-                        
+                    if (Project.id > 1) {
                         $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                     }
                 });
 
                 arrayProblem.forEach( (problemType) => {
-                    if (problemType.id <= 5) {
+                    if (problemType.id < 6) {
                         $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
                     }
                 });
@@ -133,9 +127,13 @@
                 $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>')
 
                 arrayProject.forEach( (Project) => {
-                    if (Project.id > 1) {
+                    if (Project.id < 2) {
+                        
                         $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                     }
+                    if (Project.id > 2) {
+                        $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
+                    }   
                 });
 
                 arrayProblem.forEach( (problemType) => {
@@ -172,6 +170,7 @@
                 }
             });
         }
+
     });
 
 </script>   
