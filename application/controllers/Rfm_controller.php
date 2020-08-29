@@ -975,7 +975,7 @@ class Rfm_controller extends CI_Controller {
             
         }
 
-        $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+        $data = array('isValid' => $isValid, 'isPesan' => $isPesan, 'insert_data' => $insert_data, 'array_insert' => $array_insert);
         echo json_encode($data);
     }
 
