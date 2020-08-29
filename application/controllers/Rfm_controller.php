@@ -104,14 +104,17 @@ class Rfm_controller extends CI_Controller {
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
             
-            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID) ) {
+            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID) AND $field->problem_type != KODE_APLIKASI_BARU ) {
                 $btn_option = $btn_option;
-            }elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
+            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
                 $btn_option = $btn_option;
-            // }elseif($field->assign_to === $SESSION_USER_ID AND $field->request_status === STT_ASSIGNED) {
-            //     $btn_option = $btn_option;
-            }else {
+            
+            } elseif ($field->request_status === STT_APPROVED AND $field->problem_type == KODE_APLIKASI_BARU){
+                $btn_option ="";
+               
+            } else {
                 $btn_option = "";
+               
             }
 
             // nama yg harus approve
@@ -148,7 +151,7 @@ class Rfm_controller extends CI_Controller {
             $btn_edit = "<a class='btn btn-warning text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-edit-rfm' data-id='$field->id' title='Edit RFM'><i class='fa fa-edit'></i></a>";
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
                 $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
-                if($SESSION_USER_JABATAN==="HEAD IT" || $SESSION_USER_JABATAN==="SUPERVISOR IT" || $SESSION_USER_JABATAN==="DIREKSI")
+                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI' && $field->problem_type === KODE_APLIKASI_BARU)
                 {
                     $btn_option = $btn_edit.$btn_option;
                 }
@@ -598,17 +601,13 @@ class Rfm_controller extends CI_Controller {
         $date_now = date('Y-m-d h:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
-        $problem_type = NULL;
+        $problem_type = null;
         $project_id = $this->input->post('project_id');
 
         if ($request_type == 2) {
             $problem_type = $this->input->post('problem_type');
         } else if ($request_type == 3) {
-            if ($project_id !== 1){
-                $problem_type = $this->input->post('problem_type');
-            } else {
-            $problem_type = NULL;
-            }
+            $problem_type = $this->input->post('problem_type');
         }
 
         $subject = $this->input->post('subject');
@@ -652,7 +651,7 @@ class Rfm_controller extends CI_Controller {
         if(empty($request_type)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Request Type Harus Diisi !!!</div>";
-        }elseif(empty($problem_type) && !($project_id == 1)) {
+        }elseif(empty($problem_type)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Problem Type Harus Diisi !!!</div>";
         }elseif(empty($subject)) {
@@ -879,8 +878,8 @@ class Rfm_controller extends CI_Controller {
 
             $array_insert = array(
                 'no_rfm'            => $no_rfm,
-                'request_type'      => $request_type,
                 'problem_type'      => $problem_type,
+                'request_type'      => $request_type,
                 'request_by'        => $user_id,
                 'request_date'      => $date_now,
                 'request_upline_by' => $head_id,
@@ -1651,6 +1650,8 @@ class Rfm_controller extends CI_Controller {
         $app_it = $this->db->where('id', 'RFM_AKSES_IT_APP')->get(TB_PARAMETER)->row();
         $problem_type = $this->input->post('problem_type_hidden');
         $project_id = $this->input->post('project_id_hidden');
+        $subject = $this->input->post('subject');
+        $detail = $this->input->post('detail');
 
         $array_insert = array(
             'request_status' => STT_APPROVED,
@@ -1687,6 +1688,18 @@ class Rfm_controller extends CI_Controller {
 
             $isValid = 1;
             $isPesan = "<div class='alert alert-success'>Berhasil Menyetujui RFM</div>";
+        }
+
+        if ($problem_type == KODE_APLIKASI_BARU) {
+
+            $array_insert = array(
+                'project_name'      => $subject,
+                'description'       => $detail,
+                'create_date'       => $date_now,
+                'create_by'         => $SESSION_USER_ID,
+            );
+    
+            $insert_data_task = $this->db->insert(TB_PROJECT, $array_insert);
         }
 
         $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
@@ -1747,6 +1760,7 @@ class Rfm_controller extends CI_Controller {
             );
     
             $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
+
         }
 
         if(!$insert_data) {
@@ -1991,7 +2005,7 @@ class Rfm_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by' => $SESSION_UPLINE,
                     'assign_to' => NULL,
-                    "problem_type NOT IN($rfp_id)" => NULL,
+                    'problem_type !=' => KODE_APLIKASI_BARU,
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;

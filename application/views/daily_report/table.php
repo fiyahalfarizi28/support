@@ -521,9 +521,9 @@
 										<select  id="project_id" class="form-control" name="project_id" style="margin-bottom: 15px">
 											<option disabled value="" selected="selected">- SELECT PROJECT -</option>
 											<?php foreach($filteredProjectList as $r): ?>
-												<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && !($r->status == STT_DONE)) {?>
-													<option value=<?php echo $r->id ?> ><?php echo $r->project_name ?></option>
-												<?php } ?>
+												<option value=<?php echo $r->id ?>>
+													<?php echo $r->project_name ?>
+												</option>
 											<?php endforeach ?>
 										</select>
 									</div>
@@ -551,7 +551,7 @@
 								</div>
 
 								<div id="collapseRFM" class="panel-collapse collapse">
-									<div class="panel-body">
+								<div class="panel-body">
 										<div class="form-group">
 											<label for="rfm_id">No. RFM:</label>
 											<select id="rfm_id" class="form-control" name="rfm_id" style="margin-bottom: 15px">
@@ -569,24 +569,46 @@
 								</div>
 							</div>
 						</div>
-
+						
 						<div class="form-group collapse" id="collapseRfmDetail">
-							<label for="textAreaRfmDetail">Detail RFM :</label>
-							<textarea class="form-control" id="textAreaRfmDetail" rows="3" style="resize: none"></textarea>
+							<label for="RequestBy">Request By : <span id="requestBy">-</span></label></br>
+							<label for="RfmDetail">Detail RFM :</label>
+							<textarea class="form-control" id="RfmDetail" rows="3" style="resize: none"></textarea></br>
+							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label>
 						</div>
-			
+						
 						<div class="form-group">
-							<label for="Status">Status</label>
-							<select type="text" class="form-control" id="status" name="status">
+							<label for="status">Status</label>
+							<select class="form-control" id="status" name="status">
 								<option disabled selected="selected">- Pilih Status -</option>
-								<option id="on_progress" value="ON PROGRESS">ON PROGRESS</option>
-								<option id="done" value="DONE">DONE</option>
+								<option value="ON PROGRESS">ON PROGRESS</option>
+								<option value="DONE">DONE</option>
 							</select>
+						</div>
+
+						<div class="panel-group" id="accordion" style="margin-top: 8px">
+							<div class="panel panel-default">
+								
+								<div id="collapseStatus" class="panel-collapse collapse">
+									<div class="panel-body">
+										<div class="form-group">
+											<label>Tulis Notes :</label>
+											<input type="textarea" name="notes" id="notes" placeholder="Notes..." style="resize: none" class="form-control"></input>
+										</div>
+										
+										<div class="form-group">
+											<label for ="penyelesaian">Cara penyelesaian :</label>
+											<input type="textarea" class="form-control" id="penyelesaian" style="resize: none" name="penyelesaian" placeholder="Cara penyelesaian case tersebut..."></input>
+										</div>
+									</div>
+								</div>
+
+							</div>
 						</div>
 
 						<div class="form-group">
 							<label for="keterangan">Keterangan:</label>
-							<input type="textarea" class="form-control" id="keterangan" style="resize: none" name="keterangan"></input>
+							<input type="textarea" class="form-control" id="keterangan" style="resize: none" placeholder="Keterangan... " name="keterangan"></input>
 						</div>
 
 						<div class="form-group">
@@ -609,6 +631,8 @@
 
     document.addEventListener("DOMContentLoaded", function (event) {
 
+		var userList;
+
     	$('#tb_detail_dr').DataTable({
 			"bSort" : false
 		});
@@ -617,30 +641,30 @@
 			"bSort" : false
 		});
 
-        $('#projectFlag').on('change', function (e) {
+		$('#projectFlag').on('change', function (e) {
 			// TODO: Get project list
             var optionSelected = $("option:selected", this);
 			var valueSelected = this.value;
 
-			$('#textAreaRfmDetail').val("");
-			$("#collapseRfmDetail").collapse('hide');
-
             if (valueSelected === "Project") {
-                $('#collapseProject').collapse('show');
+				$('#RfmDetail').val("");
+				$("#collapseRfmDetail").collapse('hide');
+				
+				$('#collapseProject').collapse('show');
 				$('#collapseRFM').collapse('hide');
 				
 				$('#rfm_id').prop('disabled', 'disabled');
 				$('#project_id').prop('disabled', false);
 				$('#task_id').prop('disabled', false);
             } else if (valueSelected === "RFM") {
-				
+				userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
                 $('#collapseProject').collapse('hide');
 				$('#collapseRFM').collapse('show');
 
 				$('#rfm_id').prop('disabled', false);
 				$('#project_id').prop('disabled', 'disabled');
 				$('#task_id').prop('disabled', 'disabled');
-            } else{
+            } else {
 				$('#collapseProject').collapse('hide');
 				$('#collapseRFM').collapse('hide');
 
@@ -667,40 +691,80 @@
 				
                 $('#collapseTask').collapse('show');
             } else {
-                $('#collapseTask').collapse('hide');
+				$('#collapseTask').collapse('hide');
+				
+				$('#project_id').prop('disabled', 'disabled');
+				$('#task_id').prop('disabled', 'disabled');
+				
             }
 		});
 
 		$('#rfm_id').on('change', function (e){
 			
-			$('#textAreaRfmDetail').val("");
-			$("#textAreaRfmDetail").prop('disabled', 'disabled');
+			$('#requestBy').val("");
+			$('#targetDate').val("");
+			$('#RfmDetail').val("");
+			$("#RfmDetail").prop('disabled', 'disabled');
 
 			var optionSelected = $("option:selected", this);
 			var valueSelected = this.value;	
 
 			if (valueSelected !== null) {
 				var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+				// console.log(userList);
+				
 
 				for (var i=0; i<rfmList.length; i++) {
 					if (rfmList[i].id == valueSelected) {
-						$('#textAreaRfmDetail').val(rfmList[i].rfm_detail);
+						var requestBy = "";
+						var month = new Date(rfmList[i].target_date).getMonth();
+						var date = new Date(rfmList[i].target_date).getDate();
+						var year = new Date(rfmList[i].target_date).getFullYear();
+						var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
+						for (var j=0; j<userList.length; j++) {
+							if (rfmList[i].request_by == userList[j].user_id) {
+								requestBy = userList[j].nama;
+							}
+						}
+
+						$('#RfmDetail').val(rfmList[i].rfm_detail);
+						$('#requestBy').text(requestBy);
+						$('#targetDate').text(targetDate);
 					}
 				}
 
 				$("#collapseRfmDetail").collapse('show');
+				
             } else {
 				$("#collapseRfmDetail").collapse('hide');
             }	
 
+        });
+
+		$('#status').on('change', function (e) {
+            var optionSelected = $("option:selected", this);
+			var valueSelected = this.value;
+
+            if (valueSelected === "DONE") {
+				$("#collapseStatus").collapse('show');
+				var penyelesaian="";
+				penyelesaian = userList[i].nama;
+
+
+            } else {
+				$("#collapseStatus").collapse('hide');
+				$('#collapseStatus').prop('disabled', 'disabled');
+			}
 		});
 		
 	});
+
 	
+
+		
 	function post_request_dr() {
 		var form = $('#frm-create-task')[0];
 		var data = new FormData(form);
-		console.log(data);
 		$.ajax({
 			type: "post",
 			url: "dailyreport_controller/post_request_dr",
@@ -716,7 +780,7 @@
 				var isValid = res.isValid,
 					isPesan = res.isPesan;
 
-				console.log(`${isValid}: ${isPesan}`);
+				// console.log(`${isValid}: ${isPesan}`);
 
 				if(isValid == 0) {
 					$('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');

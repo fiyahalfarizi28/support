@@ -38,11 +38,12 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_PROJECT
             );
 
-            $Q = 'SELECT DISTINCT ticket_support.task.project_id AS id, ticket_support.project.project_name AS project_name
+            $Q = "SELECT DISTINCT ticket_support.task.project_id AS id, ticket_support.project.project_name AS project_name
             FROM ticket_support.task
             INNER JOIN ticket_support.project
-            ON ticket_support.task.project_id=ticket_support.project.id;
-            ';
+            ON ticket_support.task.project_id=ticket_support.project.id
+            WHERE ticket_support.task.assign_to=".$this->session->userdata('USER_ID').";
+            ";
 
             $data['projectList'] = $this->daily_report_model->get_crud($array_crud);
             $data['filteredProjectList'] = $this->db->query($Q)->result();

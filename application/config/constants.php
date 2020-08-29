@@ -116,8 +116,9 @@ define('TB_KODE_KANTOR', 'view_app_kode_kantor');
 
 define('REQUEST_TYPE_MAINTENANCE', 2);
 define('REQUEST_TYPE_PROJECT', 3);
-define('KODE_PERUBAHAN_APLIKASI', 10);
 define('KODE_PENAMBAHAN_APLIKASI', 9);
+define('KODE_PERUBAHAN_APLIKASI', 10);
+define('KODE_APLIKASI_BARU', 11);
 
 define('STT_ON_QUEUE','ON QUEUE');
 define('STT_VALIDATED','VALIDATED');
