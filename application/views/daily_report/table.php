@@ -598,7 +598,7 @@
 										
 										<div class="form-group">
 											<label for ="penyelesaian">Cara penyelesaian :</label>
-											<input type="textarea" class="form-control" id="penyelesaian" style="resize: none" name="penyelesaian" placeholder="Cara penyelesaian case tersebut..."></input>
+											<input type="textarea" class="form-control" name="penyelesaian" id="penyelesaian" style="resize: none" name="penyelesaian" placeholder="Cara penyelesaian case tersebut..."></input>
 										</div>
 									</div>
 								</div>
@@ -744,16 +744,16 @@
 		$('#status').on('change', function (e) {
             var optionSelected = $("option:selected", this);
 			var valueSelected = this.value;
+			console.log(valueSelected, '<= Ini status');
 
             if (valueSelected === "DONE") {
+				$('#penyelesaian').prop('disabled', false);
+				$('#penyelesaian').prop('disabled', false);
 				$("#collapseStatus").collapse('show');
-				var penyelesaian="";
-				penyelesaian = userList[i].nama;
-
-
             } else {
 				$("#collapseStatus").collapse('hide');
-				$('#collapseStatus').prop('disabled', 'disabled');
+				$('#penyelesaian').prop('disabled', 'disabled');
+				$('#penyelesaian').prop('disabled', 'disabled');
 			}
 		});
 		

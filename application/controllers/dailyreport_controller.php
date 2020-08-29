@@ -102,6 +102,8 @@ class dailyreport_controller extends ci_controller{
         $project_id = null;
         $task_id = null;
         $rfm_id = null;
+        $done_notes = null;
+        $comment = null;
         $status = $this->input->post('status');
         $keterangan = $this->input->post('keterangan');
         $projectFlag = $this->input->post('projectFlag');
@@ -116,6 +118,14 @@ class dailyreport_controller extends ci_controller{
 
         if ($this->input->post('rfm_id') !== "") {
             $rfm_id = $this->input->post('rfm_id');
+        }
+
+        if ($this->input->post('notes') !== "") {
+            $done_notes = $this->input->post('notes');
+        }
+
+        if ($this->input->post('penyelesaian') !== "") {
+            $comment = $this->input->post('penyelesaian');
         }
         
         if(empty($project_id) && empty($rfm_id)  && empty($keterangan) ) {
@@ -166,10 +176,22 @@ class dailyreport_controller extends ci_controller{
 
             $array_update_rfm = array(
                 'result_status' => $status,
+                'done_notes'    => $done_notes
             );
 
             $this->db->where('id', $rfm_id);
             $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
+
+            if (!empty($comment) && $status==STT_DONE) {
+                $array_insert_comment = array(
+                    'id'            => $rfm_id,
+                    'tanggal'      	=> $date_now,
+                    'user'          => $user_id,
+                    'comment'       => $comment
+                );
+            
+                $insert_comment = $this->db->insert(TB_COMMENT, $array_insert_comment);
+            }
 
             if(!$insert_data) {
                 $isValid = 0;
