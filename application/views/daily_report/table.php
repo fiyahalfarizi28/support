@@ -4,78 +4,7 @@
 		<div class="card-body">
 			<div class="pesan"></div>
 				<form class="mb-2" action="" method="post">
-					<label>
-						Cari berdasarkan bulan dan tahun
-						<!-- <span class="text-danger"><i>(belum ada aksi pencariannya)</i></span> -->
-					</label>
-					<div class="row">
-						<div class="col-md-2">
-							<select name="m" class="form-control">
-								<?php
-								$m = $this->input->post('m');
-								$y = $this->input->post('Y');
-
-								if(empty($m && $y)) {
-									$m = date('m');
-									$y = date('Y');
-								}
-									if($m=='01'):
-										$mm = 'Januari';
-									elseif($m=='02'):
-										$mm = 'Februari';
-									elseif($m=='03'):
-										$mm = 'Maret';
-									elseif($m=='04'):
-										$mm = 'April';
-									elseif($m=='05'):
-										$mm = 'Mei';
-									elseif($m=='06'):
-										$mm = 'Juni';
-									elseif($m=='07'):
-										$mm = 'Juli';
-									elseif($m=='08'):
-										$mm = 'Agustus';
-									elseif($m=='09'):
-										$mm = 'September';
-									elseif($m=='10'):
-										$mm = 'Oktober';
-									elseif($m=='11'):
-										$mm = 'November';
-									elseif($m=='12'):
-										$mm = 'Desember';
-									endif;
-
-									if($m):
-										echo "<option value='$m'>$mm</option>";
-									endif;
-								?>
-								<option value="01">Januari</option>
-								<option value="02">Februari</option>
-								<option value="03">Maret</option>
-								<option value="04">April</option>
-								<option value="05">Mei</option>
-								<option value="06">Juni</option>
-								<option value="07">Juli</option>
-								<option value="08">Agustus</option>
-								<option value="09">September</option>
-								<option value="10">Oktober</option>
-								<option value="11">November</option>
-								<option value="12">Desember</option>
-							</select>
-						</div>
-						<div class="col-md-2">
-							<select name="y" class="form-control">
-								<?php
-									if($y):
-										echo "<option value='$y'>$y</option>";
-									endif;
-								?>
-							</select>
-						</div>
-						<div class="col-md-1">
-							<input type="submit" name="" value="Cari" class="btn btn-block btn-outline-secondary">
-						</div>
-					</div>
+					
 				</form>
 
 				<table class="colapse-table res3" width="100%" cellspacing="0">
@@ -100,14 +29,14 @@
 							// $projectList = $this->db->get(TB_PROJECT)->result();
 							// $taskList = $this->db->get(TB_TASK)->result();
 							$rfmList = $this->db->get(TB_DETAIL)->result();
-							$thisMonth = date("Y-m");
+							// $thisMonth = date("Y-m");
 						?>
 
                 		<?php foreach($ITList as $r): ?>
                     
 							<?php 
 								$this->db->where('user_id', $r->user_id);
-								$this->db->where('tanggal >', $thisMonth);
+								// $this->db->where('tanggal >', $thisMonth);
 								$this->db->order_by('last_update DESC');
 								$specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
 							?>
@@ -486,7 +415,7 @@
 			</div>
 		</div>
 
-	<div class="modal fade" id="modal-create-task" role="dialog">
+		<div class="modal fade" id="modal-create-task" role="dialog">
 		<div class="modal-dialog modal-lg">>
 		
 			<!-- Modal content-->
@@ -598,7 +527,7 @@
 										
 										<div class="form-group">
 											<label for ="penyelesaian">Cara penyelesaian :</label>
-											<input type="textarea" class="form-control" name="penyelesaian" id="penyelesaian" style="resize: none" name="penyelesaian" placeholder="Cara penyelesaian case tersebut..."></input>
+											<input type="textarea" name="penyelesaian"class="form-control" id="penyelesaian" style="resize: none" name="penyelesaian" placeholder="Cara penyelesaian case tersebut..."></input>
 										</div>
 									</div>
 								</div>
@@ -624,174 +553,173 @@
 				</div>
 			</div>
 		</div>
+	<script>
+	
+		document.addEventListener("DOMContentLoaded", function (event) {
+	
+			var userList;
+	
+			$('#tb_detail_dr').DataTable({
+				"bSort" : false
+			});
+	
+			$('.detail_dr').DataTable({
+				"bSort" : false
+			});
+	
+			$('#projectFlag').on('change', function (e) {
+				// TODO: Get project list
+				var optionSelected = $("option:selected", this);
+				var valueSelected = this.value;
+	
+				if (valueSelected === "Project") {
+					$('#RfmDetail').val("");
+					$("#collapseRfmDetail").collapse('hide');
+					
+					$('#collapseProject').collapse('show');
+					$('#collapseRFM').collapse('hide');
+					
+					$('#rfm_id').prop('disabled', 'disabled');
+					$('#project_id').prop('disabled', false);
+					$('#task_id').prop('disabled', false);
+				} else if (valueSelected === "RFM") {
+					userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
+					$('#collapseProject').collapse('hide');
+					$('#collapseRFM').collapse('show');
+	
+					$('#rfm_id').prop('disabled', false);
+					$('#project_id').prop('disabled', 'disabled');
+					$('#task_id').prop('disabled', 'disabled');
+				} else {
+					$('#collapseProject').collapse('hide');
+					$('#collapseRFM').collapse('hide');
+	
+					$('#rfm_id').prop('disabled', 'disabled');
+					$('#project_id').prop('disabled', 'disabled');
+					$('#task_id').prop('disabled', 'disabled');
+				}
+			});
+	
+			$('#project_id').on('change', function (e) {
+				// TODO: Get specific project available task
+				var optionSelected = $("option:selected", this);
+				var valueSelected = this.value;
+				$('#task_id').empty();
+	
+				if (valueSelected !== null) {
+					var arrayTask = <?php echo json_encode($taskList->result()) ?>;
+					$('#task_id').append('<option selected="selected" value="">-Pilih task-</option>')
+					arrayTask.forEach( (task) => {
+						if (task.project_id == valueSelected) {
+							$('#task_id').append(`<option value="${task.id}">${task.task_name}</option>`);
+						}
+					})
+					
+					$('#collapseTask').collapse('show');
+				} else {
+					$('#collapseTask').collapse('hide');
+					
+					$('#project_id').prop('disabled', 'disabled');
+					$('#task_id').prop('disabled', 'disabled');
+					
+				}
+			});
+	
+			$('#rfm_id').on('change', function (e){
+				
+				$('#requestBy').val("");
+				$('#targetDate').val("");
+				$('#RfmDetail').val("");
+				$("#RfmDetail").prop('disabled', 'disabled');
+	
+				var optionSelected = $("option:selected", this);
+				var valueSelected = this.value;	
+	
+				if (valueSelected !== null) {
+					var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+					// console.log(userList);
+					
+	
+					for (var i=0; i<rfmList.length; i++) {
+						if (rfmList[i].id == valueSelected) {
+							var requestBy = "";
+							var month = new Date(rfmList[i].target_date).getMonth();
+							var date = new Date(rfmList[i].target_date).getDate();
+							var year = new Date(rfmList[i].target_date).getFullYear();
+							var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
+							for (var j=0; j<userList.length; j++) {
+								if (rfmList[i].request_by == userList[j].user_id) {
+									requestBy = userList[j].nama;
+								}
+							}
+	
+							$('#RfmDetail').val(rfmList[i].rfm_detail);
+							$('#requestBy').text(requestBy);
+							$('#targetDate').text(targetDate);
+						}
+					}
+	
+					$("#collapseRfmDetail").collapse('show');
+					
+				} else {
+					$("#collapseRfmDetail").collapse('hide');
+				}	
+	
+			});
+	
+			$('#status').on('change', function (e) {
+				var optionSelected = $("option:selected", this);
+				var valueSelected = this.value;
+	
+				if (valueSelected === "DONE") {
+					$('#penyelesaian').prop('disabled', false);
+					$('#penyelesaian').prop('disabled', false);
+					$("#collapseStatus").collapse('show');
+				} else {
+					$("#collapseStatus").collapse('hide');
+					$('#penyelesaian').prop('disabled', 'disabled');
+					$('#penyelesaian').prop('disabled', 'disabled');
+				}
+			});
+			
+		});
+	
+		
+	
+			
+		function post_request_dr() {
+			var form = $('#frm-create-task')[0];
+			var data = new FormData(form);
+			$.ajax({
+				type: "post",
+				url: "dailyreport_controller/post_request_dr",
+				data: data,
+				processData: false,
+				contentType: false,
+				cache: false,
+				dataType: "json",
+				beforeSend: function() {
+					$('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+				},
+				success: function (res) {
+					var isValid = res.isValid,
+						isPesan = res.isPesan;
+	
+					// console.log(`${isValid}: ${isPesan}`);
+	
+					if(isValid == 0) {
+						$('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
+						$('.pesan').html(isPesan);
+					}else {
+						$('.pesan').html(isPesan);
+						setTimeout (()=> window.location.reload(), 2000);
+					}
+					$('#modal-create-task').modal('hide');
+				}
+			});
+		}
+		
+	</script>
 	<?php } ?>
 </div>
 
-<script>
-
-    document.addEventListener("DOMContentLoaded", function (event) {
-
-		var userList;
-
-    	$('#tb_detail_dr').DataTable({
-			"bSort" : false
-		});
-
-		$('.detail_dr').DataTable({
-			"bSort" : false
-		});
-
-		$('#projectFlag').on('change', function (e) {
-			// TODO: Get project list
-            var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;
-
-            if (valueSelected === "Project") {
-				$('#RfmDetail').val("");
-				$("#collapseRfmDetail").collapse('hide');
-				
-				$('#collapseProject').collapse('show');
-				$('#collapseRFM').collapse('hide');
-				
-				$('#rfm_id').prop('disabled', 'disabled');
-				$('#project_id').prop('disabled', false);
-				$('#task_id').prop('disabled', false);
-            } else if (valueSelected === "RFM") {
-				userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
-                $('#collapseProject').collapse('hide');
-				$('#collapseRFM').collapse('show');
-
-				$('#rfm_id').prop('disabled', false);
-				$('#project_id').prop('disabled', 'disabled');
-				$('#task_id').prop('disabled', 'disabled');
-            } else {
-				$('#collapseProject').collapse('hide');
-				$('#collapseRFM').collapse('hide');
-
-				$('#rfm_id').prop('disabled', 'disabled');
-				$('#project_id').prop('disabled', 'disabled');
-				$('#task_id').prop('disabled', 'disabled');
-			}
-        });
-
-		$('#project_id').on('change', function (e) {
-			// TODO: Get specific project available task
-            var optionSelected = $("option:selected", this);
-            var valueSelected = this.value;
-			$('#task_id').empty();
-
-            if (valueSelected !== null) {
-				var arrayTask = <?php echo json_encode($taskList->result()) ?>;
-				$('#task_id').append('<option selected="selected" value="">-Pilih task-</option>')
-				arrayTask.forEach( (task) => {
-					if (task.project_id == valueSelected) {
-						$('#task_id').append(`<option value="${task.id}">${task.task_name}</option>`);
-					}
-				})
-				
-                $('#collapseTask').collapse('show');
-            } else {
-				$('#collapseTask').collapse('hide');
-				
-				$('#project_id').prop('disabled', 'disabled');
-				$('#task_id').prop('disabled', 'disabled');
-				
-            }
-		});
-
-		$('#rfm_id').on('change', function (e){
-			
-			$('#requestBy').val("");
-			$('#targetDate').val("");
-			$('#RfmDetail').val("");
-			$("#RfmDetail").prop('disabled', 'disabled');
-
-			var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;	
-
-			if (valueSelected !== null) {
-				var rfmList = <?php echo json_encode($rfmList->result()) ?>;
-				// console.log(userList);
-				
-
-				for (var i=0; i<rfmList.length; i++) {
-					if (rfmList[i].id == valueSelected) {
-						var requestBy = "";
-						var month = new Date(rfmList[i].target_date).getMonth();
-						var date = new Date(rfmList[i].target_date).getDate();
-						var year = new Date(rfmList[i].target_date).getFullYear();
-						var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
-						for (var j=0; j<userList.length; j++) {
-							if (rfmList[i].request_by == userList[j].user_id) {
-								requestBy = userList[j].nama;
-							}
-						}
-
-						$('#RfmDetail').val(rfmList[i].rfm_detail);
-						$('#requestBy').text(requestBy);
-						$('#targetDate').text(targetDate);
-					}
-				}
-
-				$("#collapseRfmDetail").collapse('show');
-				
-            } else {
-				$("#collapseRfmDetail").collapse('hide');
-            }	
-
-        });
-
-		$('#status').on('change', function (e) {
-            var optionSelected = $("option:selected", this);
-			var valueSelected = this.value;
-			console.log(valueSelected, '<= Ini status');
-
-            if (valueSelected === "DONE") {
-				$('#penyelesaian').prop('disabled', false);
-				$('#penyelesaian').prop('disabled', false);
-				$("#collapseStatus").collapse('show');
-            } else {
-				$("#collapseStatus").collapse('hide');
-				$('#penyelesaian').prop('disabled', 'disabled');
-				$('#penyelesaian').prop('disabled', 'disabled');
-			}
-		});
-		
-	});
-
-	
-
-		
-	function post_request_dr() {
-		var form = $('#frm-create-task')[0];
-		var data = new FormData(form);
-		$.ajax({
-			type: "post",
-			url: "dailyreport_controller/post_request_dr",
-			data: data,
-			processData: false,
-			contentType: false,
-			cache: false,
-			dataType: "json",
-			beforeSend: function() {
-				$('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
-			},
-			success: function (res) {
-				var isValid = res.isValid,
-					isPesan = res.isPesan;
-
-				// console.log(`${isValid}: ${isPesan}`);
-
-				if(isValid == 0) {
-					$('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
-					$('.pesan').html(isPesan);
-				}else {
-					$('.pesan').html(isPesan);
-					setTimeout (()=> window.location.reload(), 2000);
-				}
-				$('#modal-create-task').modal('hide');
-			}
-		});
-	}
-	
-</script>

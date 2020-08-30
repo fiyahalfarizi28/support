@@ -58,8 +58,14 @@ class dailyreport_controller extends ci_controller{
             );
 
             $QTask = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING') AND assign_to = ". $this->session->userdata('USER_ID') ."";
+            $QTaskAll = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING')";
 
-            $data['taskList'] = $this->db->query($QTask);
+             if ($this->session->userdata('USER_JABATAN')==="HEAD IT" || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT' || $this->session->userdata('USER_JABATAN')==='DIREKSI') {
+                 $data['taskList'] = $this->db->query($QTaskAll)->result();
+                // $data['taskList'] = $this->db->query($QTask);
+             } else {
+                $data['taskList'] = $this->db->query($QTask);
+             }
 			
             $this->template->load('template','daily_report/table', $data);
         }else {
@@ -176,22 +182,46 @@ class dailyreport_controller extends ci_controller{
 
             $array_update_rfm = array(
                 'result_status' => $status,
-                'done_notes'    => $done_notes
+                'done_notes'    => $done_notes,
+                'request_status'=> STT_DONE
             );
 
             $this->db->where('id', $rfm_id);
             $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
 
             if (!empty($comment) && $status==STT_DONE) {
-                $array_insert_comment = array(
-                    'id'            => $rfm_id,
-                    'tanggal'      	=> $date_now,
-                    'user'          => $user_id,
-                    'comment'       => $comment
+
+                // TODO: Check row in tb comment, if null then insert, if not null then update comment
+                $array_crud = array(
+                    'table' => TB_COMMENT,
+                    'where' => array(
+                        'id' => $rfm_id,
+                    )
                 );
-            
-                $insert_comment = $this->db->insert(TB_COMMENT, $array_insert_comment);
-            }
+                
+                $check = $this->rfm_model->get_crud($array_crud)->num_rows();
+
+                if ($check != 0) {
+                    $array_update_comment = array(
+                        'date'      	=> $date_now,
+                        'user'          => $user_id,
+                        'comment'       => $comment
+                    );
+                
+                    $this->db->where('id', $rfm_id);
+
+                    $update_comment = $this->db->update(TB_COMMENT, $array_update_comment);
+                } else {
+                    $array_insert_comment = array(
+                        'id'            => $rfm_id,
+                        'date'      	=> $date_now,
+                        'user'          => $user_id,
+                        'comment'       => $comment
+                    );
+                
+                    $insert_comment = $this->db->insert(TB_COMMENT, $array_insert_comment);
+                }
+            } 
 
             if(!$insert_data) {
                 $isValid = 0;
