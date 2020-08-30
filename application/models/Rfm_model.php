@@ -61,7 +61,7 @@ class Rfm_model extends ci_model{
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
         } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT' || $SESSION_USER_JABATAN == 'DIREKSI'){ 
-            // $this->db->order_by("request_status");        
+            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");        
         }   else {
             $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
         }
