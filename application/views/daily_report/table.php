@@ -505,7 +505,7 @@
 							<textarea class="form-control" id="RfmDetail" rows="3" style="resize: none"></textarea></br>
 							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
 							<label for="Revisi">Notes Revisi:</label>
-							<textarea rows="1" class="form-control" style="resize: none" readonly></textarea>
+							<textarea rows="1" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
 						</div>
 						
 						<div class="form-group">
@@ -559,7 +559,7 @@
 
 			document.addEventListener("DOMContentLoaded", function (event) {
 
-				var userList;
+				var userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
 
 				$('#tb_detail_dr').DataTable({
 					"bSort" : false
@@ -585,7 +585,6 @@
 						$('#project_id').prop('disabled', false);
 						$('#task_id').prop('disabled', false);
 					} else if (valueSelected === "RFM") {
-						userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('show');
 
@@ -628,7 +627,6 @@
 				});
 
 				$('#task_id').on('change', function (e){
-					
 					$('#requestBy').val("");
 					$('#targetDate').val("");
 					$('#RfmDetail').val("");
@@ -637,11 +635,23 @@
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
+					console.log(valueSelected, '<== Value Task')
 
 					if (valueSelected !== null) {
 						var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+						var arrayTask = <?php echo json_encode($taskList->result()) ?>;
+						var thisTask;
+
+						arrayTask.forEach( (task) => {
+							if (task.id == valueSelected) {
+								thisTask = task;
+							}
+						})
+
+						console.log(thisTask)
+						
 						for (var i=0; i<rfmList.length; i++) {
-							if ( rfmList[i].no_rfm == valueSelected) {
+							if ( rfmList[i].no_rfm == thisTask.no_rfm) {
 								var requestBy = "";
 								var month = new Date(rfmList[i].target_date).getMonth();
 								var date = new Date(rfmList[i].target_date).getDate();
@@ -649,6 +659,7 @@
 								var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
 								for (var j=0; j<userList.length; j++) {
 									if (rfmList[i].request_by == userList[j].user_id) {
+										console.log(rfmList[i])
 										requestBy = userList[j].nama;
 									}
 								}
@@ -656,6 +667,7 @@
 								$('#RfmDetail').val(rfmList[i].rfm_detail);
 								$('#requestBy').text(requestBy);
 								$('#targetDate').text(targetDate);
+								$('#Revisi').val(rfmList[i].confirm_notes);
 							}
 						}
 
@@ -696,6 +708,7 @@
 								$('#RfmDetail').val(rfmList[i].rfm_detail);
 								$('#requestBy').text(requestBy);
 								$('#targetDate').text(targetDate);
+								$('#Revisi').val(rfmList[i].confirm_notes);
 							}
 						}
 
