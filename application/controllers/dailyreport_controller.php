@@ -22,7 +22,6 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_DETAIL,
             );
 
-            // $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
             $data['rfmList'] = $this->daily_report_model->get_crud($array_crud);
 
             $array_crud = array(
@@ -30,7 +29,6 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_DETAIL,
             );
 
-            // $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
             $data['statusList'] = $this->daily_report_model->get_crud($array_crud);
 			
 			$array_crud = array(
@@ -62,7 +60,6 @@ class dailyreport_controller extends ci_controller{
 
              if ($this->session->userdata('USER_JABATAN')==="HEAD IT" || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT' || $this->session->userdata('USER_JABATAN')==='DIREKSI') {
                  $data['taskList'] = $this->db->query($QTaskAll)->result();
-                // $data['taskList'] = $this->db->query($QTask);
              } else {
                 $data['taskList'] = $this->db->query($QTask);
              }

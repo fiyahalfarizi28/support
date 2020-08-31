@@ -26,8 +26,8 @@
 					<tbody>
 						<?php 
 							$ITList = $this->db->get(TB_USER)->result();
-							// $projectList = $this->db->get(TB_PROJECT)->result();
-							// $taskList = $this->db->get(TB_TASK)->result();
+							$projectList = $this->db->get(TB_PROJECT)->result();
+							$taskList = $this->db->get(TB_TASK)->result();
 							$rfmList = $this->db->get(TB_DETAIL)->result();
 							// $thisMonth = date("Y-m");
 						?>
@@ -503,7 +503,9 @@
 							<label for="RequestBy">Request By : <span id="requestBy">-</span></label></br>
 							<label for="RfmDetail">Detail RFM :</label>
 							<textarea class="form-control" id="RfmDetail" rows="3" style="resize: none"></textarea></br>
-							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label>
+							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
+							<label for="Revisi">Notes Revisi:</label>
+							<textarea rows="1" class="form-control" style="resize: none" readonly></textarea>
 						</div>
 						
 						<div class="form-group">
@@ -553,173 +555,208 @@
 				</div>
 			</div>
 		</div>
-	<script>
-	
-		document.addEventListener("DOMContentLoaded", function (event) {
-	
-			var userList;
-	
-			$('#tb_detail_dr').DataTable({
-				"bSort" : false
-			});
-	
-			$('.detail_dr').DataTable({
-				"bSort" : false
-			});
-	
-			$('#projectFlag').on('change', function (e) {
-				// TODO: Get project list
-				var optionSelected = $("option:selected", this);
-				var valueSelected = this.value;
-	
-				if (valueSelected === "Project") {
-					$('#RfmDetail').val("");
-					$("#collapseRfmDetail").collapse('hide');
-					
-					$('#collapseProject').collapse('show');
-					$('#collapseRFM').collapse('hide');
-					
-					$('#rfm_id').prop('disabled', 'disabled');
-					$('#project_id').prop('disabled', false);
-					$('#task_id').prop('disabled', false);
-				} else if (valueSelected === "RFM") {
-					userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
-					$('#collapseProject').collapse('hide');
-					$('#collapseRFM').collapse('show');
-	
-					$('#rfm_id').prop('disabled', false);
-					$('#project_id').prop('disabled', 'disabled');
-					$('#task_id').prop('disabled', 'disabled');
-				} else {
-					$('#collapseProject').collapse('hide');
-					$('#collapseRFM').collapse('hide');
-	
-					$('#rfm_id').prop('disabled', 'disabled');
-					$('#project_id').prop('disabled', 'disabled');
-					$('#task_id').prop('disabled', 'disabled');
-				}
-			});
-	
-			$('#project_id').on('change', function (e) {
-				// TODO: Get specific project available task
-				var optionSelected = $("option:selected", this);
-				var valueSelected = this.value;
-				$('#task_id').empty();
-	
-				if (valueSelected !== null) {
-					var arrayTask = <?php echo json_encode($taskList->result()) ?>;
-					$('#task_id').append('<option selected="selected" value="">-Pilih task-</option>')
-					arrayTask.forEach( (task) => {
-						if (task.project_id == valueSelected) {
-							$('#task_id').append(`<option value="${task.id}">${task.task_name}</option>`);
-						}
-					})
-					
-					$('#collapseTask').collapse('show');
-				} else {
-					$('#collapseTask').collapse('hide');
-					
-					$('#project_id').prop('disabled', 'disabled');
-					$('#task_id').prop('disabled', 'disabled');
-					
-				}
-			});
-	
-			$('#rfm_id').on('change', function (e){
-				
-				$('#requestBy').val("");
-				$('#targetDate').val("");
-				$('#RfmDetail').val("");
-				$("#RfmDetail").prop('disabled', 'disabled');
-	
-				var optionSelected = $("option:selected", this);
-				var valueSelected = this.value;	
-	
-				if (valueSelected !== null) {
-					var rfmList = <?php echo json_encode($rfmList->result()) ?>;
-					// console.log(userList);
-					
-	
-					for (var i=0; i<rfmList.length; i++) {
-						if (rfmList[i].id == valueSelected) {
-							var requestBy = "";
-							var month = new Date(rfmList[i].target_date).getMonth();
-							var date = new Date(rfmList[i].target_date).getDate();
-							var year = new Date(rfmList[i].target_date).getFullYear();
-							var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
-							for (var j=0; j<userList.length; j++) {
-								if (rfmList[i].request_by == userList[j].user_id) {
-									requestBy = userList[j].nama;
-								}
+		<script>
+
+			document.addEventListener("DOMContentLoaded", function (event) {
+
+				var userList;
+
+				$('#tb_detail_dr').DataTable({
+					"bSort" : false
+				});
+
+				$('.detail_dr').DataTable({
+					"bSort" : false
+				});
+
+				$('#projectFlag').on('change', function (e) {
+					// TODO: Get project list
+					var optionSelected = $("option:selected", this);
+					var valueSelected = this.value;
+
+					if (valueSelected === "Project") {
+						$('#RfmDetail').val("");
+						$("#collapseRfmDetail").collapse('hide');
+						
+						$('#collapseProject').collapse('show');
+						$('#collapseRFM').collapse('hide');
+						
+						$('#rfm_id').prop('disabled', 'disabled');
+						$('#project_id').prop('disabled', false);
+						$('#task_id').prop('disabled', false);
+					} else if (valueSelected === "RFM") {
+						userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
+						$('#collapseProject').collapse('hide');
+						$('#collapseRFM').collapse('show');
+
+						$('#rfm_id').prop('disabled', false);
+						$('#project_id').prop('disabled', 'disabled');
+						$('#task_id').prop('disabled', 'disabled');
+					} else {
+						$('#collapseProject').collapse('hide');
+						$('#collapseRFM').collapse('hide');
+
+						$('#rfm_id').prop('disabled', 'disabled');
+						$('#project_id').prop('disabled', 'disabled');
+						$('#task_id').prop('disabled', 'disabled');
+					}
+				});
+
+				$('#project_id').on('change', function (e) {
+					// TODO: Get specific project available task
+					var optionSelected = $("option:selected", this);
+					var valueSelected = this.value;
+					$('#task_id').empty();
+
+					if (valueSelected !== null) {
+						var arrayTask = <?php echo json_encode($taskList->result()) ?>;
+						$('#task_id').append('<option selected="selected" value="">-Pilih task-</option>')
+						arrayTask.forEach( (task) => {
+							if (task.project_id == valueSelected) {
+								$('#task_id').append(`<option value="${task.id}">${task.task_name}</option>`);
 							}
-	
-							$('#RfmDetail').val(rfmList[i].rfm_detail);
-							$('#requestBy').text(requestBy);
-							$('#targetDate').text(targetDate);
-						}
+						})
+						
+						$('#collapseTask').collapse('show');
+					} else {
+						$('#collapseTask').collapse('hide');
+						
+						$('#project_id').prop('disabled', 'disabled');
+						$('#task_id').prop('disabled', 'disabled');
+						
 					}
-	
-					$("#collapseRfmDetail").collapse('show');
+				});
+
+				$('#task_id').on('change', function (e){
 					
-				} else {
-					$("#collapseRfmDetail").collapse('hide');
-				}	
-	
-			});
-	
-			$('#status').on('change', function (e) {
-				var optionSelected = $("option:selected", this);
-				var valueSelected = this.value;
-	
-				if (valueSelected === "DONE") {
-					$('#penyelesaian').prop('disabled', false);
-					$('#penyelesaian').prop('disabled', false);
-					$("#collapseStatus").collapse('show');
-				} else {
-					$("#collapseStatus").collapse('hide');
-					$('#penyelesaian').prop('disabled', 'disabled');
-					$('#penyelesaian').prop('disabled', 'disabled');
-				}
-			});
-			
-		});
-	
-		
-	
-			
-		function post_request_dr() {
-			var form = $('#frm-create-task')[0];
-			var data = new FormData(form);
-			$.ajax({
-				type: "post",
-				url: "dailyreport_controller/post_request_dr",
-				data: data,
-				processData: false,
-				contentType: false,
-				cache: false,
-				dataType: "json",
-				beforeSend: function() {
-					$('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
-				},
-				success: function (res) {
-					var isValid = res.isValid,
-						isPesan = res.isPesan;
-	
-					// console.log(`${isValid}: ${isPesan}`);
-	
-					if(isValid == 0) {
-						$('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
-						$('.pesan').html(isPesan);
-					}else {
-						$('.pesan').html(isPesan);
-						setTimeout (()=> window.location.reload(), 2000);
+					$('#requestBy').val("");
+					$('#targetDate').val("");
+					$('#RfmDetail').val("");
+					$('#Revisi').val("");
+					$("#RfmDetail").prop('disabled', 'disabled');
+
+					var optionSelected = $("option:selected", this);
+					var valueSelected = this.value;	
+
+					if (valueSelected !== null) {
+						var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+						for (var i=0; i<rfmList.length; i++) {
+							if ( rfmList[i].no_rfm == valueSelected) {
+								var requestBy = "";
+								var month = new Date(rfmList[i].target_date).getMonth();
+								var date = new Date(rfmList[i].target_date).getDate();
+								var year = new Date(rfmList[i].target_date).getFullYear();
+								var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
+								for (var j=0; j<userList.length; j++) {
+									if (rfmList[i].request_by == userList[j].user_id) {
+										requestBy = userList[j].nama;
+									}
+								}
+
+								$('#RfmDetail').val(rfmList[i].rfm_detail);
+								$('#requestBy').text(requestBy);
+								$('#targetDate').text(targetDate);
+							}
+						}
+
+						$("#collapseRfmDetail").collapse('show');
+						
+					} else {
+						$("#collapseRfmDetail").collapse('hide');
+					}	
+
+				});
+
+				$('#rfm_id').on('change', function (e){
+					
+					$('#requestBy').val("");
+					$('#targetDate').val("");
+					$('#RfmDetail').val("");
+					$('#Revisi').val("");
+					$("#RfmDetail").prop('disabled', 'disabled');
+
+					var optionSelected = $("option:selected", this);
+					var valueSelected = this.value;	
+
+					if (valueSelected !== null) {
+						var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+						for (var i=0; i<rfmList.length; i++) {
+							if (rfmList[i].id == valueSelected) {
+								var requestBy = "";
+								var month = new Date(rfmList[i].target_date).getMonth();
+								var date = new Date(rfmList[i].target_date).getDate();
+								var year = new Date(rfmList[i].target_date).getFullYear();
+								var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
+								for (var j=0; j<userList.length; j++) {
+									if (rfmList[i].request_by == userList[j].user_id) {
+										requestBy = userList[j].nama;
+									}
+								}
+
+								$('#RfmDetail').val(rfmList[i].rfm_detail);
+								$('#requestBy').text(requestBy);
+								$('#targetDate').text(targetDate);
+							}
+						}
+
+						$("#collapseRfmDetail").collapse('show');
+						
+					} else {
+						$("#collapseRfmDetail").collapse('hide');
+					}	
+
+				});
+
+				$('#status').on('change', function (e) {
+					var optionSelected = $("option:selected", this);
+					var valueSelected = this.value;
+
+					if (valueSelected === "DONE") {
+						$('#penyelesaian').prop('disabled', false);
+						$('#penyelesaian').prop('disabled', false);
+						$("#collapseStatus").collapse('show');
+					} else {
+						$("#collapseStatus").collapse('hide');
+						$('#penyelesaian').prop('disabled', 'disabled');
+						$('#penyelesaian').prop('disabled', 'disabled');
 					}
-					$('#modal-create-task').modal('hide');
-				}
+				});
+				
 			});
-		}
-		
-	</script>
+	
+			function post_request_dr() {
+				var form = $('#frm-create-task')[0];
+				var data = new FormData(form);
+				$.ajax({
+					type: "post",
+					url: "dailyreport_controller/post_request_dr",
+					data: data,
+					processData: false,
+					contentType: false,
+					cache: false,
+					dataType: "json",
+					beforeSend: function() {
+						$('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+					},
+					success: function (res) {
+						var isValid = res.isValid,
+							isPesan = res.isPesan;
+
+						// console.log(`${isValid}: ${isPesan}`);
+
+						if(isValid == 0) {
+							$('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
+							$('.pesan').html(isPesan);
+						}else {
+							$('.pesan').html(isPesan);
+							setTimeout (()=> window.location.reload(), 2000);
+						}
+						$('#modal-create-task').modal('hide');
+					}
+				});
+			}
+			
+		</script>
 	<?php } ?>
 </div>
 
