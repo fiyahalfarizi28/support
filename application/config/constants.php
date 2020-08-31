@@ -102,7 +102,7 @@ define('PASS_ONLINE','test123!');
 
 define('TB_USER','user');
 define('TB_PARAMETER','parameter');
-define('TB_DETAIL','rfm_new_detail');
+define('TB_DETAIL','rfm_new_detail_copy');
 define('TB_RFP','rfp_new_detail');
 define('TB_ATTACHMENT','rfm_new_attachment');
 define('TB_COMMENT','rfm_new_comment');
@@ -129,6 +129,7 @@ define('STT_REJECT','REJECT');
 define('STT_ASSIGNED','ASSIGNED');
 define('STT_PENDING','PENDING');
 define('STT_SOLVED','SOLVED');
+define('STT_CONFIRMED', 'CONFIRMED');
 
 define('TYPE_RFP','rfp');
 define('APP_HC', '764'); //abi

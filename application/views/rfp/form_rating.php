@@ -46,7 +46,7 @@
         </div>
 
         <div class="form-group">
-            <textarea name="" class="form-control" style="resize: none" placeholder="Detail. . ." rows="5" required readonly><?php echo $rows->rfm_detail ?></textarea>
+            <textarea name="" class="form-control" style="resize: none" placeholder="Detail. . ." rows="5" required readonly><?php echo $rows->rfp_detail ?></textarea>
         </div>
         
         <div class="form-group text-primary">
@@ -56,7 +56,7 @@
         <div class="form-group">
         <?php
             $no = 1;
-            $this->db->where('rfm_id', $rows->id);
+            $this->db->where('rfp_id', $rows->id);
             $qAtt = $this->db->get(TB_ATTACHMENT);
             foreach($qAtt->result() as $rAtt){
                 $nama_file = $rAtt->filename;
@@ -143,7 +143,7 @@
         </div>
 
         <div class="form-group collapse" style="margin-top: 30px" id="collapseKirim">
-            <input type="hidden" name="id_rfm" value="<?php echo $rows->id ?>">
+            <input type="hidden" name="id_rfp" value="<?php echo $rows->id ?>">
             <input type="hidden" name="isOk" id="isOk" value="tidak">
             <div class="btn_post_request">
                 <a href="javascript:void(0)" onclick="set_rating_request()" class="btn btn-primary btn-block"><i class="far fa-check-circle"></i> Kirim</a>

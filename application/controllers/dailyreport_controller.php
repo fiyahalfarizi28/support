@@ -155,7 +155,8 @@ class dailyreport_controller extends ci_controller{
                 }
 
                 $array_update_task = array(
-                    'status' => $status,
+                    'status'            => $status,
+                    'update_by'         => $this->session->userdata('USER_ID'),
                 );
     
                 $this->db->where('id', $task_id);
@@ -180,7 +181,8 @@ class dailyreport_controller extends ci_controller{
             $array_update_rfm = array(
                 'result_status' => $status,
                 'done_notes'    => $done_notes,
-                'request_status'=> STT_DONE
+                'done_date'     => $date_now,
+                'request_status'=> STT_DONE,
             );
 
             $this->db->where('id', $rfm_id);

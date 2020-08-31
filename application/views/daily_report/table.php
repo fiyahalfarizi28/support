@@ -570,14 +570,12 @@
 				});
 
 				$('#projectFlag').on('change', function (e) {
-					// TODO: Get project list
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;
 
 					if (valueSelected === "Project") {
-						$('#RfmDetail').val("");
+						// $('#RfmDetail').val("");
 						$("#collapseRfmDetail").collapse('hide');
-						
 						$('#collapseProject').collapse('show');
 						$('#collapseRFM').collapse('hide');
 						
@@ -585,19 +583,25 @@
 						$('#project_id').prop('disabled', false);
 						$('#task_id').prop('disabled', false);
 					} else if (valueSelected === "RFM") {
+						// $('#RfmDetail').val("");
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('show');
+						$("#collapseRfmDetail").collapse('hide');
 
 						$('#rfm_id').prop('disabled', false);
 						$('#project_id').prop('disabled', 'disabled');
 						$('#task_id').prop('disabled', 'disabled');
+						$("#RfmDetail").prop('disabled', 'disabled');
 					} else {
+						// $('#RfmDetail').val("");
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('hide');
+						$("#collapseRfmDetail").collapse('hide');
 
 						$('#rfm_id').prop('disabled', 'disabled');
 						$('#project_id').prop('disabled', 'disabled');
 						$('#task_id').prop('disabled', 'disabled');
+						$("#RfmDetail").prop('disabled', 'disabled');
 					}
 				});
 
@@ -674,6 +678,11 @@
 						$("#collapseRfmDetail").collapse('show');
 						
 					} else {
+						$('#requestBy').val("");
+						$('#targetDate').val("");
+						$('#RfmDetail').val("");
+						$('#Revisi').val("");
+						$("#RfmDetail").prop('disabled', 'disabled');
 						$("#collapseRfmDetail").collapse('hide');
 					}	
 
@@ -715,6 +724,11 @@
 						$("#collapseRfmDetail").collapse('show');
 						
 					} else {
+						$('#requestBy').val("");
+						$('#targetDate').val("");
+						$('#RfmDetail').val("");
+						$('#Revisi').val("");
+						$("#RfmDetail").prop('disabled', 'disabled');
 						$("#collapseRfmDetail").collapse('hide');
 					}	
 

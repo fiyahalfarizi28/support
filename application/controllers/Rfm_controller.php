@@ -85,7 +85,7 @@ class Rfm_controller extends CI_Controller {
             // nama pic
             if($field->assign_to === NULL) {
                 $row_assign_to = '-';
-            }else {
+            } else {
                 $array_crud = array(
                     'table' => TB_USER,
                     'where' => array('user_id' => $field->assign_to),
@@ -93,7 +93,7 @@ class Rfm_controller extends CI_Controller {
                 $row_assign_to = $this->rfm_model->get_crud($array_crud);
                 if(!empty($row_assign_to->num_rows())) {
                     $row_assign_to = $row_assign_to->row()->nama;
-                }else{
+                } else{
                     $row_assign_to = '-';
                 }
             }
@@ -104,14 +104,10 @@ class Rfm_controller extends CI_Controller {
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
             
-            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID) AND $field->problem_type != KODE_APLIKASI_BARU ) {
+            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID)) {
                 $btn_option = $btn_option;
-            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
+            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
                 $btn_option = $btn_option;
-            
-            } elseif ($field->request_status === STT_APPROVED AND $field->problem_type == KODE_APLIKASI_BARU){
-                $btn_option ="";
-               
             } else {
                 $btn_option = "";
                
@@ -149,9 +145,10 @@ class Rfm_controller extends CI_Controller {
 
             // btn edit di status on queue
             $btn_edit = "<a class='btn btn-warning text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-edit-rfm' data-id='$field->id' title='Edit RFM'><i class='fa fa-edit'></i></a>";
+
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
                 $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
-                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI' && $field->problem_type === KODE_APLIKASI_BARU)
+                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI')
                 {
                     $btn_option = $btn_edit.$btn_option;
                 }
@@ -643,9 +640,7 @@ class Rfm_controller extends CI_Controller {
         $total = $resMax->maxID;
         $total++;
         $char = "IT/RFM/".$kode_cabang.".";
-        if ($request_type == 3) {
-            $char = "IT/RFP/".$kode_cabang.".";
-        }
+    
         $no_rfm = $char . sprintf("%06s", $total);
 
         if(empty($request_type)) {
@@ -1757,6 +1752,7 @@ class Rfm_controller extends CI_Controller {
                 'assign_date'       => $date_now,
                 'target_date'       => $target_date,
                 'status'            => STT_PENDING,
+                'update_by'         => $assign_pic,
             );
     
             $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
@@ -1807,7 +1803,7 @@ class Rfm_controller extends CI_Controller {
         }
         
         $array_insert = array(
-            'request_status' => STT_DONE,
+            'request_status' => STT_CONFIRMED,
             'done_date'   => $date_now,
             'done_notes'  => $notes,
         );
@@ -1937,6 +1933,7 @@ class Rfm_controller extends CI_Controller {
     public function bell()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        
         $this->db->where('id', 'RFM_RFP_ID');
         $row_rfp = $this->db->get(TB_PARAMETER)->row()->value;
         $rfp_id = explode(":", $row_rfp);
@@ -2005,7 +2002,7 @@ class Rfm_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by' => $SESSION_UPLINE,
                     'assign_to' => NULL,
-                    'problem_type !=' => KODE_APLIKASI_BARU,
+                    "problem_type IN($rfp_id)" => NULL,
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;
@@ -2043,7 +2040,7 @@ class Rfm_controller extends CI_Controller {
             'table' => TB_DETAIL,
             'where' => array(
                     'request_by' => $SESSION_USER_ID,
-                    'request_status' => STT_DONE,
+                    'request_status' => STT_CONFIRMED,
                     'result_status' => STT_DONE,
                     'approve_by !=' => NULL,
                     'receive_by !=' => NULL,

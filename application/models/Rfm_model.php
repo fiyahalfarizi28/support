@@ -1,6 +1,6 @@
 <?php
 class Rfm_model extends ci_model{
-    var $table = TB_DETAIL;
+    var $table = TB_RFP;
     var $column_order = array(null, 'id');
     var $column_search = array('id', 'no_rfm', 'request_status', 'result_status');
     var $order = array('jumlah' => 'asc');
@@ -65,9 +65,9 @@ class Rfm_model extends ci_model{
         }   else {
             $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
         }
-
         $this->db->order_by("request_status");
         $this->db->order_by("request_date");
+        
         $i = 0;
      
         foreach ($this->column_search as $item)

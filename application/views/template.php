@@ -49,9 +49,8 @@
                     <ul class="list-group">
                         <li class="list-group-item"><a href="<?php echo base_url() ?>">DASHBOARD</a></li>
                         <li class="list-group-item"><a href="<?php echo base_url('rfm') ?>">RFM</a></li>
+                        <li class="list-group-item"><a href="<?php echo base_url('rfp') ?>">RFP</a></li>
                         <?php
-
-                            // echo "<script>console.log('Debug Objects: " . $this->session->userdata('USER_DIVISI') . "' );</script>";
                             
                             if(in_array($this->session->userdata('USER_ID'), $menu)) {
                                 echo "<li class='list-group-item'><a href='".base_url('user_management')."'>USER MANAGEMENT</a></li>";
@@ -83,6 +82,9 @@
                     </a>
                     <a href="<?php echo base_url('rfm#table') ?>" title="RFM">
                         <i class="far fa-bell fa-lg"></i><sup class="badge badge-danger rfm-bells"></sup>
+                    </a>
+                    <a href="<?php echo base_url('rfp#table') ?>" title="RFP">
+                        <i class="far fa-envelope-open fa-lg"></i><sup class="badge badge-danger rfp-bells"></sup>
                     </a>
                 </div>
             </div>
