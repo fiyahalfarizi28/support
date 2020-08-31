@@ -319,7 +319,7 @@ class Rfm_controller extends CI_Controller {
             'table' => TB_DETAIL,
             'where' => array(
                 'request_by' => $id,
-                'request_status' => STT_DONE,
+                'request_status' => STT_CONFIRMED,
                 'result_status' => STT_DONE
             )
         );
@@ -927,7 +927,7 @@ class Rfm_controller extends CI_Controller {
                                 'full_filename' => $new_name,
                                 'data_file'     => "upload/$new_name"
                             );
-                            $insert_attachment = $this->db->insert(TB_ATTACHMENT, $array_insert);
+                            $insert_attachment = $this->db->insert(TB_ATTACHMENT_RFM, $array_insert);
 
                             if($insert_attachment) {
                                 move_uploaded_file($tmp, $path.null.$new_name);
@@ -977,7 +977,7 @@ class Rfm_controller extends CI_Controller {
     {
         $id = $this->input->post('idx');
         $array_crud = array(
-            'table' => TB_COMMENT,
+            'table' => TB_COMMENT_RFM,
             'where' => array(
                 'id' => $id
             )
@@ -1385,7 +1385,7 @@ class Rfm_controller extends CI_Controller {
                                 'full_filename' => $new_name,
                                 'data_file'     => "upload/$new_name"
                             );
-                            $insert_attachment = $this->db->insert(TB_ATTACHMENT, $array_insert);
+                            $insert_attachment = $this->db->insert(TB_ATTACHMENT_RFM, $array_insert);
 
                             if($insert_attachment) {
                                 move_uploaded_file($tmp, $path.null.$new_name);
@@ -1407,11 +1407,11 @@ class Rfm_controller extends CI_Controller {
                 foreach($removeAtt as $keyRmv => $valRmv){
                     $idremove = $removeAtt[$keyRmv];
                     $this->db->where('id', $idremove);
-                    $remove_name = $this->db->get(TB_ATTACHMENT)->row();
+                    $remove_name = $this->db->get(TB_ATTACHMENT_RFM)->row();
                     $dir = $remove_name->data_file;
                     
                     $this->db->where('id', $idremove);
-                    $this->db->delete(TB_ATTACHMENT);
+                    $this->db->delete(TB_ATTACHMENT_RFM);
                     unlink($dir);
                 }
             }
@@ -1815,7 +1815,7 @@ class Rfm_controller extends CI_Controller {
             'date' => $date_now,
             'comment' => $penyelesaian
         );
-        $this->db->insert(TB_COMMENT, $array_insert);
+        $this->db->insert(TB_COMMENT_RFM, $array_insert);
 
         if(!$insert_data) {
             $isValid = 0;

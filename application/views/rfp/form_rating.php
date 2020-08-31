@@ -57,7 +57,7 @@
         <?php
             $no = 1;
             $this->db->where('rfp_id', $rows->id);
-            $qAtt = $this->db->get(TB_ATTACHMENT);
+            $qAtt = $this->db->get(TB_ATTACHMENT_RFP);
             foreach($qAtt->result() as $rAtt){
                 $nama_file = $rAtt->filename;
                 $explode_file_ext = explode(".", $nama_file);

@@ -1,6 +1,6 @@
 <?php
 class Rfm_model extends ci_model{
-    var $table = TB_RFP;
+    var $table = TB_DETAIL;
     var $column_order = array(null, 'id');
     var $column_search = array('id', 'no_rfm', 'request_status', 'result_status');
     var $order = array('jumlah' => 'asc');
