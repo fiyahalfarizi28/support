@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">REJECT RFP<?php echo $rows->no_rfp ?></h4>
+    <h4 class="modal-title">REJECT RFP <?php echo $rows->no_rfp ?></h4>
     <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
 
@@ -21,20 +21,7 @@
 </div>
 
 <script>
-    //----- confirm reject request-------
-    function confirm_reject_rfp() {
-        var data = $('#frm-app').serialize();
-        $.ajax({
-            type : 'post',
-            url : 'rfp_controller/btn_reject',
-            data :  data,
-            cache: false,
-            success : function(res) {
-                $('#modal-reject-rfp').modal('show');
-                $('#view-reject-rfp').html(res);
-            }
-        });
-    }
+   
 
     function set_reject_request_rfp() {
     // var data = $('#frm-create').serialize();
@@ -55,7 +42,7 @@
                 var isValid = res.isValid,
                     isPesan = res.isPesan;
                 if(isValid == 0) {
-                    $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a> <a href="javascript:void(0)" onclick="confirm_reject_rfp()" class="btn btn-danger"><i class="far fa-times-circle"></i> Reject</a>');
+                    $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a> <a href="javascript:void(0)" onclick="confirm_reject()" class="btn btn-danger"><i class="far fa-times-circle"></i> Reject</a>');
                     $('.pesan').html(isPesan);
                 }else {
                     $('.pesan').html(isPesan);

@@ -184,7 +184,7 @@
                 <div class="btn_post_request">
                     <a href="javascript:void(0)" onclick="<?php echo $onclick ?>" class="btn btn-primary"><i class="far fa-check-circle"></i> <?php echo $btnText ?></a>
 
-                    <a href="javascript:void(0)" onclick="confirm_reject_rfp()" class="btn btn-danger" <?php echo $reject_aa ?>><i class="far fa-times-circle"></i> Reject</a>
+                    <a href="javascript:void(0)" onclick="confirm_reject()" class="btn btn-danger" <?php echo $reject_aa ?>><i class="far fa-times-circle"></i> Reject</a>
 
                     <a href="javascript:void(0)" onclick="<?php echo $onclickReject ?>" class="btn btn-danger" <?php echo $closeModal ?>><i class="far fa-times-circle"></i> <?php echo $btnTextReject ?></a>
                 </div>
@@ -195,6 +195,21 @@
 </div>
 
 <script>
+     //----- confirm reject request-------
+     function confirm_reject() {
+        var data = $('#frm-app').serialize();
+        $.ajax({
+            type : 'post',
+            url : 'rfp_controller/btn_reject',
+            data :  data,
+            cache: false,
+            success : function(res) {
+                $('#modal-reject-rfp').modal('show');
+                $('#view-reject-rfp').html(res);
+            }
+        });
+    }
+
     //----- rfp approve request-------
     function set_app_request() {
         // var data = $('#frm-create').serialize();
@@ -216,6 +231,37 @@
                     isPesan = res.isPesan;
                 if(isValid == 0) {
                     $('.btn_post_request').html('<a href="javascript:void(0)" onclick="set_app_request_rfp()" class="btn btn-success"><i class="far fa-check-circle"></i> Approve</a> <a href="javascript:void(0)" onclick="" class="btn btn-success"><i class="far fa-times-circle"></i> Reject</a>');
+                    $('.pesan').html(isPesan);
+                }else {
+                    $('.pesan').html(isPesan);
+                    $('#modal-approve-rfp').modal('hide');
+                    reload_table();
+                }
+            }
+        });
+    }
+
+    //----- rfp assign request-------
+    function set_assign_request() {
+        // var data = $('#frm-create').serialize();
+        var form = $('#frm-app')[0];
+        var data = new FormData(form);
+        $.ajax({
+            type: "post",
+            url: "rfp_controller/set_assign_request",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: "json",
+            beforeSend: function() {
+                $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+            },
+            success: function (res) {
+                var isValid = res.isValid,
+                    isPesan = res.isPesan;
+                if(isValid == 0) {
+                    $('.btn_post_request').html('<a href="javascript:void(0)" onclick="set_assign_request_rfp()" class="btn btn-success"><i class="far fa-check-circle"></i> Assign</a> <a href="javascript:void(0)" onclick="" class="btn btn-danger"><i class="far fa-times-circle"></i> Reject</a>');
                     $('.pesan').html(isPesan);
                 }else {
                     $('.pesan').html(isPesan);

@@ -84,8 +84,10 @@ class Rfp_controller extends CI_Controller {
             
             if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID)) {
                 $btn_option = $btn_option;
-            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
+            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
                 $btn_option = $btn_option;
+            } elseif($field->request_status === STT_APPROVED AND $field->problem_type == KODE_APLIKASI_BARU) {
+                $btn_option = "";
             } else {
                 $btn_option = "";
             }
@@ -1965,6 +1967,7 @@ class Rfp_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by' => $SESSION_UPLINE,
                     'assign_to' => NULL,
+                    'problem_type !=' => KODE_APLIKASI_BARU,
                 )
         );
         $approve = $this->rfp_model->get_crud($array_crud)->row()->total;

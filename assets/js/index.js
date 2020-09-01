@@ -236,6 +236,32 @@ $(document).ready(function(){
                 }
             });
         })
+    
+    $('#modal-rating-rfp').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+        $.ajax({
+            type : 'post',
+            url : 'rf_controller/btn_rating',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-rating-rfp').html(res);
+            }
+        });
+    })
+
+    $('#modal-case').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+        $.ajax({
+            type : 'post',
+            url : 'rfp_controller/btn_case',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-case').html(res);
+            }
+        });
+    })
 
 })
     

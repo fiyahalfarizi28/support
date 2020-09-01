@@ -56,7 +56,7 @@ class Rfm_model extends ci_model{
         $this->db->select($qry);
         $this->db->from($this->table);
         $this->db->join('dpm_online.'.TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
-        $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
+        // $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
         
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
@@ -121,7 +121,7 @@ class Rfm_model extends ci_model{
         $rfp_id = implode(",",$rfp_id);
 
         $this->_get_datatables_query($SESSION_UPLINE);
-        $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
+        // $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
         $query = $this->db->get();
         return $query->num_rows();
     }
@@ -133,7 +133,7 @@ class Rfm_model extends ci_model{
         $rfp_id = explode(":", $row_rfp);
         array_pop($rfp_id);
         $rfp_id = implode(",",$rfp_id);
-        $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
+        // $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
         $this->db->from($this->table);
         return $this->db->count_all_results();
     }

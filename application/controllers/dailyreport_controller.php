@@ -6,6 +6,7 @@ class dailyreport_controller extends ci_controller{
 		$this->load->model('daily_report_model');
         $this->load->model('auth_model');
         $this->load->model('rfm_model');
+        $this->load->model('rfp_model');
     }
     
     function index()
@@ -23,6 +24,13 @@ class dailyreport_controller extends ci_controller{
             );
 
             $data['rfmList'] = $this->daily_report_model->get_crud($array_crud);
+
+            $array_crud = array(
+                'select' => '*',
+                'table' => TB_RFP,
+            );
+
+            $data['rfPList'] = $this->daily_report_model->get_crud($array_crud);
 
             $array_crud = array(
                 'select' => '*',
@@ -51,7 +59,6 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_TASK,
                 'where' => array(
                     'assign_to' => $this->session->userdata('USER_ID'),
-                    'status' => STT_ON_PROGRESS,
                 )
             );
 
@@ -65,7 +72,7 @@ class dailyreport_controller extends ci_controller{
              }
 			
             $this->template->load('template','daily_report/table', $data);
-        }else {
+        } else {
             $this->load->view('login/form_login');
         }
     }
@@ -100,11 +107,12 @@ class dailyreport_controller extends ci_controller{
             die();
         }
 		
-        $date_now = date('Y-m-d');
+        $date_now = date('Y-m-d H:i:s');
         $user_id = $this->session->userdata('USER_ID');
         $project_id = null;
         $task_id = null;
         $rfm_id = null;
+        $rfp_id = null;
         $done_notes = null;
         $comment = null;
         $status = $this->input->post('status');
@@ -123,6 +131,10 @@ class dailyreport_controller extends ci_controller{
             $rfm_id = $this->input->post('rfm_id');
         }
 
+        if ($this->input->post('rfp_id') !== "") {
+            $rfm_id = $this->input->post('rfp_id');
+        }
+
         if ($this->input->post('notes') !== "") {
             $done_notes = $this->input->post('notes');
         }
@@ -131,29 +143,25 @@ class dailyreport_controller extends ci_controller{
             $comment = $this->input->post('penyelesaian');
         }
         
-        if(empty($project_id) && empty($rfm_id)  && empty($keterangan) ) {
+        if(empty($project_id) && (empty($rfm_id)  || empty($rfp_id) )&& empty($keterangan) ) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Task Harus Diisi !!!</div>";
-        }elseif(empty($status)) {
+        } elseif(empty($status)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Status Pekerjaan Harus Diisi !!!</div>";
-        }else{
+        } else {
 
             $array_crud = array(
                 'table' => TB_DAILY_ACTIVITY,
                 'where' => array(
                     'user_id' => $this->session->userdata('USER_ID'),
-                    'tanggal' => $date_now,
+                    'date' => $date_now,
                 )
             );
 
             $sql = $this->daily_report_model->get_crud($array_crud);
             
             if (!empty($task_id)) {
-                if($status == STT_DONE) {
-                    $status = STT_ON_PROGRESS;
-                }
-
                 $array_update_task = array(
                     'status'            => $status,
                     'update_by'         => $this->session->userdata('USER_ID'),
@@ -162,16 +170,17 @@ class dailyreport_controller extends ci_controller{
                 $this->db->where('id', $task_id);
                 $update_task = $this->db->update(TB_TASK, $array_update_task);
 
-                $no_rfm = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfm;
-                $rfm_id = $this->db->where('no_rfm', $no_rfm)->get(TB_DETAIL)->row()->id;
+                $no_rfp = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfp;
+                $rfp_id = $this->db->where('no_rfp', $no_rfp)->get(TB_RFP)->row()->id;
             }
 
             $array_insert = array(
                 'user_id'       => $user_id,
-                'tanggal'      	=> $date_now,
+                'date'      	=> $date_now,
                 'project_id'    => $project_id,
                 'task_id'       => $task_id,
                 'rfm_id'        => $rfm_id,
+                'rfp_id'        => $rfp_id,
                 'status'        => $status,
                 'keterangan' 	=> $keterangan,
             );
@@ -182,17 +191,27 @@ class dailyreport_controller extends ci_controller{
                 'result_status' => $status,
                 'done_notes'    => $done_notes,
                 'done_date'     => $date_now,
-                'request_status'=> STT_DONE,
+                'request_status'=> STT_CONFIRMED,
             );
 
             $this->db->where('id', $rfm_id);
             $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
 
+            $array_update_rfp = array(
+                'result_status' => $status,
+                'done_notes'    => $done_notes,
+                'done_date'     => $date_now,
+                'request_status'=> STT_CONFIRMED,
+            );
+
+            $this->db->where('id', $rfp_id);
+            $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
+
             if (!empty($comment) && $status==STT_DONE) {
 
                 // TODO: Check row in tb comment, if null then insert, if not null then update comment
                 $array_crud = array(
-                    'table' => TB_COMMENT,
+                    'table' => TB_COMMENT_RFM,
                     'where' => array(
                         'id' => $rfm_id,
                     )
@@ -200,8 +219,17 @@ class dailyreport_controller extends ci_controller{
                 
                 $check = $this->rfm_model->get_crud($array_crud)->num_rows();
 
+                $array_crud = array(
+                    'table' => TB_COMMENT_RFP,
+                    'where' => array(
+                        'id' => $rfp_id,
+                    )
+                );
+                
+                $check = $this->rfp_model->get_crud($array_crud)->num_rows();
+
                 if ($check != 0) {
-                    $array_update_comment = array(
+                    $array_update_comment_rfm = array(
                         'date'      	=> $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
@@ -209,16 +237,36 @@ class dailyreport_controller extends ci_controller{
                 
                     $this->db->where('id', $rfm_id);
 
-                    $update_comment = $this->db->update(TB_COMMENT, $array_update_comment);
+                    $update_comment_rfm = $this->db->update(TB_COMMENT, $array_update_comment_rfm);
+
+                    $array_update_comment_rfp = array(
+                        'date'      	=> $date_now,
+                        'user'          => $user_id,
+                        'comment'       => $comment
+                    );
+                
+                    $this->db->where('id', $rfp_id);
+
+                    $update_comment_rfp = $this->db->update(TB_COMMENT, $array_update_comment_rfp);
+
                 } else {
-                    $array_insert_comment = array(
+                    $array_insert_comment_rfm = array(
                         'id'            => $rfm_id,
                         'date'      	=> $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );
                 
-                    $insert_comment = $this->db->insert(TB_COMMENT, $array_insert_comment);
+                    $insert_comment_rfm = $this->db->insert(TB_COMMENT_RFM, $array_insert_comment_rfm);
+
+                    $array_insert_comment_rfp = array(
+                        'id'            => $rfp_id,
+                        'date'      	=> $date_now,
+                        'user'          => $user_id,
+                        'comment'       => $comment
+                    );
+                
+                    $insert_comment_rfp = $this->db->insert(TB_COMMENT_RFP, $array_insert_comment_rfp);
                 }
             } 
 
@@ -240,6 +288,4 @@ class dailyreport_controller extends ci_controller{
         $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
         echo json_encode($data);
     }
-
-
 }

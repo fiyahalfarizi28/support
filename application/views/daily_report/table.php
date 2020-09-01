@@ -3,9 +3,7 @@
 	
 		<div class="card-body">
 			<div class="pesan"></div>
-				<form class="mb-2" action="" method="post">
-					
-				</form>
+				<form class="mb-2" action="" method="post"></form>
 
 				<table class="colapse-table res3" width="100%" cellspacing="0">
 					<thead>
@@ -16,7 +14,8 @@
 							<th>WAKTU</th>
 							<th>PROJECT</th>
 							<th>TASK</th>
-							<th>RFM</th>
+							<th>No. RFM</th>
+							<th>No. RFP</th>
 							<th>STATUS</th>
 							<th>KETERANGAN</th>
 							<th>PIC</th>
@@ -29,6 +28,7 @@
 							$projectList = $this->db->get(TB_PROJECT)->result();
 							$taskList = $this->db->get(TB_TASK)->result();
 							$rfmList = $this->db->get(TB_DETAIL)->result();
+							$rfpList = $this->db->get(TB_RFP)->result();
 							// $thisMonth = date("Y-m");
 						?>
 
@@ -36,7 +36,7 @@
                     
 							<?php 
 								$this->db->where('user_id', $r->user_id);
-								// $this->db->where('tanggal >', $thisMonth);
+								// $this->db->where('date >', $thisMonth);
 								$this->db->order_by('last_update DESC');
 								$specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
 							?>
@@ -48,7 +48,7 @@
 											<td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->user_id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
 											<td>
 												<?php
-													$hari = date('l',strtotime($row->tanggal));
+													$hari = date('l',strtotime($row->date));
 													switch($hari){
 														case 'Sunday':
 															$hari = "Minggu";
@@ -85,7 +85,7 @@
 													echo $hari;
 												?>
 											</td>
-											<td><?php echo date("d-m-Y",strtotime( $row->tanggal)) ?></td>
+											<td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
 											<td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
 											<td>
 												<?php 
@@ -140,6 +140,23 @@
 													echo $tableDataNoRFM;
 												?>
 											</td>
+											<td>
+												<?php $tableDataNoRFP = null;
+													if (!empty($row->rfp_id))
+													{
+														foreach($rfpList as $rowRfp):
+															if ($row->rfp_id == $rowRfp->id) {
+																$tableDataNoRFP = $rowRfp->no_rfp;
+																break;
+															}
+														endforeach;
+													}
+													else {
+														$tableDataNoRFP = "-";
+													}
+													echo $tableDataNoRFP;
+												?>
+											</td>
 											<td><?php echo $row->status ?></td>
 											<td><?php echo $row->keterangan ?></td>
 											<td><?php echo $r->nama ?></td>
@@ -158,7 +175,8 @@
 														<th>WAKTU</th>
 														<th>PROJECT</th>
 														<th>TASK</th>
-														<th>RFM</th>
+														<th>No. RFM</th>
+														<th>No. RFP</th>
 														<th>STATUS</th>
 														<th>KETERANGAN</th>
 													</tr>
@@ -169,7 +187,7 @@
 															<tr>
 																<td>
 																	<?php
-																		$hari = date('l',strtotime($row->tanggal));
+																		$hari = date('l',strtotime($row->date));
 																		switch($hari){
 																			case 'Sunday':
 																				$hari = "Minggu";
@@ -206,7 +224,7 @@
 																		echo $hari;
 																	?>
 																</td>
-																<td><?php echo date("d-m-Y",strtotime( $row->tanggal)) ?></td>
+																<td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
 																<td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
 																<td>
 																	<?php 
@@ -247,7 +265,6 @@
 																		echo $tableTaskName;
 																	?>
 																</td>
-																
 																<td>
 																	<?php $tableDataNoRFM = null;
 																		if (!empty($row->rfm_id))
@@ -263,6 +280,23 @@
 																			$tableDataNoRFM = "-";
 																		}
 																		echo $tableDataNoRFM;
+																	?>
+																</td>
+																<td>
+																	<?php $tableDataNoRFP = null;
+																		if (!empty($row->rfp_id))
+																		{
+																			foreach($rfpList as $rowRfp):
+																				if ($row->rfp_id == $rowRfp->id) {
+																					$tableDataNoRFP = $rowRfp->no_rfp;
+																					break;
+																				}
+																			endforeach;
+																		}
+																		else {
+																			$tableDataNoRFP = "-";
+																		}
+																		echo $tableDataNoRFP;
 																	?>
 																</td>
 																<td><?php echo $row->status ?></td>
@@ -299,7 +333,8 @@
 							<th>WAKTU</th>
 							<th>PROJECT</th>
 							<th>TASK</th>
-							<th>RFM</th>
+							<th>No. RFM</th>
+							<th>No. RFP</th>
 							<th>STATUS</th>
 							<th>KETERANGAN</th>
 						</tr>
@@ -309,7 +344,7 @@
 						<tr>
 							<td>
 							<?php
-								$hari = date('l',strtotime($r->tanggal));
+								$hari = date('l',strtotime($r->date));
 								switch($hari){
 									case 'Sunday':
 										$hari = "Minggu";
@@ -347,7 +382,7 @@
 							?>
 							</td>
 
-							<td><?php echo date("d-m-Y",strtotime( $r->tanggal)) ?></td>
+							<td><?php echo date("d-m-Y",strtotime( $r->date)) ?></td>
 
 							<td>
 								<?php echo date("H:i",strtotime( $r->last_update)) ?>
@@ -388,14 +423,13 @@
 									echo $tableTaskName;
 								?>
 							</td>
-
-							<td><?php $tableDataNoRFM = null;
+							<td>
+								<?php $tableDataNoRFM = null;
 									if (!empty($r->rfm_id))
 									{
 										foreach($rfmList->result() as $row):
 											if ($r->rfm_id == $row->id) {
 												$tableDataNoRFM = $row->no_rfm;
-												// echo "<script>console.log('masuk sini, ". $tableDataNoRFM."')</script>";
 												break;
 											}
 										endforeach;
@@ -406,7 +440,23 @@
 									echo $tableDataNoRFM;
 								?>
 							</td>
-
+							<td>
+								<?php $tableDataNoRFP = null;
+									if (!empty($r->rfp_id))
+									{
+										foreach($rfpList->result() as $row):
+											if ($r->rfp_id == $row->id) {
+												$tableDataNoRFP = $row->no_rfp;
+												break;
+											}
+										endforeach;
+									}
+									else {
+										$tableDataNoRFP = "-";
+									}
+									echo $tableDataNoRFP;
+								?>
+							</td>
 							<td><?php echo $r->status ?></td>
 							<td><?php echo $r->keterangan ?></td>
 						</tr>
@@ -435,8 +485,8 @@
 							<label for="projectFlag">Jenis task :</label>
 							<select id="projectFlag" name="projectFlag" class="form-control">
 								<option disabled selected="selected" value="">- Pilih Task -</option>
-								<option>Project</option>
-								<option >RFM</option>
+								<option>RFP</option>
+								<option>RFM</option>
 								<option>Other</option>
 							</select>
 						</div>
@@ -469,7 +519,6 @@
 																	<option value=<?php echo $r->id ?> ><?php echo $r->task_name ?></option>
 																<?php } ?>
 															<?php endforeach ?>
-															
 														</select>
 													</div>
 												</div>
@@ -565,15 +614,11 @@
 					"bSort" : false
 				});
 
-				$('.detail_dr').DataTable({
-					"bSort" : false
-				});
-
 				$('#projectFlag').on('change', function (e) {
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;
 
-					if (valueSelected === "Project") {
+					if (valueSelected === "RFP") {
 						// $('#RfmDetail').val("");
 						$("#collapseRfmDetail").collapse('hide');
 						$('#collapseProject').collapse('show');
@@ -639,10 +684,9 @@
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
-					console.log(valueSelected, '<== Value Task')
 
 					if (valueSelected !== null) {
-						var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+						var rfpList = <?php echo json_encode($rfpList->result()) ?>;
 						var arrayTask = <?php echo json_encode($taskList->result()) ?>;
 						var thisTask;
 
@@ -651,27 +695,24 @@
 								thisTask = task;
 							}
 						})
-
-						console.log(thisTask)
 						
-						for (var i=0; i<rfmList.length; i++) {
-							if ( rfmList[i].no_rfm == thisTask.no_rfm) {
+						for (var i=0; i<rfpList.length; i++) {
+							if ( rfpList[i].no_rfp == thisTask.no_rfp) {
 								var requestBy = "";
-								var month = new Date(rfmList[i].target_date).getMonth();
-								var date = new Date(rfmList[i].target_date).getDate();
-								var year = new Date(rfmList[i].target_date).getFullYear();
+								var month = new Date(rfpList[i].target_date).getMonth();
+								var date = new Date(rfpList[i].target_date).getDate();
+								var year = new Date(rfpList[i].target_date).getFullYear();
 								var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
 								for (var j=0; j<userList.length; j++) {
-									if (rfmList[i].request_by == userList[j].user_id) {
-										console.log(rfmList[i])
+									if (rfpList[i].request_by == userList[j].user_id) {
 										requestBy = userList[j].nama;
 									}
 								}
 
-								$('#RfmDetail').val(rfmList[i].rfm_detail);
+								$('#RfmDetail').val(rfpList[i].rfm_detail);
 								$('#requestBy').text(requestBy);
 								$('#targetDate').text(targetDate);
-								$('#Revisi').val(rfmList[i].confirm_notes);
+								$('#Revisi').val(rfpList[i].confirm_notes);
 							}
 						}
 
@@ -768,9 +809,6 @@
 					success: function (res) {
 						var isValid = res.isValid,
 							isPesan = res.isPesan;
-
-						// console.log(`${isValid}: ${isPesan}`);
-
 						if(isValid == 0) {
 							$('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
 							$('.pesan').html(isPesan);
