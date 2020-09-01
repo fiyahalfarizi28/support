@@ -230,62 +230,34 @@ class dailyreport_controller extends ci_controller{
 
                 // TODO: Check row in tb comment, if null then insert, if not null then update comment
                 $array_crud = array(
-                    'table' => TB_COMMENT_RFM,
+                    'table' => !empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP,
                     'where' => array(
-                        'id' => $rfm_id,
+                        'id' => !empty($rfm_id) ? $rfm_id : $rfp_id,
                     )
                 );
                 
                 $check = $this->rfm_model->get_crud($array_crud)->num_rows();
 
-                $array_crud = array(
-                    'table' => TB_COMMENT_RFP,
-                    'where' => array(
-                        'id' => $rfp_id,
-                    )
-                );
-                
-                $check = $this->rfp_model->get_crud($array_crud)->num_rows();
-
                 if ($check != 0) {
-                    $array_update_comment_rfm = array(
+                    $array_update_comment = array(
                         'date'      	=> $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );
                 
-                    $this->db->where('id', $rfm_id);
+                    $this->db->where('id', !empty($rfm_id) ? $rfm_id : $rfp_id);
 
-                    $update_comment_rfm = $this->db->update(TB_COMMENT_RFM, $array_update_comment_rfm);
-
-                    $array_update_comment_rfp = array(
-                        'date'      	=> $date_now,
-                        'user'          => $user_id,
-                        'comment'       => $comment
-                    );
-                
-                    $this->db->where('id', $rfp_id);
-
-                    $update_comment_rfp = $this->db->update(TB_COMMENT_RFP, $array_update_comment_rfp);
+                    $update_comment = $this->db->update( !empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_update_comment);
 
                 } else {
-                    $array_insert_comment_rfm = array(
-                        'id'            => $rfm_id,
+                    $array_insert_comment = array(
+                        'id'            => !empty($rfm_id) ? $rfm_id : $rfp_id,
                         'date'      	=> $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );
                 
-                    $insert_comment_rfm = $this->db->insert(TB_COMMENT_RFM, $array_insert_comment_rfm);
-
-                    $array_insert_comment_rfp = array(
-                        'id'            => $rfp_id,
-                        'date'      	=> $date_now,
-                        'user'          => $user_id,
-                        'comment'       => $comment
-                    );
-                
-                    $insert_comment_rfp = $this->db->insert(TB_COMMENT_RFP, $array_insert_comment_rfp);
+                    $insert_comment = $this->db->insert(!empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_insert_comment);
                 }
             } 
 
