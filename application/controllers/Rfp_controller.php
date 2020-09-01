@@ -1856,9 +1856,7 @@ class Rfp_controller extends CI_Controller {
                 echo json_encode($data);
                 die(); 
             }
-        }
-
-        
+        }    
 
         if ($isOk == 'tidak') {
             $array_insert = array(
@@ -1875,8 +1873,8 @@ class Rfp_controller extends CI_Controller {
                 'update_by'         => $this->session->userdata('USER_ID'),
             );
             
-            $task_id = $this->input->post('task_id');
-            $this->db->where('id', $task_id);
+            $no_rfp = $this->db->where('id', $id_rfp)->get(TB_RFP)->row()->no_rfp;
+            $this->db->where('no_rfp', $no_rfp);
             $update_task = $this->db->update(TB_TASK, $array_update_task);
 
         } else {
@@ -1887,9 +1885,9 @@ class Rfp_controller extends CI_Controller {
             'confirm_date'   => $date_now,
             'confirm_notes'  => $notes,
             'rates'   => $rates,
-        );
+            );
 
-        $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
+            $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
         }
 
 

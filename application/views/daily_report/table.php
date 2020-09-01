@@ -165,7 +165,7 @@
 								<?php endforeach ?>
 
 								<tr id=<?php echo $r->user_id?> class="collapse">
-									<td colspan="10">
+									<td colspan="11">
 										<p>
 											<table class="tb_detail_dr" style="width: 100%">
 												<thead>

@@ -138,10 +138,6 @@ class dailyreport_controller extends ci_controller{
         if ($this->input->post('notes') !== "") {
             $done_notes = $this->input->post('notes');
         }
-
-        if ($this->input->post('penyelesaian') !== "") {
-            $comment = $this->input->post('penyelesaian');
-        }
         
         if(empty($project_id) && empty($rfm_id) && empty($rfp_id) && empty($keterangan) ) {
             $isValid = 0;
@@ -149,9 +145,6 @@ class dailyreport_controller extends ci_controller{
         } elseif(empty($status)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Status Pekerjaan Harus Diisi !!!</div>";
-        } elseif(empty($comment)) {
-            $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
         } else {
 
             $array_crud = array(
@@ -206,6 +199,8 @@ class dailyreport_controller extends ci_controller{
             $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
 
             if ($status == STT_DONE) {
+
+                
                 
                 $array_update_rfm = array(
                     'result_status' => $status,
@@ -227,6 +222,15 @@ class dailyreport_controller extends ci_controller{
                 $this->db->where('id', $rfp_id);
                 $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
     
+            }
+
+            if ($this->input->post('penyelesaian') !== "") {
+                $comment = $this->input->post('penyelesaian');
+            }
+
+            if(empty($comment && $status == STT_DONE)) {
+                $isValid = 0;
+                $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
             }
 
             if (!empty($comment) && $status == STT_DONE) {
@@ -262,7 +266,10 @@ class dailyreport_controller extends ci_controller{
                 
                     $insert_comment = $this->db->insert(!empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_insert_comment);
                 }
-            } 
+            } else if(empty($comment && $status == STT_DONE)) {
+                $isValid = 0;
+                $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
+            }
 
             if(!$insert_data) {
                 $isValid = 0;
