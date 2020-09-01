@@ -228,7 +228,7 @@ $(document).ready(function(){
             var data = $(e.relatedTarget).data('id');
             $.ajax({
                 type : 'post',
-                url : 'rfm_controller/btn_approve',
+                url : 'rfp_controller/btn_approve',
                 data :  'idx='+ data,
                 cache: false,
                 success : function(res) {
@@ -519,7 +519,7 @@ function set_update_it() {
 }
 //-------------------------------------
 
-//-----create new rfm post request-------
+//----- rfm approve request-------
 function set_app_request() {
     // var data = $('#frm-create').serialize();
     var form = $('#frm-app')[0];
@@ -551,7 +551,7 @@ function set_app_request() {
 }
 //-------------------------------------
 
-//-----create new rfm post request-------
+//----- rfm assign request-------
 function set_assign_request() {
     // var data = $('#frm-create').serialize();
     var form = $('#frm-app')[0];
@@ -583,7 +583,7 @@ function set_assign_request() {
 }
 //-------------------------------------
 
-//-----create new rfm post request-------
+//----- rfm done request-------
 function set_done_request() {
     // var data = $('#frm-create').serialize();
     var form = $('#frm-app')[0];
@@ -615,7 +615,7 @@ function set_done_request() {
 }
 //-------------------------------------
 
-//-----reject rfm post request-------
+//----- confirm reject request-------
 function confirm_reject() {
     var data = $('#frm-app').serialize();
     $.ajax({
