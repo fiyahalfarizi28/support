@@ -30,7 +30,7 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_RFP,
             );
 
-            $data['rfPList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['rfpList'] = $this->daily_report_model->get_crud($array_crud);
 
             $array_crud = array(
                 'select' => '*',
@@ -132,7 +132,7 @@ class dailyreport_controller extends ci_controller{
         }
 
         if ($this->input->post('rfp_id') !== "") {
-            $rfm_id = $this->input->post('rfp_id');
+            $rfp_id = $this->input->post('rfp_id');
         }
 
         if ($this->input->post('notes') !== "") {
@@ -143,7 +143,7 @@ class dailyreport_controller extends ci_controller{
             $comment = $this->input->post('penyelesaian');
         }
         
-        if(empty($project_id) && (empty($rfm_id)  || empty($rfp_id) )&& empty($keterangan) ) {
+        if(empty($project_id) && empty($rfm_id) && empty($rfp_id) && empty($keterangan) ) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Task Harus Diisi !!!</div>";
         } elseif(empty($status)) {
@@ -183,15 +183,13 @@ class dailyreport_controller extends ci_controller{
                 'rfp_id'        => $rfp_id,
                 'status'        => $status,
                 'keterangan' 	=> $keterangan,
+                'update_by'     => $user_id,
             );
         
-	    	$insert_data = $this->db->insert(TB_DAILY_ACTIVITY, $array_insert);
+            $insert_data = $this->db->insert(TB_DAILY_ACTIVITY, $array_insert);
 
             $array_update_rfm = array(
                 'result_status' => $status,
-                'done_notes'    => $done_notes,
-                'done_date'     => $date_now,
-                'request_status'=> STT_CONFIRMED,
             );
 
             $this->db->where('id', $rfm_id);
@@ -199,15 +197,36 @@ class dailyreport_controller extends ci_controller{
 
             $array_update_rfp = array(
                 'result_status' => $status,
-                'done_notes'    => $done_notes,
-                'done_date'     => $date_now,
-                'request_status'=> STT_CONFIRMED,
             );
 
             $this->db->where('id', $rfp_id);
             $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
 
-            if (!empty($comment) && $status==STT_DONE) {
+            if ($status == STT_DONE) {
+                
+                $array_update_rfm = array(
+                    'result_status' => $status,
+                    'done_notes'    => $done_notes,
+                    'done_date'     => $date_now,
+                    'request_status' => STT_CONFIRMED,
+                );
+    
+                $this->db->where('id', $rfm_id);
+                $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
+    
+                $array_update_rfp = array(
+                    'result_status' => $status,
+                    'done_notes'    => $done_notes,
+                    'done_date'     => $date_now,
+                    'request_status' => STT_CONFIRMED,
+                );
+    
+                $this->db->where('id', $rfp_id);
+                $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
+    
+            }
+
+            if (!empty($comment) && $status == STT_DONE) {
 
                 // TODO: Check row in tb comment, if null then insert, if not null then update comment
                 $array_crud = array(
@@ -237,7 +256,7 @@ class dailyreport_controller extends ci_controller{
                 
                     $this->db->where('id', $rfm_id);
 
-                    $update_comment_rfm = $this->db->update(TB_COMMENT, $array_update_comment_rfm);
+                    $update_comment_rfm = $this->db->update(TB_COMMENT_RFM, $array_update_comment_rfm);
 
                     $array_update_comment_rfp = array(
                         'date'      	=> $date_now,
@@ -247,7 +266,7 @@ class dailyreport_controller extends ci_controller{
                 
                     $this->db->where('id', $rfp_id);
 
-                    $update_comment_rfp = $this->db->update(TB_COMMENT, $array_update_comment_rfp);
+                    $update_comment_rfp = $this->db->update(TB_COMMENT_RFP, $array_update_comment_rfp);
 
                 } else {
                     $array_insert_comment_rfm = array(

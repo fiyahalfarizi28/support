@@ -485,8 +485,8 @@
 							<label for="projectFlag">Jenis task :</label>
 							<select id="projectFlag" name="projectFlag" class="form-control">
 								<option disabled selected="selected" value="">- Pilih Task -</option>
-								<option>RFP</option>
 								<option>RFM</option>
+								<option>RFP</option>
 								<option>Other</option>
 							</select>
 						</div>
@@ -548,13 +548,13 @@
 							</div>
 						</div>
 						
-						<div class="form-group collapse" id="collapseRfmDetail">
+						<div class="form-group collapse" id="collapseDetail">
 							<label for="RequestBy">Request By : <span id="requestBy">-</span></label></br>
-							<label for="RfmDetail">Detail RFM :</label>
-							<textarea class="form-control" id="RfmDetail" rows="3" style="resize: none"></textarea></br>
+							<label for="Detail">Detail :</label>
+							<textarea class="form-control" id="Detail" rows="3" style="resize: none"></textarea></br>
 							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
 							<label for="Revisi">Notes Revisi:</label>
-							<textarea rows="1" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
+							<textarea rows="2" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
 						</div>
 						
 						<div class="form-group">
@@ -620,33 +620,34 @@
 
 					if (valueSelected === "RFP") {
 						// $('#RfmDetail').val("");
-						$("#collapseRfmDetail").collapse('hide');
+						$("#collapseDetail").collapse('hide');
 						$('#collapseProject').collapse('show');
 						$('#collapseRFM').collapse('hide');
 						
 						$('#rfm_id').prop('disabled', 'disabled');
 						$('#project_id').prop('disabled', false);
 						$('#task_id').prop('disabled', false);
+						$("#Detail").prop('disabled', 'disabled');
 					} else if (valueSelected === "RFM") {
 						// $('#RfmDetail').val("");
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('show');
-						$("#collapseRfmDetail").collapse('hide');
+						$("#collapseDetail").collapse('hide');
 
 						$('#rfm_id').prop('disabled', false);
 						$('#project_id').prop('disabled', 'disabled');
 						$('#task_id').prop('disabled', 'disabled');
-						$("#RfmDetail").prop('disabled', 'disabled');
+						$("#Detail").prop('disabled', 'disabled');
 					} else {
 						// $('#RfmDetail').val("");
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('hide');
-						$("#collapseRfmDetail").collapse('hide');
+						$("#collapseDetail").collapse('hide');
 
 						$('#rfm_id').prop('disabled', 'disabled');
 						$('#project_id').prop('disabled', 'disabled');
 						$('#task_id').prop('disabled', 'disabled');
-						$("#RfmDetail").prop('disabled', 'disabled');
+						$("#Detail").prop('disabled', 'disabled');
 					}
 				});
 
@@ -678,9 +679,9 @@
 				$('#task_id').on('change', function (e){
 					$('#requestBy').val("");
 					$('#targetDate').val("");
-					$('#RfmDetail').val("");
+					$('#Detail').val("");
 					$('#Revisi').val("");
-					$("#RfmDetail").prop('disabled', 'disabled');
+					$("#Detail").prop('disabled', 'disabled');
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
@@ -709,22 +710,22 @@
 									}
 								}
 
-								$('#RfmDetail').val(rfpList[i].rfm_detail);
+								$('#Detail').val(rfpList[i].rfp_detail);
 								$('#requestBy').text(requestBy);
 								$('#targetDate').text(targetDate);
 								$('#Revisi').val(rfpList[i].confirm_notes);
 							}
 						}
 
-						$("#collapseRfmDetail").collapse('show');
+						$("#collapseDetail").collapse('show');
 						
 					} else {
 						$('#requestBy').val("");
 						$('#targetDate').val("");
-						$('#RfmDetail').val("");
+						$('#Detail').val("");
 						$('#Revisi').val("");
-						$("#RfmDetail").prop('disabled', 'disabled');
-						$("#collapseRfmDetail").collapse('hide');
+						$("#Detail").prop('disabled', 'disabled');
+						$("#collapseDetail").collapse('hide');
 					}	
 
 				});
@@ -733,9 +734,9 @@
 					
 					$('#requestBy').val("");
 					$('#targetDate').val("");
-					$('#RfmDetail').val("");
+					$('#Detail').val("");
 					$('#Revisi').val("");
-					$("#RfmDetail").prop('disabled', 'disabled');
+					$("#Detail").prop('disabled', 'disabled');
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
@@ -755,22 +756,22 @@
 									}
 								}
 
-								$('#RfmDetail').val(rfmList[i].rfm_detail);
+								$('#Detail').val(rfmList[i].rfm_detail);
 								$('#requestBy').text(requestBy);
 								$('#targetDate').text(targetDate);
 								$('#Revisi').val(rfmList[i].confirm_notes);
 							}
 						}
 
-						$("#collapseRfmDetail").collapse('show');
+						$("#collapseDetail").collapse('show');
 						
 					} else {
 						$('#requestBy').val("");
 						$('#targetDate').val("");
-						$('#RfmDetail').val("");
+						$('#Detail').val("");
 						$('#Revisi').val("");
-						$("#RfmDetail").prop('disabled', 'disabled');
-						$("#collapseRfmDetail").collapse('hide');
+						$("#Detail").prop('disabled', 'disabled');
+						$("#collapseDetail").collapse('hide');
 					}	
 
 				});
