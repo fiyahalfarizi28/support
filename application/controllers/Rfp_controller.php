@@ -82,12 +82,12 @@ class Rfp_controller extends CI_Controller {
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
             
-            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND $field->request_status == STT_ON_QUEUE) {
+            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID)) {
                 $btn_option = $btn_option;
-            }elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status == STT_APPROVED) {
+            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
                 $btn_option = $btn_option;
-            }else {
-                $btn_option = "-";
+            } else {
+                $btn_option = "";
             }
 
             // nama yg harus approve
@@ -113,6 +113,8 @@ class Rfp_controller extends CI_Controller {
             if($field->request_by == $SESSION_USER_ID AND $field->request_status == STT_DONE AND $field->result_status === STT_DONE) {
                 $btn_option = $btn_rating;
             }
+
+            $btn_edit = "<a class='btn btn-warning text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-edit-rfp' data-id='$field->id' title='Edit RFM'><i class='fa fa-edit'></i></a>";
 
             // btn edit di status on queue
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
@@ -292,10 +294,9 @@ class Rfp_controller extends CI_Controller {
         if($check >= 1) {
             $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa memberi kami penilaian. Terima kasih';
             $this->load->view('modal/notify', $data);
-        }else {
+        } else {
             $array_crud = array(
                 'table' => TB_PROBLEM_TYPE,
-                'where' => array('system_type' => 'RFP'),
             );
             $data['problem_type'] = $this->rfp_model->get_crud($array_crud);
             
@@ -327,7 +328,6 @@ class Rfp_controller extends CI_Controller {
         
         $array_crud = array(
             'table' => TB_PROBLEM_TYPE,
-            // 'where' => array('system_type' => NULL),
         );
         $data['problem_type'] = $this->rfp_model->get_crud($array_crud);
         
@@ -563,10 +563,8 @@ class Rfp_controller extends CI_Controller {
         $table_destination = TB_RFP;
         $problem_type = null;
         $project_id = $this->input->post('project_id');
-
-        if ($request_type == 2) {
-            $problem_type = $this->input->post('problem_type');
-        } else if ($request_type == 3) {
+        
+        if ($request_type == 3) {
             $problem_type = $this->input->post('problem_type');
         }
 
@@ -585,7 +583,7 @@ class Rfp_controller extends CI_Controller {
         
         $array_crud = array(
             'table' => TB_PARAMETER,
-            'where' => array('id' => 'RFP_AKSES_IT_APP'),
+            'where' => array('id' => 'RFM_AKSES_IT_APP'),
         );
         $app_it = $this->rfp_model->get_crud($array_crud)->row()->value;
         $explode_app_it = explode(':', $app_it);
@@ -1954,7 +1952,6 @@ class Rfp_controller extends CI_Controller {
                     'approve_by' => NULL,
                     'receive_by' => NULL,
                     'assign_to' => NULL,
-                    "problem_type IN($rfp_id)" => NULL,
                 )
         );
         $upline = $this->rfp_model->get_crud($array_crud)->row()->total;
@@ -1968,7 +1965,6 @@ class Rfp_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by' => $SESSION_UPLINE,
                     'assign_to' => NULL,
-                    "problem_type IN($rfp_id)" => NULL,
                 )
         );
         $approve = $this->rfp_model->get_crud($array_crud)->row()->total;
@@ -1982,7 +1978,6 @@ class Rfp_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by !=' => NULL,
                     'assign_to' => $SESSION_USER_ID,
-                    "problem_type IN($rfp_id)" => NULL,
                 )
         );
         $assign = $this->rfp_model->get_crud($array_crud)->row()->total;
@@ -1996,7 +1991,6 @@ class Rfp_controller extends CI_Controller {
                     'approve_by' => NULL,
                     'receive_by' => NULL,
                     'assign_to' => $SESSION_USER_ID,
-                    "problem_type NOT IN($rfp_id)" => NULL,
                 )
         );
         $auto_assign = $this->rfp_model->get_crud($array_crud)->row()->total;

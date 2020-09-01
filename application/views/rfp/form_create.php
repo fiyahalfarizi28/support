@@ -74,7 +74,7 @@
 
                     <!-- btn_kirim -->
                     <div class="btn_post_request">
-                        <a href="javascript:void(0)" onclick="post_request()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>
+                        <a href="javascript:void(0)" onclick="post_request_rfp()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>
                     </div>
                 </div>
             </div>
@@ -136,10 +136,9 @@
         if (optionSelected == "APLIKASI BARU") {
 
             $('#problem_type').empty();
-            $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>');
-
+            
             arrayProblem2.forEach( (problemType) => {
-                if (problemType.id > 8 && problemType.id < 11) {
+                if (problemType.id > 10) {
                     $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
                 }
             });
@@ -155,5 +154,37 @@
         }
 
     });
+
+    //-----create new rfp post request-------
+    function post_request_rfp() {
+        // var data = $('#frm-create').serialize();
+        var form = $('#frm-create')[0];
+        var data = new FormData(form);
+        $.ajax({
+            type: "post",
+            url: "rfp_controller/post_request",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: "json",
+            beforeSend: function() {
+                $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+            },
+            success: function (res) {
+                var isValid = res.isValid,
+                    isPesan = res.isPesan;
+                if(isValid == 0) {
+                    $('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
+                    $('.pesan').html(isPesan);
+                }else {
+                    $('.pesan').html(isPesan);
+                    $('#modal-create-rfm').modal('hide');
+                    $('#modal-create-rfp').modal('hide');
+                    reload_table();
+                }
+            }
+        });
+    }
 
 </script>   

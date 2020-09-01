@@ -209,7 +209,33 @@ $(document).ready(function(){
             }
         });
     })
-    //=====================================
+
+    $('#modal-edit-rfp').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+
+        $.ajax({
+            type : 'post',
+            url : 'rfp_controller/btn_edit',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-modal-edit').html(res);
+            }
+        });
+    })
+
+    $('#modal-approve-rfp').on('show.bs.modal', function (e) {
+            var data = $(e.relatedTarget).data('id');
+            $.ajax({
+                type : 'post',
+                url : 'rfm_controller/btn_approve',
+                data :  'idx='+ data,
+                cache: false,
+                success : function(res) {
+                    $('#view-approve-rfp').html(res);
+                }
+            });
+        })
 
 })
     

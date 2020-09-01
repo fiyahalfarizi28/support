@@ -138,7 +138,7 @@
 
                     <!-- btn_kirim -->
                     <div class="btn_post_request">
-                        <a href="javascript:void(0)" onclick="set_post_request()" class="btn btn-success"><i class="fa fa-check"></i> Update</a>
+                        <a href="javascript:void(0)" onclick="set_post_request_rfp()" class="btn btn-success"><i class="fa fa-check"></i> Update</a>
                     </div>
                 </div>
             </div>
@@ -147,6 +147,38 @@
 </div>
 
 <script>
+    
+    //-----edit rfp post request-------
+function set_post_request-rfp() {
+    // var data = $('#frm-create').serialize();
+    var form = $('#frm-edit')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "post",
+        url: "rfp_controller/set_post_request",
+        data: data,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        cache: false,
+        beforeSend: function() {
+            $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+        },
+        success: function (res) {
+            var isValid = res.isValid,
+                isPesan = res.isPesan;
+            if(isValid == 0) {
+                $('.btn_post_request').html('<a href="javascript:void(0)" onclick="set_post_request-rfp()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
+                $('.pesan').html(isPesan);
+            }else {
+                $('.pesan').html(isPesan);
+                $('#modal-edit-rfp').modal('hide');
+                reload_table();
+            }
+        }
+    });
+}
+
 $('.supx').click(function(){
     var data_id = $(this).data('id');
     var name_id = "#name_id"+ data_id;

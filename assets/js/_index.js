@@ -190,6 +190,21 @@ $(document).ready(function(){
     })
     //=====================================
 
+    $('#modal-edit-rfp').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+
+        console.log(data, '<= masuk sini')
+        $.ajax({
+            type : 'post',
+            url : 'rfp_controller/btn_edit',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-modal-edit').html(res);
+            }
+        });
+    })
+
 })
     
 function preloader()
