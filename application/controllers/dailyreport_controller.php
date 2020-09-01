@@ -149,6 +149,9 @@ class dailyreport_controller extends ci_controller{
         } elseif(empty($status)) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Status Pekerjaan Harus Diisi !!!</div>";
+        } elseif(empty($comment)) {
+            $isValid = 0;
+            $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
         } else {
 
             $array_crud = array(

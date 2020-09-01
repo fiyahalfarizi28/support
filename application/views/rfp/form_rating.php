@@ -134,11 +134,11 @@
 
         <div class="form-group text-center collapse" style="margin-top: 15px" id="collapseYes">
             <span class="star-rating star-5">
-                <input type="radio" name="rates" value="1"><i></i>
-                <input type="radio" name="rates" value="2"><i></i>
-                <input type="radio" name="rates" value="3"><i></i>
-                <input type="radio" name="rates" value="4"><i></i>
-                <input type="radio" name="rates" value="5"><i></i>
+            <input type="radio" name="rates" value="1" data-toggle="tooltip" data-placement="top" title="Buruk!"><i></i>
+                <input type="radio" name="rates" value="2" data-toggle="tooltip" data-placement="top" title="Kurang bagus!"><i></i>
+                <input type="radio" name="rates" value="3" data-toggle="tooltip" data-placement="top" title="Cukup bagus!"><i></i>
+                <input type="radio" name="rates" value="4" data-toggle="tooltip" data-placement="top" title="Bagus!"><i></i>
+                <input type="radio" name="rates" value="5" data-toggle="tooltip" data-placement="top" title="Sangat bagus!"><i></i>
             </span>
         </div>
 
@@ -146,7 +146,7 @@
             <input type="hidden" name="id_rfp" value="<?php echo $rows->id ?>">
             <input type="hidden" name="isOk" id="isOk" value="tidak">
             <div class="btn_post_request">
-                <a href="javascript:void(0)" onclick="set_rating_request()" class="btn btn-primary btn-block"><i class="far fa-check-circle"></i> Kirim</a>
+                <a href="javascript:void(0)" onclick="set_rating_request_rfp()" class="btn btn-primary btn-block"><i class="far fa-check-circle"></i> Kirim</a>
             </div>
         </div>
 
@@ -172,5 +172,40 @@
         $('#collapseNo').collapse('show');
         $('#collapseKirim').collapse('show');
     });
+
+    $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+    });
+
+    function set_rating_request_rfp() {
+    // var data = $('#frm-rating').serialize();
+    var form = $('#frm-rating')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "post",
+        url: "rfp_controller/set_rating_request",
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        dataType: "json",
+        beforeSend: function() {
+            $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary btn-block"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+        },
+        success: function (res) {
+            var isValid = res.isValid,
+                isPesan = res.isPesan;
+            if(isValid == 0) {
+                $('.btn_post_request').html('<a href="javascript:void(0)" onclick="set_rating_request()" class="btn btn-success btn-block"><i class="far fa-check-circle"></i> Simpan</a>');
+                $('.pesan').html(isPesan);
+            }else {
+                $('.pesan').html(isPesan);
+                $('#modal-rating-rfp').modal('hide');
+                reload_table();
+            }
+        }
+    });
+}
+//-------------------------------------
 </script>
 

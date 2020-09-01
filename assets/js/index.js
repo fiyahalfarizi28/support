@@ -241,7 +241,7 @@ $(document).ready(function(){
         var data = $(e.relatedTarget).data('id');
         $.ajax({
             type : 'post',
-            url : 'rf_controller/btn_rating',
+            url : 'rfp_controller/btn_rating',
             data :  'idx='+ data,
             cache: false,
             success : function(res) {
@@ -250,7 +250,7 @@ $(document).ready(function(){
         });
     })
 
-    $('#modal-case').on('show.bs.modal', function (e) {
+    $('#modal-case-rfp').on('show.bs.modal', function (e) {
         var data = $(e.relatedTarget).data('id');
         $.ajax({
             type : 'post',

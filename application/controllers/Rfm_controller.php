@@ -139,7 +139,7 @@ class Rfm_controller extends CI_Controller {
             
             // btn rating
             $btn_rating = "<a class='btn btn-success text-warning btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-rating-rfm' data-id='$field->id' title='Give Rating'><i class='fa fa-star'></i></a>";
-            if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_DONE AND $field->result_status === STT_DONE) {
+            if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_CONFIRMED AND $field->result_status === STT_DONE) {
                 $btn_option = $btn_rating;
             }
 
@@ -258,7 +258,7 @@ class Rfm_controller extends CI_Controller {
                 }else {
                     $btn_case = NULL;
                 }
-            }else {
+            } else {
                 $btn_case = NULL;
             }
 
@@ -326,7 +326,7 @@ class Rfm_controller extends CI_Controller {
         
         $check = $this->rfm_model->get_crud($array_crud)->num_rows();
         if($check >= 1) {
-            $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa memberi kami penilaian. Terima kasih';
+            $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa konfirmasi dan beri penilaian. Terima kasih';
             $this->load->view('modal/notify', $data);
         } else {
             $array_crud = array(
@@ -1895,11 +1895,12 @@ class Rfm_controller extends CI_Controller {
         }
 
         $array_insert = array(
-            'request_status' => STT_SOLVED,
+            'request_status' => STT_DONE,
             'confirm_by' => $SESSION_USER_ID,
             'confirm_date'   => $date_now,
             'confirm_notes'  => $notes,
             'rates'   => $rates,
+            'result_status' => STT_SOLVED,
         );
 
         if ($isOk == 'tidak') {

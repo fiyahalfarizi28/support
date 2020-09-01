@@ -112,7 +112,7 @@ class Rfp_controller extends CI_Controller {
             
             // btn rating 
             $btn_rating = "<a class='btn btn-success text-warning btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-rating-rfp' data-id='$field->id' title='Give Rating'><i class='fa fa-star'></i></a>";
-            if($field->request_by == $SESSION_USER_ID AND $field->request_status == STT_DONE AND $field->result_status === STT_DONE) {
+            if($field->request_by == $SESSION_USER_ID AND $field->request_status == STT_CONFIRMED AND $field->result_status === STT_DONE) {
                 $btn_option = $btn_rating;
             }
 
@@ -500,7 +500,6 @@ class Rfp_controller extends CI_Controller {
         
         $array_crud = array(
             'table' => TB_PROBLEM_TYPE,
-            'where' => array('system_type' => NULL),
         );
         $data['problem_type'] = $this->rfp_model->get_crud($array_crud);
         
@@ -1859,14 +1858,7 @@ class Rfp_controller extends CI_Controller {
             }
         }
 
-        $array_insert = array(
-            'request_status' => STT_DONE,
-            'result_status' => STT_SOLVED,
-            'confirm_by' => $SESSION_USER_ID,
-            'confirm_date'   => $date_now,
-            'confirm_notes'  => $notes,
-            'rates'   => $rates,
-        );
+        
 
         if ($isOk == 'tidak') {
             $array_insert = array(
@@ -1876,9 +1868,30 @@ class Rfp_controller extends CI_Controller {
                 'confirm_date'   => $date_now,
                 'confirm_notes'  => $notes,
             );  
-        }
+            $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
+
+            $array_update_task = array(
+                'status'            => STT_PENDING,
+                'update_by'         => $this->session->userdata('USER_ID'),
+            );
+            
+            $task_id = $this->input->post('task_id');
+            $this->db->where('id', $task_id);
+            $update_task = $this->db->update(TB_TASK, $array_update_task);
+
+        } else {
+            $array_insert = array(
+            'request_status' => STT_DONE,
+            'result_status' => STT_SOLVED,
+            'confirm_by' => $SESSION_USER_ID,
+            'confirm_date'   => $date_now,
+            'confirm_notes'  => $notes,
+            'rates'   => $rates,
+        );
 
         $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
+        }
+
 
         if(!$insert_data) {
             $isValid = 0;

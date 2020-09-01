@@ -134,11 +134,11 @@
 
         <div class="form-group text-center collapse" style="margin-top: 15px" id="collapseYes">
             <span class="star-rating star-5">
-                <input type="radio" name="rates" value="1"><i></i>
-                <input type="radio" name="rates" value="2"><i></i>
-                <input type="radio" name="rates" value="3"><i></i>
-                <input type="radio" name="rates" value="4"><i></i>
-                <input type="radio" name="rates" value="5"><i></i>
+                <input type="radio" name="rates" value="1" data-toggle="tooltip" data-placement="top" title="Buruk!"><i></i>
+                <input type="radio" name="rates" value="2" data-toggle="tooltip" data-placement="top" title="Kurang bagus!"><i></i>
+                <input type="radio" name="rates" value="3" data-toggle="tooltip" data-placement="top" title="Cukup bagus!"><i></i>
+                <input type="radio" name="rates" value="4" data-toggle="tooltip" data-placement="top" title="Bagus!"><i></i>
+                <input type="radio" name="rates" value="5" data-toggle="tooltip" data-placement="top" title="Sangat bagus!"><i></i>
             </span>
         </div>
 
@@ -172,5 +172,10 @@
         $('#collapseNo').collapse('show');
         $('#collapseKirim').collapse('show');
     });
+
+    $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+    });
+
 </script>
 
