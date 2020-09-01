@@ -223,7 +223,7 @@
                     
                     <?php 
                         $this->db->where('user_id', $r->user_id);
-                        $this->db->where('tanggal', date('Y-m-d'));
+                        $this->db->where('date', date('Y-m-d'));
                         $this->db->order_by('last_update DESC');
                         $specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
                     ?>
@@ -235,7 +235,7 @@
                                     <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->user_id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
                                     <td>
                                         <?php
-                                            $hari = date('l',strtotime($row->tanggal));
+                                            $hari = date('l',strtotime($row->date));
                                             switch($hari){
                                                 case 'Sunday':
                                                     $hari = "Minggu";
@@ -272,7 +272,7 @@
                                             echo $hari;
                                         ?>
                                     </td>
-                                    <td><?php echo date("d-m-Y",strtotime( $row->tanggal)) ?></td>
+                                    <td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                     <td>
                                         <?php 
@@ -356,7 +356,7 @@
                                                 <tr>
                                                     <td>
                                                         <?php
-                                                            $hari = date('l',strtotime($row->tanggal));
+                                                            $hari = date('l',strtotime($row->date));
                                                             switch($hari){
                                                                 case 'Sunday':
                                                                     $hari = "Minggu";
@@ -393,7 +393,7 @@
                                                             echo $hari;
                                                         ?>
                                                     </td>
-                                                    <td><?php echo date("d-m-Y",strtotime( $row->tanggal)) ?></td>
+                                                    <td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
                                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                                     <td>
                                                         <?php 
@@ -728,7 +728,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PRESENTASE APLIKASI</b>
+                <b>PERSENTASE APLIKASI RFM</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart1"></canvas>
@@ -743,6 +743,78 @@
             </div>
             <div class="card-body">
                 <canvas id="myChart2"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE APLIKASI RFP</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart3"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE PERMINTAAN</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart4"></canvas>
+            </div>
+        </div>
+    </div>
+</div>  
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE RFM BERDASARKAN KANTOR</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart5"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE RFP BERDASARKAN KANTOR</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart6"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE RFM BERDASARKAN DIVISI</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart7"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE RFP BERDASARKAN DIVISI</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart8"></canvas>
             </div>
         </div>
     </div>
@@ -778,8 +850,6 @@
                                 $counter += 1;
                             }
                         endforeach;
-                        // $divider = count($rfmList);
-                        // $data = $counter / $divider * 100;
                         $data = $counter;
                         echo json_encode($data).",";
                     endforeach;
@@ -807,6 +877,16 @@
                 "rgb(254,231,218)",
                 "rgb(255,203,134)",
                 "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -829,8 +909,6 @@
                     label: function(tooltipItem, data) {
                     var dataLabel = data.labels[tooltipItem.index];
                     var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
-                        // $divider = count($rfmList);
-                        // $data = $counter / $divider * 100;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
                         dataLabel[0] += value;
@@ -843,7 +921,6 @@
             }
         }
     });
-
 
 //==================================================
 
@@ -870,8 +947,6 @@
                                 $counter += 1;
                             }
                         endforeach;
-                        // $divider = count($rfmList);
-                        // $data = $counter / $divider * 100;
                         $data = $counter;
                         echo json_encode($data).",";
                     endforeach;
@@ -899,6 +974,16 @@
                 "rgb(254,231,218)",
                 "rgb(255,203,134)",
                 "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -937,6 +1022,594 @@
         }
     });
 
+//==================================================
+
+    <?php
+            $applicationList = $this->db->get(TB_PROJECT)->result();
+            $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+            $rfpList = $this->db->get(TB_RFP)->result();
+    ?>
+
+    var ctx_ = document.getElementById("myChart3").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php
+                foreach($applicationList as $r):
+                    $data = array();
+                    $data = $r->project_name;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($applicationList as $r):
+                        $data = array();
+                        $counter = 0;
+                        foreach($rfpList as $eachrfp):
+                            if ($eachrfp->project_id == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        $data = $counter;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                "rgb(243,204,111)",
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'Application Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfpList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+//==================================================
+
+    var ctx_ = document.getElementById("myChart4").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php
+                foreach($problemTypeList as $r):
+                    $data = array();
+                    $data = $r->problem_type;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($problemTypeList as $r):
+                        $data = array();
+                        $counter = 0;
+                        foreach($rfpList as $eachrfp):
+                            if ($eachrfp->problem_type == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        $data = $counter;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                "rgb(243,204,111)",
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartProblemType = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'Problem Type Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfpList)?> * 100).toLocaleString()+'%';
+
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+
+                    // return the text to display on the tooltip
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+
+//==================================================
+
+    var ctx_ = document.getElementById("myChart5").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php 
+                foreach($applicationList as $r):
+                    $data = array();
+                    $data = $r->project_name;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($applicationList as $r):
+                        $data = array();
+                        $counter = 0;
+                        foreach($rfmList as $eachrfm):
+                            if ($eachrfm->project_id == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        $data = $counter;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                "rgb(243,204,111)",
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'RFM Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+
+//==================================================
+
+var ctx_ = document.getElementById("myChart6").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php
+                foreach($applicationList as $r):
+                    $data = array();
+                    $data = $r->project_name;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($applicationList as $r):
+                        $data = array();
+                        $counter = 0;
+                        foreach($rfpList as $eachrfp):
+                            if ($eachrfp->project_id == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        $data = $counter;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                "rgb(243,204,111)",
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'RFP Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfpList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+//==================================================
+
+    var ctx_ = document.getElementById("myChart7").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php 
+                foreach($applicationList as $r):
+                    $data = array();
+                    $data = $r->project_name;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($applicationList as $r):
+                        $data = array();
+                        $counter = 0;
+                        foreach($rfmList as $eachrfm):
+                            if ($eachrfm->project_id == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        $data = $counter;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                "rgb(243,204,111)",
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'RFM Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+
+//==================================================
+
+var ctx_ = document.getElementById("myChart8").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php
+                foreach($applicationList as $r):
+                    $data = array();
+                    $data = $r->project_name;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($applicationList as $r):
+                        $data = array();
+                        $counter = 0;
+                        foreach($rfpList as $eachrfp):
+                            if ($eachrfp->project_id == $r->id) {
+                                $counter += 1;
+                            }
+                        endforeach;
+                        $data = $counter;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                "rgb(243,204,111)",
+                "rgb(210,220,226)",
+                "rgb(179,221,209)",
+                "rgb(207,235,248)",
+                "rgb(247,185,147)",
+                "rgb(239,228,172)",
+                "rgb(246,207,200)",
+                "rgb(232,150,148)",
+                "rgb(254,231,218)",
+                "rgb(255,203,134)",
+                "rgb(232,229,194)",
+                "rgb(244,226,226)",
+                "rgb(226,240,196)",
+                "rgb(255,231,155)",
+                "rgb(194,239,233)",
+                "rgb(233,213,190)",
+                "rgb(254,229,189)",
+                "rgb(233,210,225)",
+                "rgb(240,180,212)",
+                "rgb(200,230,200)",
+                "rgb(182,184,181)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'RFP Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfpList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
 //==================================================
 
     document.getElementById("monthAwal").addEventListener("change", function(){
@@ -1023,15 +1696,14 @@
 </script>
 
 <div class="row pt-3">
-    <div class="col-md-6">
+    <!-- <div class="col-md-6">
         <div class="card">
-            <div class="card-header"><b>REQUEST BERDASARKAN KANTOR</b></div>
+            <div class="card-header"><b>PERSENTASE RFM BERDASARKAN KANTOR</b></div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered" width="100%" id="dt_dashboard">
                         <thead class="bg-primary text-light">
                             <tr>
-                                <!-- <th>KODE KANTOR</th> -->
                                 <th>NAMA KANTOR</th>
                                 <th>JUMLAH REQUEST</th>
                             </tr>
@@ -1046,7 +1718,6 @@
                                 foreach($rfmGrouped as $r): 
                             ?>
                                 <tr>
-                                    <!-- <td style="text-align: left"><?php echo $r->kode_kantor ?></td> -->
                                     <td>
                                         <?php 
                                             $this->db->where('kode_kantor', $r->kode_kantor);
@@ -1067,9 +1738,9 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div class="col-md-6">
+    <!-- <div class="col-md-6">
         <div class="card">
             <div class="card-header"><b>REQUEST BERDASARKAN DIVISI</b></div>
             <div class="card-body">
@@ -1112,7 +1783,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
                 
