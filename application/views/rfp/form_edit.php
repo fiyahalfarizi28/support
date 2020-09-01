@@ -185,4 +185,13 @@ $('.supx').click(function(){
     $(name_id).hide();
 })
 
+var fileId = 0;
+function addFile() {
+    fileId++;
+    var html =  '<input type="file" name="attachment[]" />'+
+                ' <a href="javascript:void(0)" onclick="javascript:removeElement(\'file-' + fileId + '\'); return false;">'+
+                '<i class="far fa-window-close fa-lg text-danger"></i></a>';
+    addElement('files', 'p', 'file-' + fileId, html);
+}
+
 </script>

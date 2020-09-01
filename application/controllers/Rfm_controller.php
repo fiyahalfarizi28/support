@@ -2092,4 +2092,17 @@ class Rfm_controller extends CI_Controller {
         $this->load->view('export_to_excel', $data);
     }
 
+    public function getattachment() {
+        $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $id_rfm = $this->input->post('id_rfm');
+        $id_rfp = $this->input->post('id_rfp');
+        $data = array();
+
+        $data['cekController'] = true;
+        $data['id_rfm'] = $id_rfm;
+        $data['id_rfp'] = $id_rfp;
+        $this->load->view('daily_report/attachment', $data);
+
+    }
+
 }

@@ -555,6 +555,11 @@
 							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
 							<label for="Revisi">Notes Revisi:</label>
 							<textarea rows="2" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
+							
+							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
+							<div id="attachmentElement" style="margin-top: 8px">
+								
+							</div>
 						</div>
 						
 						<div class="form-group">
@@ -682,6 +687,7 @@
 					$('#Detail').val("");
 					$('#Revisi').val("");
 					$("#Detail").prop('disabled', 'disabled');
+					$('#attachmentElement').empty();
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
@@ -717,6 +723,19 @@
 							}
 						}
 
+						$.ajax({
+							type : 'post',
+							url : 'rfm_controller/getattachment',
+							data :  {
+								'id_rfm': null,
+								'id_rfp': valueSelected
+							},
+							cache: false,
+							success : function(res) {
+								$('#attachmentElement').html(res);
+							}
+						});
+
 						$("#collapseDetail").collapse('show');
 						
 					} else {
@@ -726,6 +745,7 @@
 						$('#Revisi').val("");
 						$("#Detail").prop('disabled', 'disabled');
 						$("#collapseDetail").collapse('hide');
+						$('#attachmentElement').empty();
 					}	
 
 				});
@@ -737,6 +757,7 @@
 					$('#Detail').val("");
 					$('#Revisi').val("");
 					$("#Detail").prop('disabled', 'disabled');
+					$('#attachmentElement').empty();
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
@@ -763,6 +784,19 @@
 							}
 						}
 
+						$.ajax({
+							type : 'post',
+							url : 'rfm_controller/getattachment',
+							data :  {
+								'id_rfm': valueSelected,
+								'id_rfp': null
+							},
+							cache: false,
+							success : function(res) {
+								$('#attachmentElement').html(res);
+							}
+						});
+
 						$("#collapseDetail").collapse('show');
 						
 					} else {
@@ -772,6 +806,7 @@
 						$('#Revisi').val("");
 						$("#Detail").prop('disabled', 'disabled');
 						$("#collapseDetail").collapse('hide');
+						$('#attachmentElement').empty();
 					}	
 
 				});

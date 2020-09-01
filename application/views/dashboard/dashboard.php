@@ -1226,6 +1226,13 @@
 
 //==================================================
 
+    <?php 
+        $Q = 'SELECT kode_kantor, COUNT(*) as total_by_kk
+        FROM ticket_support.rfm_new_detail
+        GROUP BY kode_kantor';
+        $rfmGrouped = $this->db->query($Q)->result();
+    ?>
+
     var ctx_ = document.getElementById("myChart5").getContext("2d");
     var data_ = {
         labels: [
