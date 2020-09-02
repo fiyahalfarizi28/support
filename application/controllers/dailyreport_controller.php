@@ -161,6 +161,7 @@ class dailyreport_controller extends ci_controller{
                 $array_update_task = array(
                     'status'            => $status,
                     'update_by'         => $this->session->userdata('USER_ID'),
+                    'last_update'       => $date_now,
                 );
     
                 $this->db->where('id', $task_id);
@@ -171,7 +172,7 @@ class dailyreport_controller extends ci_controller{
                 );
     
                 $this->db->where('id', $project_id);
-                $update_rfm = $this->db->update(TB_PROJECT, $array_update_project);
+                $update_project = $this->db->update(TB_PROJECT, $array_update_project);
 
                 $no_rfp = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfp;
                 $rfp_id = $this->db->where('no_rfp', $no_rfp)->get(TB_RFP)->row()->id;

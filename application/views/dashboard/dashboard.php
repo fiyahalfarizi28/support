@@ -478,7 +478,7 @@
                     <th style="text-align: center">#</th>
                     <th>NAMA PROJECT</th>
                     <th>STATUS</th>
-                    <th>UPDATE TERAKHIR</th>
+                    <th>LAST UPDATE</th>
                 </tr>
             </thead>
 
@@ -497,7 +497,7 @@
                         <td>
                             <?php echo STT_ON_PROGRESS?>
                         </td>
-                        <td></td>
+                        <td><?php echo date("d-m-Y | H:i:s",strtotime( $r->last_update))?></td>
                     </tr>
 
                     <tr id=<?php echo $r->id?> class="collapse">
@@ -508,8 +508,9 @@
                                             <tr>
                                                 <th>NAMA TASK</th>
                                                 <th>TANGGAL DIBUAT</th>
-                                                <th>UPDATE TERAKHIR</th>
+                                                <th>TARGET DATE</th>
                                                 <th>STATUS</th>
+                                                <th>LAST UPDATE</th>
                                                 <th>PIC</th>
                                             </tr>
                                         </thead>
@@ -518,8 +519,9 @@
                                                 <tr>
                                                     <td><?php echo $row->task_name?></td>
                                                     <td><?php echo date("d-m-Y",strtotime( $row->create_date)) ?></td>
-                                                    <td><?php echo date("d-m-Y H:i",strtotime( $row->last_update)) ?></td>
+                                                    <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>
                                                     <td><?php echo $row->status?></td>
+                                                    <td><?php echo date("d-m-Y | H:i:s",strtotime( $row->last_update))?></td>
                                                     <td>
                                                         <?php 
                                                             $this->db->where('user_id', $row->assign_to);
@@ -730,7 +732,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PERSENTASE APLIKASI RFM</b>
+                <b>PERSENTASE RFM BERDASARKAN APLIKASI</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart1"></canvas>
@@ -741,7 +743,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PERSENTASE KESALAHAN</b>
+                <b>PERSENTASE RFM BERDASARKAN PROBLEM TYPE</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart2"></canvas>
@@ -754,7 +756,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PERSENTASE APLIKASI RFP</b>
+                <b>PERSENTASE RFP BERDASARKAN APLIKASI</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart3"></canvas>
@@ -765,7 +767,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PERSENTASE PERMINTAAN</b>
+                <b>PERSENTASE RFP BERDASARKAN PROBLEM TYPE</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart4"></canvas>
@@ -1332,7 +1334,7 @@
 
 //==================================================
 
-var ctx_ = document.getElementById("myChart6").getContext("2d");
+    var ctx_ = document.getElementById("myChart6").getContext("2d");
     var data_ = {
         labels: [
             <?php
@@ -1525,7 +1527,7 @@ var ctx_ = document.getElementById("myChart6").getContext("2d");
 
 //==================================================
 
-var ctx_ = document.getElementById("myChart8").getContext("2d");
+    var ctx_ = document.getElementById("myChart8").getContext("2d");
     var data_ = {
         labels: [
             <?php
