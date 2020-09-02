@@ -84,9 +84,11 @@
                 <tr>
                     <th width="3%">#</th>
                     <th width="15%">NAMA</th>
+                    <th width="10%">ASSIGNED</th>
                     <th width="10%">ON PROGRESS</th>
                     <th width="10%">DONE</th>
                     <th width="10%">MELEWATI TARGET DATE</th>
+                    <th width="10%">REVISI</th>
                     <th width="10%">TOTAL</th>
                     <th width="10%">%</th>
                 </tr>
@@ -95,16 +97,28 @@
                     <?php
                         $no=1;
                         foreach($result as $r):
+                            $query_assigned_rfm = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_assigned_rfp = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_assigned =  $query_assigned_rfm->ASSIGNED_RFM + $query_assigned_rfp->ASSIGNED_RFP;
 
-                            $query_progress = $this->db->query("SELECT COUNT(assign_date) AS ASSIGN FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_progress_rfm = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status = 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_progress_rfp = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND result_status = 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_progress = $query_progress_rfm->ON_PROGRESS_RFM + $query_progress_rfp->ON_PROGRESS_RFP;
 
-                            $query_done = $this->db->query("SELECT COUNT(done_date) AS DONE FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_done_rfm = $this->db->query("SELECT COUNT(done_date) AS DONE_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_done_rfp = $this->db->query("SELECT COUNT(done_date) AS DONE_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_done = $query_done_rfm->DONE_RFM + $query_done_rfp->DONE_RFP;
 
-                            $sisa = $query_progress->ASSIGN - $query_done->DONE;
-                            if($query_done->DONE == 0){
+                            $query_total_rfm = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_total_rfp = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_total = $query_total_rfm->TOTAL_RFM + $query_total_rfp->TOTAL_RFP;
+
+                            $sisa = $query_assigned- $query_done;
+
+                            if($query_done == 0){
                                 $persen = '0 %';
-                            }else{
-                                $persen = ($query_done->DONE * 100) / $query_progress->ASSIGN;
+                            } else {
+                                $persen = ($query_done * 100) / $query_total;
                                 $persen = ROUND(ROUND($persen))." %";
                             }
                     ?>
@@ -114,16 +128,16 @@
                         $done_date = $this->input->post('done_date');
                         $isOverDue = $done_date > $target_date;
 
-
-
                     ?>
                         <tr>
                             <td style ="text-align: center"><?php echo $no++ ?></td>
                             <td><?php echo $r->nama ?></td>
                             <td class="text-right"><?php echo $sisa ?></td>
-                            <td class="text-right"><?php echo $query_done->DONE ?></td>
+                            <td class="text-right"><?php echo $query_progress?></td>
+                            <td class="text-right"><?php echo $query_done?></td>
                             <td></td>
-                            <td class="text-right"><?php echo $query_progress->ASSIGN ?></td>
+                            <td></td>
+                            <td class="text-right"><?php echo $query_total?></td>
                             <td class="text-right"><?php echo $persen ?></td>
                         </tr>
                     <?php endforeach ?>

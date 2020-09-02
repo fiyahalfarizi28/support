@@ -151,7 +151,7 @@ class dailyreport_controller extends ci_controller{
                 'table' => TB_DAILY_ACTIVITY,
                 'where' => array(
                     'user_id' => $this->session->userdata('USER_ID'),
-                    'date' => $date_now,
+                    'date_activity' => $date_now,
                 )
             );
 
@@ -172,7 +172,7 @@ class dailyreport_controller extends ci_controller{
 
             $array_insert = array(
                 'user_id'       => $user_id,
-                'date'      	=> $date_now,
+                'date_activity' => $date_now,
                 'project_id'    => $project_id,
                 'task_id'       => $task_id,
                 'rfm_id'        => $rfm_id,
@@ -247,7 +247,7 @@ class dailyreport_controller extends ci_controller{
 
                 if ($check != 0) {
                     $array_update_comment = array(
-                        'date'      	=> $date_now,
+                        'date_activity' => $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );
@@ -259,7 +259,7 @@ class dailyreport_controller extends ci_controller{
                 } else {
                     $array_insert_comment = array(
                         'id'            => !empty($rfm_id) ? $rfm_id : $rfp_id,
-                        'date'      	=> $date_now,
+                        'date_activity' => $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );

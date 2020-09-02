@@ -76,7 +76,7 @@ $(document).ready(function(){
                 "defaultContent": '',
             },
             { "data": "0" },
-            { "data": "17" },
+            { "data": "18" },
             { "data": "1" },
             { "data": "2" },
             { "data": "3" },
@@ -375,6 +375,10 @@ function format_tb_detail_rfp(row)
             '<td>'+row[8]+' ('+row[9]+')</td>'+
         '</tr>'+
         '<tr>'+
+            '<td width="10px">Application</td>'+
+            '<td>'+row[19]+'</td>'+
+        '</tr>'+
+        '<tr>'+
             '<td width="10px">Subject</td>'+
             '<td>'+row[10]+'</td>'+
         '</tr>'+
@@ -397,6 +401,10 @@ function format_tb_detail_rfp(row)
         '<tr>'+
             '<td width="10px">Reject Notes</td>'+
             '<td>'+row[16]+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td width="10px">Confirm Notes</td>'+
+            '<td>'+row[17]+'</td>'+
         '</tr>'+
 
         //MOBILE VIEW

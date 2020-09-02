@@ -11,7 +11,6 @@
     <span id="name_id<?php echo $rAtt->id ?>">
         <a title="<?php echo $rAtt->filename ?>" target="_blank" href="<?php echo $rAtt->data_file ?>" class=""><i class="far fa-image fa-2x"></i></a>
         <label for='check_remove<?php echo $rAtt->id ?>'>
-        <sub class="supx" data-id='<?php echo $rAtt->id ?>'>x</sub>
         </label>
         <input type="checkbox" class="check_remove" id='check_remove<?php echo $rAtt->id?>' name="removeAtt[]" value="<?php echo $rAtt->id?>">
     </span>

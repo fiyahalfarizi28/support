@@ -223,7 +223,7 @@
                     
                     <?php 
                         $this->db->where('user_id', $r->user_id);
-                        $this->db->where('date', date('Y-m-d'));
+                        $this->db->where('date_activity', date('Y-m-d'));
                         $this->db->order_by('last_update DESC');
                         $specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
                     ?>
@@ -235,7 +235,7 @@
                                     <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->user_id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
                                     <td>
                                         <?php
-                                            $hari = date('l',strtotime($row->date));
+                                            $hari = date('l',strtotime($row->date_activity));
                                             switch($hari){
                                                 case 'Sunday':
                                                     $hari = "Minggu";
@@ -272,7 +272,7 @@
                                             echo $hari;
                                         ?>
                                     </td>
-                                    <td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
+                                    <td><?php echo date("d-m-Y",strtotime( $row->date_activity)) ?></td>
                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                     <td>
                                         <?php 
@@ -356,7 +356,7 @@
                                                 <tr>
                                                     <td>
                                                         <?php
-                                                            $hari = date('l',strtotime($row->date));
+                                                            $hari = date('l',strtotime($row->date_activity));
                                                             switch($hari){
                                                                 case 'Sunday':
                                                                     $hari = "Minggu";
@@ -393,7 +393,7 @@
                                                             echo $hari;
                                                         ?>
                                                     </td>
-                                                    <td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
+                                                    <td><?php echo date("d-m-Y",strtotime( $row->date_activity)) ?></td>
                                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                                     <td>
                                                         <?php 
@@ -478,6 +478,7 @@
                     <th style="text-align: center">#</th>
                     <th>NAMA PROJECT</th>
                     <th>STATUS</th>
+                    <th>UPDATE TERAKHIR</th>
                 </tr>
             </thead>
 
@@ -496,10 +497,11 @@
                         <td>
                             <?php echo STT_ON_PROGRESS?>
                         </td>
+                        <td></td>
                     </tr>
 
                     <tr id=<?php echo $r->id?> class="collapse">
-                            <td colspan="3">
+                            <td colspan="4">
                                 <p>
                                     <table style="width: 100%">
                                         <thead>

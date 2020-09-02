@@ -15,7 +15,7 @@
                 <th>JABATAN</th>
                 <th>APPROVAL</th>
                 <th>NO.RFM</th>
-                <th>TIME</th>
+                <th>DATE</th>
                 <th>REQUEST STATUS</th>
                 <th>RESULT STATUS</th>
                 <th>PIC</th>

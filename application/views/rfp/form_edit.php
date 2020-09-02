@@ -124,7 +124,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    Attachment: <a href="javascript:void(0)" class="btn btn-warning text-white" onclick="addFile();"><i class="fa fa-paperclip"></i></a>         
+                    Attachment: <a href="javascript:void(0)" class="btn btn-warning text-white" onclick="addFile_rfp();"><i class="fa fa-paperclip"></i></a>         
                 </div>
 
                 <div class="col-md-6 text-right">
@@ -186,7 +186,7 @@ $('.supx').click(function(){
 })
 
 var fileId = 0;
-function addFile() {
+function addFile_rfp() {
     fileId++;
     var html =  '<input type="file" name="attachment[]" />'+
                 ' <a href="javascript:void(0)" onclick="javascript:removeElement(\'file-' + fileId + '\'); return false;">'+

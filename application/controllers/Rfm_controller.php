@@ -78,7 +78,9 @@ class Rfm_controller extends CI_Controller {
             // request status
             $array_crud = array(
                 'table' => TB_REQUEST_TYPE,
-                'where' => array('id' => $field->request_type),
+                'where' => array(
+                    'id' => $field->request_type,
+                ),
             );
             $row_request_type = $this->rfm_model->get_crud($array_crud)->row()->request_type;
 
@@ -210,7 +212,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $rates = "";
+                $rates = "-";
             }
 
             if($field->approve_notes != NULL)
@@ -219,7 +221,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $notes_approve = "";
+                $notes_approve = "-";
             }
 
             if($field->receive_notes != NULL)
@@ -228,7 +230,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $notes_receive = "";
+                $notes_receive = "-";
             }
 
             if($field->done_notes != NULL)
@@ -237,7 +239,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $notes_done = "";
+                $notes_done = "-";
             }
 
             if($field->reject_notes != NULL OR $field->confirm_notes)

@@ -48,7 +48,7 @@
 											<td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->user_id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
 											<td>
 												<?php
-													$hari = date('l',strtotime($row->date));
+													$hari = date('l',strtotime($row->date_activity));
 													switch($hari){
 														case 'Sunday':
 															$hari = "Minggu";
@@ -85,7 +85,7 @@
 													echo $hari;
 												?>
 											</td>
-											<td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
+											<td><?php echo date("d-m-Y",strtotime( $row->date_activity)) ?></td>
 											<td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
 											<td>
 												<?php 
@@ -187,7 +187,7 @@
 															<tr>
 																<td>
 																	<?php
-																		$hari = date('l',strtotime($row->date));
+																		$hari = date('l',strtotime($row->date_activity));
 																		switch($hari){
 																			case 'Sunday':
 																				$hari = "Minggu";
@@ -224,7 +224,7 @@
 																		echo $hari;
 																	?>
 																</td>
-																<td><?php echo date("d-m-Y",strtotime( $row->date)) ?></td>
+																<td><?php echo date("d-m-Y",strtotime( $row->date_activity)) ?></td>
 																<td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
 																<td>
 																	<?php 
@@ -344,7 +344,7 @@
 						<tr>
 							<td>
 							<?php
-								$hari = date('l',strtotime($r->date));
+								$hari = date('l',strtotime($r->date_activity));
 								switch($hari){
 									case 'Sunday':
 										$hari = "Minggu";
@@ -382,7 +382,7 @@
 							?>
 							</td>
 
-							<td><?php echo date("d-m-Y",strtotime( $r->date)) ?></td>
+							<td><?php echo date("d-m-Y",strtotime( $r->date_activity)) ?></td>
 
 							<td>
 								<?php echo date("H:i",strtotime( $r->last_update)) ?>

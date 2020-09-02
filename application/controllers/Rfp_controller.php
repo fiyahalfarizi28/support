@@ -213,6 +213,17 @@ class Rfp_controller extends CI_Controller {
                 $notes_done = "-";
             }
 
+            if($field->reject_notes != NULL OR $field->confirm_notes)
+            {
+                $notes_reject = $field->reject_notes;
+                $confirm_notes = $field->confirm_notes;
+            }
+            else
+            {
+                $notes_reject = "-";
+                $confirm_notes = "-";
+            }
+
             if($field->reject_notes != NULL)
             {
                 $notes_reject = $field->reject_notes;
@@ -256,7 +267,7 @@ class Rfp_controller extends CI_Controller {
             $row[] = $txtApprove;
             $row[] = $field->result_status;
             $row[] = $row_assign_to;
-            $row[] = $btn_option;
+            $row[] = $btn_option.$btn_case;
             $row[] = $row_problem_type;
             $row[] = $row_request_type;
             $row[] = $field->subject;
@@ -266,7 +277,9 @@ class Rfp_controller extends CI_Controller {
             $row[] = $notes_receive;
             $row[] = $notes_done;
             $row[] = $notes_reject;
+            $row[] = $confirm_notes;
             $row[] = $field->jabatan;
+            $row[] = $projectName;
             $data[] = $row;
         }
  
