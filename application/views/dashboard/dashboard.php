@@ -490,6 +490,8 @@
                         $this->db->order_by('last_update DESC');
                         $specificTask = $this->db->get(TB_TASK)->result();
                     ?>
+
+                    <script>console.log(<?php echo json_encode($specificTask)?>)</script>
                     
                     <tr>
                         <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
@@ -500,22 +502,23 @@
                         <td><?php echo date("d-m-Y | H:i:s",strtotime( $r->last_update))?></td>
                     </tr>
 
-                    <tr id=<?php echo $r->id?> class="collapse">
-                            <td colspan="4">
-                                <p>
-                                    <table style="width: 100%">
-                                        <thead>
-                                            <tr>
-                                                <th>NAMA TASK</th>
-                                                <th>TANGGAL DIBUAT</th>
-                                                <th>TARGET DATE</th>
-                                                <th>STATUS</th>
-                                                <th>LAST UPDATE</th>
-                                                <th>PIC</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach($specificTask as $row): ?>
+                    <tr id=<?php echo $r->id?> class="collapse">                     
+                        <td colspan="4">
+                            <p>
+                                <table style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th>NAMA TASK</th>
+                                            <th>TANGGAL DIBUAT</th>
+                                            <th>TARGET DATE</th>
+                                            <th>STATUS</th>
+                                            <th>LAST UPDATE</th>
+                                            <th>PIC</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($specificTask as $row): ?>
+                                            <?php if ($row->status != STT_DONE && $this->db->where('no_rfp', $row->no_rfp)->get(TB_RFP)->row()->result_status != STT_SOLVED ) {?>
                                                 <tr>
                                                     <td><?php echo $row->task_name?></td>
                                                     <td><?php echo date("d-m-Y",strtotime( $row->create_date)) ?></td>
@@ -529,13 +532,13 @@
                                                         ?>
                                                     </td>
                                                 </tr>
-                                            <?php endforeach ?>
-                                        </tbody>
-                                    </table>
-                                </p>
-                            </td>
-                        </tr>
-
+                                            <?php } ?>
+                                        <?php endforeach ?>
+                                    </tbody>
+                                </table>
+                            </p>
+                        </td>
+                    </tr>
                 <?php endforeach ?>
             </tbody>
 
