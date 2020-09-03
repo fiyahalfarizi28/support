@@ -29,8 +29,6 @@ a:hover{
   75%{ transform:rotate(7deg) translateY(1px); }
 }
 
-
-
 .star-rating {
 font-size: 0;
 white-space: nowrap;

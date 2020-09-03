@@ -54,6 +54,7 @@ $route['logout'] = 'auth_controller/logout';
 $route['rfm'] = 'rfm_controller';
 $route['rfp'] = 'rfp_controller';
 $route['daily_report'] = 'dailyreport_controller';
+$route['activity'] = 'activity_controller';
 $route['user_management'] = 'um_controller';
 $route['kpi'] = 'um_controller/kpi_pic';
 $route['export_to_excel'] = 'rfm_controller/export_to_excel';

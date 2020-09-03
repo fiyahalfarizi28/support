@@ -98,7 +98,7 @@
                         $no=1;
                         foreach($result as $r):
 
-                            $query_kehadiran = $this->db->query("SELECT COUNT(date_activity) AS KEHADIRAN FROM daily_activity WHERE user_id='$r->user_id' AND MONTH(date_activity) = $m AND YEAR(date_activity) = $y")->row();
+                            $query_kehadiran = $this->db->query("SELECT COUNT(DISTINCT date_activity) AS KEHADIRAN FROM daily_activity WHERE user_id='$r->user_id' AND MONTH(date_activity) = $m AND YEAR(date_activity) = $y")->row();
                            
                             $query_assigned_rfm = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
                             $query_assigned_rfp = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
@@ -116,8 +116,8 @@
                             $query_total_rfp = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
                             $query_total = $query_total_rfm->TOTAL_RFM + $query_total_rfp->TOTAL_RFP;
 
-                            $query_lewat_rfm = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND done_date > target_date AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
-                            $query_lewat_rfp = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND done_date > target_date AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_lewat_rfm = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_lewat_rfp = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
                             $query_lewat = $query_lewat_rfm->LEWAT_RFM + $query_lewat_rfp->LEWAT_RFP;
 
                             $assigned = $query_assigned - $query_done;
@@ -129,13 +129,6 @@
                                 $persen = ROUND(ROUND($persen))." %";
                             }
                     ?>
-
-                            <?php
-                                $target_date = $this->input->post('target_date');
-                                $done_date = $this->input->post('done_date');
-                                $isOverDue = $done_date > $target_date;
-
-                            ?>
                         <tr>
                             <td style ="text-align: center"><?php echo $no++ ?></td>
                             <td><?php echo $r->nama ?></td>
