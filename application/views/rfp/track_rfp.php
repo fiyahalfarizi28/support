@@ -1,5 +1,5 @@
 <div class="card mb-3" id="table">
-    <div class="card-header"><b>TRACKING RFM</b></div>
+    <div class="card-header"><b>TRACKING RFP</b></div>
 
     <div class="card-body">
     <div class="pesan"></div>
@@ -10,7 +10,7 @@
             <thead>
             <tr>
                 <th>REQUEST BY</th>
-                <th>NO.RFM</th>
+                <th>NO.RFP</th>
                 <th>DATE</th>
                 <th>REQUEST STATUS</th>
                 <th>RESULT STATUS</th>
@@ -19,7 +19,7 @@
             </thead>
 
             <tbody>
-                <?php foreach($track_rfm->result() as $r): ?>
+                <?php foreach($track_rfp->result() as $r): ?>
                     <tr>
                         <td>
                             <?php 
@@ -28,7 +28,7 @@
                             ?>
                         </td>
                         <td>
-                            <?php echo $r->no_rfm?>
+                            <?php echo $r->no_rfp?>
                         </td>
                         <td>
                             <?php echo date("d-m-Y",strtotime( $r->request_date)) ?>
@@ -40,16 +40,16 @@
                             <?php echo $r->result_status ?>
                         </td>
                         <td>
-                            <button class="btn btn-success btn-sm" id="btn_track" data-id="<?php echo $r->no_rfm ?>" data-toggle="modal" data-target="#modal-track-rfm">
+                            <button class="btn btn-success btn-sm" id="btn_track" data-id="<?php echo $r->no_rfp ?>" data-toggle="modal" data-target="#modal-track-rfp">
                                 <i class="far fa-eye"></i> Track
                             </button>
                         </td>
                         
                     </tr>
 
-                    <div class="modal fade" id="modal-track-rfm">
+                    <div class="modal fade" id="modal-track-rfp">
                         <div class="modal-dialog modal-m">
-                            <div class="modal-content" id="view-track-rfm"> 
+                            <div class="modal-content" id="view-track-rfp"> 
                             </div>
                         </div>
                     </div>
