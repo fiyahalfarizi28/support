@@ -265,6 +265,21 @@ $(document).ready(function(){
         });
     })
 
+    $('#modal-track-rfm').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+        console.log(data);
+        
+        $.ajax({
+            type : 'post',
+            url : 'track_rfm_controller/track_rfm',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-modal-track').html(res);
+            }
+        });
+    })
+
 })
     
 function preloader()

@@ -40,41 +40,24 @@
                             <?php echo $r->result_status ?>
                         </td>
                         <td>
-                            <button class="btn btn-success btn-sm" id="btn_track" data-id="<?php $r->no_rfm ?>" data-toggle="modal" data-target="#modal-track-rfm">
+                            <button class="btn btn-success btn-sm" id="btn_track" data-id="<?php echo $r->no_rfm ?>" data-toggle="modal" data-target="#modal-track-rfm">
                                 <i class="far fa-eye"></i> Track
                             </button>
                         </td>
+                        
                     </tr>
+
+                    <div class="modal fade" id="modal-track-rfm">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content" id="view-modal-track">
+                                
+                            </div>
+                        </div>
+                    </div>
                 <?php endforeach ?>
             </tbody>
         </table>
 
-        <div class="modal fade" id="modal-track-rfm">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">TRACK <?php echo $r->no_rfm ?></h3>
-                    </div>
-
-                    <div class="modal-body">
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </div>
-
-<script>
-    $('#modal-track-rfm').on('show.bs.modal', function (e) {
-        var data = $(e.relatedTarget).data('id');
-        $.ajax({
-            type : 'post',
-            data :  'idx='+ data,
-            cache: false,
-            success : function(res) {
-                $('#view-modal-track').html(res);
-            }
-        });
-    })
-</script>

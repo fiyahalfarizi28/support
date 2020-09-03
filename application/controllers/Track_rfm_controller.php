@@ -41,4 +41,12 @@ class Track_rfm_controller extends CI_Controller {
         
     }
 
+    public function track_rfm()
+    {
+        $id = $this->input->post('idx');
+        $data['no_rfm'] = $id;
+
+        $this->load->view('modal/modal_track', $data);
+    }
+
 }
