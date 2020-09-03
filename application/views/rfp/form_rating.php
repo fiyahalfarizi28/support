@@ -119,11 +119,11 @@
 
         <div class="row" style="margin-top: 8px">
             <div class="col-md-6">
-                <button name="iya" id="iya" type="button" class="btn btn-success btn-block"><i class="far fa-times-circle"></i> IYA </button>
+                <button name="iya" id="iya" type="button" class="btn btn-success btn-block"><i class="far fa-times-circle"></i> SESUAI </button>
             </div>
 
             <div class="col-md-6">
-                <button name="tidak" id="tidak" type="button" class="btn btn-danger btn-block"><i class="far fa-times-circle"></i> TIDAK </button>
+                <button name="tidak" id="tidak" type="button" class="btn btn-danger btn-block"><i class="far fa-times-circle"></i> TIDAK SESUAI </button>
             </div>
         </div> 
 
