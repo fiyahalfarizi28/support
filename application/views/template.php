@@ -63,7 +63,7 @@
                                     <a href="<?php echo base_url('rfm') ?>">LIST RFM</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
-                                    <a href="">TRACK RFM</a>
+                                    <a href="<?php echo base_url('track_rfm') ?>">TRACK RFM</a>
                                 </li>
                             </ul>
                         <li class="list-group-item"><a href="#rfpSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">RFP</a></li>
@@ -72,7 +72,7 @@
                                     <a href="<?php echo base_url('rfp') ?>">LIST RFP</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
-                                    <a href="">TRACK RFP</a>
+                                    <a href="<?php echo base_url('track_rfp') ?>">TRACK RFP</a>
                                 </li>
                             </ul>
                         <?php
