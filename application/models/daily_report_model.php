@@ -5,7 +5,6 @@ class daily_report_model extends ci_model{
         parent::__construct();
     }
 	
-	
 	public function get_crud($data)
     {
         if (is_array($data)) {
