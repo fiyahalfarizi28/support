@@ -176,6 +176,10 @@ class Rfm_controller extends CI_Controller {
             {
                 $txtApprove = "<b class='text-dark'>$field->request_status</b>";
             }
+            elseif($field->request_status === STT_CONFIRMED)
+            {
+                $txtApprove = "<b class='text-dark'>$field->request_status</b>";
+            }
             elseif($field->request_status === STT_DONE)
             {
                 $txtApprove = "<b class='text-success'>$field->request_status</b>";

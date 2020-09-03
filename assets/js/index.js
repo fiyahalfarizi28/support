@@ -196,6 +196,8 @@ $(document).ready(function(){
         });
     })
 
+    
+
     //RFP=============================
     $('#modal-create-rfp').on('show.bs.modal', function (e) {
         var data = $(e.relatedTarget).data('id');

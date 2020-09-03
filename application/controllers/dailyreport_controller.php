@@ -1,5 +1,5 @@
 <?php
-class dailyreport_controller extends ci_controller{
+class Dailyreport_controller extends ci_controller{
     
     function __construct() {
         parent::__construct();
