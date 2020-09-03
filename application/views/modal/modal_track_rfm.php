@@ -1,14 +1,14 @@
 <style>
 .progressbar {
   margin-left: 50px;
-  padding: 10px;
+  padding: 0;
   counter-reset: step;
 }
 .progressbar li {
   list-style-type: none;
   /* width: 25%; */
   /* float: left; */
-  font-size: 14px;
+  font-size: 13px;
   position: relative;
   text-align: left;
   text-transform: uppercase;
@@ -62,17 +62,70 @@
 .progressbar li.active + li:after {
   background-color: #007bff;
 }
-.progressbar li.reject {
-  color: red;
-}
-.progressbar li.reject:before {
-  border-color: red;
-  background-color: red;
-}
-.progressbar li.reject + li:after {
-  background-color: red;
-}
+
 </style>
+
+<?php
+    if($r->request_date != NULL) {
+      $class_status_request = "done";
+      $title_status_request = "RFM dengan No. $r->no_rfm telah terkirim";
+    } else {
+      $class_status_request = "active";
+      $title_status_request = "Menunggu RFM";
+    }
+
+    if($r->approve_date != NULL ) {
+      $class_app_dept ="done";
+      $title_app_dept= "RFM dengan No. $r->no_rfm telah disetujui oleh Department Head";
+    } else {
+      if ($class_status_request == "done") {
+        $class_app_dept = "active";
+      } else {
+        $class_app_dept = "";
+      }
+
+      $title_app_dept = "Menunggu persetujuan dari Department Head";
+    }
+
+    if($r->receive_date != NULL ) {
+      $class_app_it ="done";
+      $title_app_it= "RFM dengan No. $r->no_rfm telah disetujui oleh IT";
+    } else {
+      if ($class_app_dept == "done") {
+        $class_app_it = "active";
+      } else {
+        $class_app_it = "";
+      }
+      
+      $title_app_it = "Menunggu persetujuan dari IT";
+    }
+
+    if($r->assign_date != NULL ) {
+      $class_assign ="active";
+      $title_assign = "RFM dengan No. $r->no_rfm sedang dikerjakan";
+      if ($r->done_date != NULL ) {
+        $class_assign ="done";
+        $title_assign= "RFM dengan No. $r->no_rfm telah selesai dikerjakan";
+      }
+    } else {
+      $class_assign = "";
+      $title_assign= "Menunggu assign ke PIC";
+    }
+
+    if($r->confirm_date != NULL) {
+      $class_confirmed ="done";
+      $title_confirmed= "RFM dengan No. $r->no_rfm telah selesai dikerjakan, mohon konfirmasi penyelesaian";
+    } else {
+      if ($class_assign == "done") {
+        $class_confirmed = "active";
+      } else {
+        $class_confirmed = "";
+      }
+      
+      $title_confirmed = "Menunggu konfirmasi";
+    }
+
+?>
 
 <div class="modal-header">
     <h3 class="modal-title">TRACK <?php echo $r->no_rfm ?></h3>
@@ -80,40 +133,45 @@
 
 <div class="modal-body">
     <ul class="progressbar">
-        <li class="done" data-toggle="tooltip" data-placement="left" title="<?php ?>">
+        <li class="<?php echo $class_status_request ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_status_request ?>">
           RFM terkirim
           <div class="ml-4">
-            ()
+          (<?php echo !empty($r->request_date) ? date('d-m-Y', strtotime($r->request_date)) : '' ?> | <?php echo !empty($r->request_date) ? date('H:i:s', strtotime($r->request_date)) : '' ?>)
           </div>
         </li>
 
-        <li class="done" data-toggle="tooltip" data-placement="left" title="<?php ?>">
+        <li class="<?php echo $class_app_dept ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_app_dept ?>">
           Approved Department Head
           <div class="ml-4">
-            ()
+          (<?php echo !empty($r->approve_date) ? date('d-m-Y', strtotime($r->approve_date)) : '' ?> | <?php echo !empty($r->approve_date) ? date('H:i:s', strtotime($r->approve_date)) : '' ?>)
           </div>
         </li>
 
-        <li class="done" data-toggle="tooltip" data-placement="left" title="<?php ?>">
+        <li class="<?php echo $class_app_it ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_app_it ?>">
           Approved IT 
           <div class="ml-4">
-            ()
+          (<?php echo !empty($r->receive_date) ? date('d-m-Y', strtotime($r->receive_date)) : '' ?> | <?php echo !empty($r->receive_date) ? date('H:i:s', strtotime($r->receive_date)) : '' ?>)
           </div>
         </li>
 
-        <li class="active" data-toggle="tooltip" data-placement="left" title="<?php ?>">
+        <li class="<?php echo $class_assign ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_assign?>">
           RFM sedang dikerjakan
           <div class="ml-4">
-            ()
+          (<?php echo !empty($r->assign_date) ? date('d-m-Y', strtotime($r->assign_date)) : '' ?> | <?php echo !empty($r->assign_date) ? date('H:i:s', strtotime($r->assign_date)) : '' ?>)
           </div>
         </li>
 
-        <li class="<?php  ?>" data-toggle="tooltip" data-placement="left" title="<?php ?>">
+        <li class="<?php echo $class_confirmed?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_confirmed?>">
           Konfirmasi RFM
           <div class="ml-4">
-            ()
+          (<?php echo !empty($r->done_date) ? date('d-m-Y', strtotime($r->done_date)) : '' ?> | <?php echo !empty($r->done_date) ? date('H:i:s', strtotime($r->done_date)) : '' ?>)
           </div>
         </li>
     </ul>
-
 </div>
+
+<script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>

@@ -601,7 +601,7 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
         $SESSION_USER_INDUK = $this->session->userdata('USER_INDUK');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = null;
@@ -1005,7 +1005,7 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
         $SESSION_USER_INDUK = $this->session->userdata('USER_INDUK');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = $this->input->post('problem_type');
@@ -1647,7 +1647,7 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_FULLNAME = $this->session->userdata('USER_FULLNAME');
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $app_it = $this->db->where('id', 'RFM_AKSES_IT_APP')->get(TB_PARAMETER)->row();
         $problem_type = $this->input->post('problem_type_hidden');
         $project_id = $this->input->post('project_id_hidden');
@@ -1714,7 +1714,7 @@ class Rfm_controller extends CI_Controller {
         $notes = $this->input->post('notes');
         $assign_pic = $this->input->post('assign_pic');
         $target_date = $this->input->post('target_date');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $problem_type = $this->input->post('problem_type');
         $project_id = $this->input->post('project_id');
         $subject = $this->input->post('subject');
@@ -1797,7 +1797,7 @@ class Rfm_controller extends CI_Controller {
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
         $penyelesaian = $this->input->post('penyelesaian');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
 
         if(empty($penyelesaian)) {
             $isValid = 0;
@@ -1844,7 +1844,7 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         
         $array_insert = array(
             'request_status' => STT_REJECT,
@@ -1877,7 +1877,7 @@ class Rfm_controller extends CI_Controller {
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
         $rates = $this->input->post('rates');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $isOk = $this->input->post('isOk');
 
         if ($isOk == 'iya') {
@@ -1995,7 +1995,6 @@ class Rfm_controller extends CI_Controller {
                     'approve_by' => NULL,
                     'receive_by' => NULL,
                     'assign_to' => NULL,
-                    "problem_type NOT IN($rfp_id)" => NULL,
                 )
         );
         $upline = $this->rfm_model->get_crud($array_crud)->row()->total;
@@ -2009,7 +2008,6 @@ class Rfm_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by' => $SESSION_UPLINE,
                     'assign_to' => NULL,
-                    "problem_type IN($rfp_id)" => NULL,
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;
@@ -2023,7 +2021,6 @@ class Rfm_controller extends CI_Controller {
                     'approve_by !=' => NULL,
                     'receive_by !=' => NULL,
                     'assign_to' => $SESSION_USER_ID,
-                    "problem_type NOT IN($rfp_id)" => NULL,
                 )
         );
         $assign = $this->rfm_model->get_crud($array_crud)->row()->total;
@@ -2037,7 +2034,6 @@ class Rfm_controller extends CI_Controller {
                     'approve_by' => NULL,
                     'receive_by' => NULL,
                     'assign_to' => $SESSION_USER_ID,
-                    "problem_type NOT IN($rfp_id)" => NULL,
                 )
         );
         $auto_assign = $this->rfm_model->get_crud($array_crud)->row()->total;

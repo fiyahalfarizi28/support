@@ -56,6 +56,11 @@ class Rfm_model extends ci_model{
         $this->db->select($qry);
         $this->db->from($this->table);
         $this->db->join('dpm_online.'.TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
+
+        if(empty($_POST['search']['value'])) {
+            $this->db->where('request_status !=', STT_DONE);
+            $this->db->where('request_status !=', STT_REJECT);
+        }
         
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");

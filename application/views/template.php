@@ -48,41 +48,41 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">HOME</a></li>
+                        <li class="list-group-item"><a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-window-maximize"></i> HOME</a></li>
                             <ul class="collapse list-unstyled" id="homeSubmenu">
                                 <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
-                                    <a href="<?php echo base_url() ?>">DASHBOARD</a>
+                                    <a href="<?php echo base_url() ?>"><i class="far fa-calendar-minus"></i> DASHBOARD</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
-                                    <a href="<?php echo base_url('activity') ?>">ACTIVITY</a>
+                                    <a href="<?php echo base_url('activity') ?>"><i class="far fa-list-alt"></i> ACTIVITY</a>
                                 </li>
                             </ul>
-                        <li class="list-group-item"><a href="#rfmSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">RFM</a></li>
+                        <li class="list-group-item"><a href="#rfmSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-clipboard"></i> RFM</a></li>
                         <ul class="collapse list-unstyled" id="rfmSubmenu">
                                 <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
-                                    <a href="<?php echo base_url('rfm') ?>">LIST RFM</a>
+                                    <a href="<?php echo base_url('rfm') ?>"><i class="far fa-folder-open"></i> LIST RFM</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
-                                    <a href="<?php echo base_url('track_rfm') ?>">TRACK RFM</a>
+                                    <a href="<?php echo base_url('track_rfm') ?>"><i class="far fa-eye"></i> TRACK RFM</a>
                                 </li>
                             </ul>
-                        <li class="list-group-item"><a href="#rfpSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">RFP</a></li>
+                        <li class="list-group-item"><a href="#rfpSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-clipboard"></i> RFP</a></li>
                         <ul class="collapse list-unstyled" id="rfpSubmenu">
                                 <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
-                                    <a href="<?php echo base_url('rfp') ?>">LIST RFP</a>
+                                    <a href="<?php echo base_url('rfp') ?>"><i class="far fa-folder-open"></i> LIST RFP</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
-                                    <a href="<?php echo base_url('track_rfp') ?>">TRACK RFP</a>
+                                    <a href="<?php echo base_url('track_rfp') ?>"><i class="far fa-eye"></i> TRACK RFP</a>
                                 </li>
                             </ul>
                         <?php
                             
                             if(in_array($this->session->userdata('USER_ID'), $menu)) {
-                                echo "<li class='list-group-item'><a href='".base_url('user_management')."'>USER MANAGEMENT</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('user_management')."'><i class='far fa-address-book'></i> USER MANAGEMENT</a></li>";
                             }
 
                             if($this->session->userdata('USER_DIVISI') === 'IT') {
-                                echo "<li class='list-group-item'><a href='".base_url('daily_report')."'>DAILY ACTIVITY</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('daily_report')."'><i class='far fa-bookmark'></i> DAILY ACTIVITY</a></li>";
                             }
 
                             echo $menu_kpi;
