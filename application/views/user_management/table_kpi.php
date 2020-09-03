@@ -98,7 +98,7 @@
                         $no=1;
                         foreach($result as $r):
 
-                            $query_kehadiran = $this->db->query("SELECT COUNT(date_activity) AS KEHADIRAN FROM daily_activity WHERE user_id='$r->user_id' AND MONTH(date_activity) = $m AND YEAR(date_activity) = $y")->row();
+                            $query_kehadiran = $this->db->query("SELECT COUNT(DISTINCT date_activity) AS KEHADIRAN FROM daily_activity WHERE user_id='$r->user_id' AND MONTH(date_activity) = $m AND YEAR(date_activity) = $y")->row();
                            
                             $query_assigned_rfm = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
                             $query_assigned_rfp = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
@@ -139,7 +139,7 @@
                         <tr>
                             <td style ="text-align: center"><?php echo $no++ ?></td>
                             <td><?php echo $r->nama ?></td>
-                            <td class="text-right"><?php echo $query_kehadiran->KEHADIRAN ?></td>
+                            <td class="text-right"><?php echo !empty($query_kehadiran->KEHADIRAN) ? $query_kehadiran->KEHADIRAN : 0?></td>
                             <td class="text-right"><?php echo $assigned ?></td>
                             <td class="text-right"><?php echo $query_progress?></td>
                             <td class="text-right"><?php echo $query_done?></td>
@@ -147,6 +147,9 @@
                             <td class="text-right"><?php echo $query_total?></td>
                             <td class="text-right"><?php echo $persen ?></td>
                         </tr>
+                        <script>
+                        console.log(<?php echo json_encode(!empty($query_kehadiran->KEHADIRAN) ? $query_kehadiran->KEHADIRAN : "KOSONG" )?>)
+                    </script>
                     <?php endforeach ?>
                 </tbody>
             </table>
