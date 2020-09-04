@@ -127,8 +127,8 @@
       } else {
         $class_confirmed = "";
       }
-      
-      $title_confirmed = "Menunggu konfirmasi";
+      $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
+      $title_confirmed = "Menunggu konfirmasi dari $nama_requestor";
     }
 
 ?>
