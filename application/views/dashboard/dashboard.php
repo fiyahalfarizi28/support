@@ -190,15 +190,6 @@
     </div>
 </div>
 
-<!-- <div class="card">
-	<div class="card-header">
-		TIMELINE PROJECT IT
-	</div>
-	<div class="card-body">
-		>> <a href="upload/IT PROJECT 2020.pdf" target="_blank">IT PROJECT 2020.pdf</a>
-	</div>
-</div> -->
-
 <?php
     $tb_detail = TB_DETAIL;
     $Q = "SELECT DISTINCT MONTH(`request_date`) AS bulan FROM `rfm_new_detail` WHERE YEAR(`request_date`) BETWEEN '2019' AND YEAR(CURDATE()) ORDER BY MONTH(`request_date`) ASC";
@@ -475,7 +466,14 @@
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+    
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
         $rfmList = $this->db->get(TB_DETAIL)->result();
+        
+        $this->db->select("COUNT(*) AS jmlh_rfm");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
     ?>
 
     var ctx_ = document.getElementById("myChart1").getContext("2d");
@@ -554,6 +552,10 @@
             title:{
                 display:true,
                 text:'Application Chart'
+                
+            },
+            subtitle: {
+                text: 'Total RFM : <?php echo $this->db->get(TB_DETAIL)->row()->jmlh_rfm;?>'
             },
             tooltips: {
                 callbacks: {
@@ -678,6 +680,9 @@
     <?php
             $applicationList = $this->db->get(TB_PROJECT)->result();
             $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+
+            $this->db->where('request_status !=', STT_ON_QUEUE);
+            $this->db->where('request_status !=', STT_REJECT);
             $rfpList = $this->db->get(TB_RFP)->result();
     ?>
 

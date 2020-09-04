@@ -155,7 +155,7 @@
         </li>
 
         <li class="<?php echo $class_assign ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_assign?>">
-          Assigned PIC
+          Assigned
           <div class="ml-4">
           (<?php echo !empty($r->assign_date) ? date('d-m-Y', strtotime($r->assign_date)) : '' ?> | <?php echo !empty($r->assign_date) ? date('H:i:s', strtotime($r->assign_date)) : '' ?>)
           </div>

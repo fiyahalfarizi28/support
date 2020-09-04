@@ -2068,17 +2068,17 @@ class Rfm_controller extends CI_Controller {
                 no_rfm AS `no_rfm`,
                 e.nama AS `pic`,
                 d.nama AS `request_by`,
-                b.`problem_type` AS `problem_type`,
-                c.`request_type` AS `request_type`,
+                b.`request_type` AS `request_type`,
+                c.`problem_type` AS `problem_type`,
                 `subject` AS `subject`,
                 rfm_detail AS `detail`,
                 request_status AS `status`,
                 request_date  AS `date`
             FROM
                 rfm_new_detail a 
-                LEFT JOIN rfm_new_problem_type b 
+                LEFT JOIN rfm_new_request_type b 
                 ON a.problem_type = b.id
-                LEFT JOIN rfm_new_request_type c
+                LEFT JOIN rfm_new_problem_type c
                 ON a.request_type = c.id
                 LEFT JOIN `user` d
                 ON a.request_by = d.user_id
