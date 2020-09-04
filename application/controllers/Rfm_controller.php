@@ -106,10 +106,13 @@ class Rfm_controller extends CI_Controller {
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
             
+            $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
             if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID)) {
                 $btn_option = $btn_option;
             } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
                 $btn_option = $btn_option;
+            } elseif($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' ||  $SESSION_USER_JABATAN === 'DIREKSI' AND $field->request_status === STT_APPROVED) {
+                    $btn_option = $btn_option;
             } else {
                 $btn_option = "";
                
@@ -125,7 +128,7 @@ class Rfm_controller extends CI_Controller {
             if($field->request_upline_by != NULL AND $field->request_status === STT_ON_QUEUE) {
                 if($field->request_upline_by === $team_it)
                 {
-                    $app_by = "IT";
+                    $app_by = 'IT';
                 }
                 else
                 {
@@ -281,7 +284,6 @@ class Rfm_controller extends CI_Controller {
                 $projectName = "-";
             }
 
-
             $no++;
             $row = array();
             $row[] = $field->nama;
@@ -337,7 +339,6 @@ class Rfm_controller extends CI_Controller {
         } else {
             $array_crud = array(
                 'table' => TB_PROBLEM_TYPE,
-                'where' => array('system_type' => NULL),
             );
             $data['problem_type'] = $this->rfm_model->get_crud($array_crud);
             
@@ -459,7 +460,7 @@ class Rfm_controller extends CI_Controller {
         $data['notes_name_confirm'] = $this->rfm_model->get_crud($array_crud)->row();
         //=======================================================
 
-        $explode_disabled = explode(":", $row->receive_by);
+        $explode_disabled = explode(":", $row->approve_by);
         foreach($explode_disabled as $r){
             $rows = $r;
             $data_explode_disabled[] = $rows;
@@ -1653,20 +1654,34 @@ class Rfm_controller extends CI_Controller {
         $project_id = $this->input->post('project_id_hidden');
         $subject = $this->input->post('subject');
         $detail = $this->input->post('detail');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
-        $array_insert = array(
-            'request_status' => STT_APPROVED,
-            'approve_by'     => $SESSION_USER_ID,
-            'approve_date'   => $date_now,
-            'approve_notes'  => $notes,
-            'receive_by'     => $app_it->value,
-            'project_id'     => $project_id,
-            'problem_type'   => $problem_type
-        );
+        if ($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' ||  $SESSION_USER_JABATAN === 'DIREKSI'){
+            $array_insert = array(
+                'request_status' => STT_APPROVED,
+                'approve_by'     => $SESSION_USER_ID,
+                'approve_date'   => $date_now,
+                'receive_by'     => $SESSION_USER_ID,
+                'receive_date'   => $date_now,
+                'receive_notes'  => $notes,
+                'project_id'     => $project_id,
+                'problem_type'   => $problem_type
+            );
+            $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
+    
+        } else {
+            $array_insert = array(
+                'request_status' => STT_APPROVED,
+                'approve_by'     => $SESSION_USER_ID,
+                'approve_date'   => $date_now,
+                'approve_notes'  => $notes,
+                'receive_by'     => $app_it->value,
+                'project_id'     => $project_id,
+                'problem_type'   => $problem_type
+            );
+            $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);    
+        }
         
-
-        $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
-
         if(!$insert_data) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Gagal Menyetujui RFM</div>";
@@ -1679,7 +1694,7 @@ class Rfm_controller extends CI_Controller {
             foreach($exp as $uid) {
                 $arr = array(
                     'user_id'     => $uid,
-                    'waktu'       => $date_now,
+                    'receive_date'  => $date_now,
                     'subject'     => 'RFM Approval(Waiting Assign To PIC)',
                     'pesan'       => $SESSION_USER_FULLNAME.' menyetujui dan mengatakan '.$notes,
                     'via_android' => 1
@@ -1689,18 +1704,6 @@ class Rfm_controller extends CI_Controller {
 
             $isValid = 1;
             $isPesan = "<div class='alert alert-success'>Berhasil Menyetujui RFM</div>";
-        }
-
-        if ($problem_type == KODE_APLIKASI_BARU) {
-
-            $array_insert = array(
-                'project_name'      => $subject,
-                'description'       => $detail,
-                'create_date'       => $date_now,
-                'create_by'         => $SESSION_USER_ID,
-            );
-    
-            $insert_data_task = $this->db->insert(TB_PROJECT, $array_insert);
         }
 
         $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
@@ -1732,9 +1735,6 @@ class Rfm_controller extends CI_Controller {
         
         $array_insert = array(
             'request_status' => STT_ASSIGNED,
-            'receive_by'     => $SESSION_USER_ID,
-            'receive_date'   => $date_now,
-            'receive_notes'  => $notes,
             'assign_to'      => $assign_pic,
             'assign_date'    => $date_now,
             'target_date'    => $target_date,
@@ -1914,8 +1914,8 @@ class Rfm_controller extends CI_Controller {
                 'request_status' => STT_ASSIGNED,
                 'result_status' => STT_PENDING,
                 'confirm_by' => $SESSION_USER_ID,
-                'confirm_date'   => $date_now,
                 'confirm_notes'  => $notes,
+                'done_date'  => NULL,
             );  
         }
 

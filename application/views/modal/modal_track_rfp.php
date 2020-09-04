@@ -171,7 +171,7 @@
           Konfirmasi RFP
           <div class="ml-4">
           (<?php echo !empty($r->confirmed_date) ? date('d-m-Y', strtotime($r->confirmed_date)) : '' ?> | <?php echo !empty($r->confirmed_date) ? date('H:i:s', strtotime($r->confirmed_date)) : '' ?>)
-          </div>
+           </div>
         </li>
     </ul>
 </div>
