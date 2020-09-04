@@ -145,7 +145,7 @@
 
         <?php if(!empty($rows->confirm_notes)): ?>
         <div class="form-group">
-            <label>Notes Revisi: <?php echo $notes_name_confirm->nama." | ".$rows->confirm_date ?></label>
+            <label>Notes Revisi: <?php echo $notes_name_confirm->nama ?></label>
             <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->confirm_notes ?></textarea>
         </div>
         <?php endif ?>

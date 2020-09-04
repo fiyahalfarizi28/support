@@ -6,7 +6,7 @@
 <div class="modal-body">
 
     <?php     
-        if ( $rows->request_status == STT_APPROVED) {
+        if ( $rows->request_status == STT_APPROVED && $rows->receive_date != NULL) {
             $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required>';
             $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
             $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
@@ -135,7 +135,7 @@
 
         <?php if(!empty($rows->confirm_notes)): ?>
         <div class="form-group">
-            <label>Notes Revisi: <?php echo $notes_name_confirm->nama." | ".$rows->confirm_date ?></label>
+            <label>Notes Revisi: <?php echo $notes_name_confirm->nama ?></label>
             <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->confirm_notes ?></textarea>
         </div>
         <?php endif ?>
@@ -154,7 +154,7 @@
 
         <div class="row">
             <div class="col-md-6">
-                <?php if(!empty($rows->receive_by) AND $rows->request_status==STT_APPROVED): ?>
+                <?php if(!empty($rows->approve_by) AND $rows->request_status==STT_APPROVED AND $rows->receive_date != NULL): ?>
                 <div class="row">
                     <div class="col-md-6">
                         <label>PIC :</label>

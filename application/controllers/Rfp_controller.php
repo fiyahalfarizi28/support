@@ -81,10 +81,13 @@ class Rfp_controller extends CI_Controller {
             
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
-            
+            $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+
             if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID)) {
                 $btn_option = $btn_option;
             } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
+                $btn_option = $btn_option;
+            } elseif($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' ||  $SESSION_USER_JABATAN === 'DIREKSI' AND $field->request_status === STT_APPROVED AND $field->problem_type != KODE_APLIKASI_BARU) {
                 $btn_option = $btn_option;
             } elseif($field->request_status === STT_APPROVED AND $field->problem_type == KODE_APLIKASI_BARU) {
                 $btn_option = "";
@@ -99,14 +102,14 @@ class Rfp_controller extends CI_Controller {
             if($field->request_upline_by != NULL AND $field->request_status == STT_ON_QUEUE) {
                 if($field->request_upline_by == $team_it)
                 {
-                    $app_by = "IT";
+                    $app_by = 'IT';
                 }
                 else
                 {
                     $this->db->where('user_id', $field->request_upline_by);
-                    $app_by = $this->db->get(TB_USER)->row()->nama;
+                    $app_by = $this->db->get('dpm_online.'.TB_USER)->row()->nama;
                 }
-            }else {
+            } else {
                 $app_by = 'IT';
             }
             
@@ -240,7 +243,7 @@ class Rfp_controller extends CI_Controller {
                 }else {
                     $btn_case = NULL;
                 }
-            }else {
+            } else {
                 $btn_case = NULL;
             }
 
@@ -256,7 +259,6 @@ class Rfp_controller extends CI_Controller {
             } else {
                 $projectName = "-";
             }
-
 
             $no++;
             $row = array();
@@ -376,7 +378,6 @@ class Rfp_controller extends CI_Controller {
         
         $array_crud = array(
             'table' => TB_PROBLEM_TYPE,
-            'where' => array('system_type' => NULL),
         );
         $data['problem_type'] = $this->rfp_model->get_crud($array_crud);
         
@@ -413,7 +414,7 @@ class Rfp_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => TB_USER,
+            'table' => 'dpm_online.'.TB_USER,
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -431,7 +432,8 @@ class Rfp_controller extends CI_Controller {
         $data['notes_name_confirm'] = $this->rfp_model->get_crud($array_crud)->row();
         //=======================================================
 
-        $explode_disabled = explode(":", $row->receive_by);
+        $explode_disabled = explode(":", $row->approve_by);
+        
         foreach($explode_disabled as $r){
             $rows = $r;
             $data_explode_disabled[] = $rows;
@@ -1623,25 +1625,37 @@ class Rfp_controller extends CI_Controller {
         $project_id = $this->input->post('project_id_hidden');
         $subject = $this->input->post('subject');
         $detail = $this->input->post('detail');
-        $request_status = STT_APPROVED;
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
-        if ($problem_type == KODE_APLIKASI_BARU) {
-            $request_status = STT_DONE;
-        }
+        if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI')
+            {
+                $array_insert = array(
+                    'request_status' => STT_APPROVED,
+                    'approve_by'     => $SESSION_USER_ID,
+                    'receive_by'     => $SESSION_USER_ID,
+                    'approve_date'   => $date_now,
+                    'receive_date'   => $date_now,
+                    'receive_notes'  => $notes,
+                    'project_id'     => $project_id,
+                    'problem_type'   => $problem_type
+                );
+                
+                $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
+            } else {
+                $array_insert = array(
+                    'request_status' => STT_APPROVED,
+                    'approve_by'     => $SESSION_USER_ID,
+                    'approve_date'   => $date_now,
+                    'approve_notes'  => $notes,
+                    'receive_by'     => $app_it->value,
+                    'project_id'     => $project_id,
+                    'problem_type'   => $problem_type
+                );
+                $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
 
-        $array_insert = array(
-            'request_status' => $request_status,
-            'approve_by'     => $SESSION_USER_ID,
-            'approve_date'   => $date_now,
-            'approve_notes'  => $notes,
-            'receive_by'     => $app_it->value,
-            'project_id'     => $project_id,
-            'problem_type'   => $problem_type
-        );
+            }
+
         
-
-        $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
-
         if(!$insert_data) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Gagal Menyetujui RFP</div>";
@@ -1654,7 +1668,7 @@ class Rfp_controller extends CI_Controller {
             foreach($exp as $uid) {
                 $arr = array(
                     'user_id'     => $uid,
-                    'waktu'       => $date_now,
+                    'receive_date'  => $date_now,
                     'subject'     => 'RFP Approval(Waiting Assign To PIC)',
                     'pesan'       => $SESSION_USER_FULLNAME.' menyetujui dan mengatakan '.$notes,
                     'via_android' => 1
@@ -1708,9 +1722,6 @@ class Rfp_controller extends CI_Controller {
         
         $array_insert = array(
             'request_status' => STT_ASSIGNED,
-            'receive_by'     => $SESSION_USER_ID,
-            'receive_date'   => $date_now,
-            'receive_notes'  => $notes,
             'assign_to'      => $assign_pic,
             'assign_date'    => $date_now,
             'target_date'    => $target_date,
@@ -1881,8 +1892,8 @@ class Rfp_controller extends CI_Controller {
                 'request_status' => STT_ASSIGNED,
                 'result_status' => STT_PENDING,
                 'confirm_by' => $SESSION_USER_ID,
-                'confirm_date'   => $date_now,
                 'confirm_notes'  => $notes,
+                'done_date'      => NULL,
             );  
             $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
 

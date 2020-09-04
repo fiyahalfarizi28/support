@@ -33,8 +33,8 @@ class Track_rfm_controller extends CI_Controller {
             'table' => TB_DETAIL,
             'where' => array(
             'request_by' => $this->session->userdata('USER_ID'),
-            'request_status !=' => STT_REJECT,
-            'result_status !=' => STT_SOLVED,
+            'request_status !=' => STT_DONE,
+            'result_status !=' => STT_REJECT,
             ),
         );
         return $this->rfm_model->get_crud($array_crud);

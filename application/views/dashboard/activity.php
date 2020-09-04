@@ -340,7 +340,13 @@
                                                             echo $this->db->get(TB_USER)->row()->nama;
                                                         ?>
                                                     </td>
-                                                    <td></td>
+                                                    <td>
+                                                        <?php 
+                                                            if (date("d-m-Y",strtotime($row->last_update)) > date("d-m-Y",strtotime($row->target_date))) {
+                                                                echo'Task telah melewati target date';
+                                                            }
+                                                        ?>
+                                                    </td>
                                                 </tr>
                                             <?php } ?>
                                         <?php endforeach ?>
