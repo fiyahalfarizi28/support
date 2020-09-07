@@ -90,8 +90,6 @@
     if($r->receive_date != NULL ) {
       $class_app_it ="done";
       $title_app_it= "RFP dengan No. $r->no_rfp telah disetujui oleh IT";
-      $class_assign ="active";
-      $title_assign = "Menunggu assign ke PIC";
     } else {
       if ($class_app_dept == "done") {
         $class_app_it = "active";
@@ -122,7 +120,12 @@
         $title_confirmed= "RFP dengan No. $r->no_rfp telah selesai dikerjakan, menunggu konfirmasi dari $nama_requestor";
       }
     } else {
-      $class_assign = "";
+      if ($class_app_it == "done")
+      {
+        $class_assign = "active";
+      } else {
+        $class_assign = "";
+      }
       $class_progress = "";
       $title_assign= "Menunggu assign ke PIC";
       $title_progress= "Menunggu dikerjakan oleh PIC";

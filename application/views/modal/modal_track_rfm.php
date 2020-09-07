@@ -122,7 +122,12 @@
         $title_confirmed= "RFM dengan No. $r->no_rfm telah selesai dikerjakan, menunggu konfirmasi dari $nama_requestor";
       }
     } else {
-      $class_assign = "";
+      if ($class_app_it == "done")
+      {
+        $class_assign = "active";
+      } else {
+        $class_assign = "";
+      }
       $class_progress = "";
       $title_assign= "Menunggu assign ke PIC";
       $title_progress= "Menunggu dikerjakan oleh PIC";
