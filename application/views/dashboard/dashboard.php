@@ -200,7 +200,10 @@
     $queryyear = $this->db->query($Q)->result();
     
     $post_month = $this->input->post('month');
+    $post_monthAwal = $this->input->post('monthAwal');
+    $post_monthAkhir = $this->input->post('monthAkhir');
     $post_year = $this->input->post('year');
+
     if($post_month==1)
     {
         $bulan = "Januari";
@@ -370,6 +373,30 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
+                <b>GRAFIK RFM KUMULATIF</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart9"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>GRAFIK RFP KUMULATIF</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart10"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
                 <b>PERSENTASE RFM BERDASARKAN APLIKASI</b>
             </div>
             <div class="card-body">
@@ -469,11 +496,22 @@
     
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
         $rfmList = $this->db->get(TB_DETAIL)->result();
         
         $this->db->select("COUNT(*) AS jmlh_rfm");
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
     ?>
 
     var ctx_ = document.getElementById("myChart1").getContext("2d");
@@ -551,11 +589,8 @@
             responsive: true,
             title:{
                 display:true,
-                text:'Application Chart'
+                text:'Application Chart | Total RFM : <?php echo $this->db->get(TB_DETAIL)->row()->jmlh_rfm;?>'
                 
-            },
-            subtitle: {
-                text: 'Total RFM : <?php echo $this->db->get(TB_DETAIL)->row()->jmlh_rfm;?>'
             },
             tooltips: {
                 callbacks: {
@@ -577,6 +612,17 @@
 
 //==================================================
 
+<?php 
+    $this->db->select("COUNT(*) AS jmlh_rfm");
+    $this->db->where('request_status !=', STT_ON_QUEUE);
+    $this->db->where('request_status !=', STT_REJECT);
+    if(!empty($post_monthAwal && $post_monthAkhir)) {
+        $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+        $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+        $this->db->where("YEAR(request_date)", $val_tahun);
+    }
+    
+?>
     var ctx_ = document.getElementById("myChart2").getContext("2d");
     var data_ = {
         labels: [
@@ -652,7 +698,7 @@
             responsive: true,
             title:{
                 display:true,
-                text:'Problem Type Chart'
+                text:'Problem Type Chart | Total RFM : <?php echo $this->db->get(TB_DETAIL)->row()->jmlh_rfm;?>'
             },
             tooltips: {
                 callbacks: {
@@ -677,14 +723,29 @@
 
 //==================================================
 
-    <?php
-            $applicationList = $this->db->get(TB_PROJECT)->result();
-            $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+<?php
+        $applicationList = $this->db->get(TB_PROJECT)->result();
+        $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
 
-            $this->db->where('request_status !=', STT_ON_QUEUE);
-            $this->db->where('request_status !=', STT_REJECT);
-            $rfpList = $this->db->get(TB_RFP)->result();
-    ?>
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+        
+        $rfpList = $this->db->get(TB_RFP)->result();
+
+        $this->db->select("COUNT(*) AS jmlh_rfp");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+?>
 
     var ctx_ = document.getElementById("myChart3").getContext("2d");
     var data_ = {
@@ -761,7 +822,7 @@
             responsive: true,
             title:{
                 display:true,
-                text:'Application Chart'
+                text:' Application Chart | Total RFP : <?php echo $this->db->get(TB_RFP)->row()->jmlh_rfp;?>'
             },
             tooltips: {
                 callbacks: {
@@ -781,6 +842,17 @@
         }
     });
 //==================================================
+
+<?php 
+    $this->db->select("COUNT(*) AS jmlh_rfp");
+    $this->db->where('request_status !=', STT_ON_QUEUE);
+    $this->db->where('request_status !=', STT_REJECT);
+    if(!empty($post_monthAwal && $post_monthAkhir)) {
+        $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+        $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+        $this->db->where("YEAR(request_date)", $val_tahun);
+    }
+?>
 
     var ctx_ = document.getElementById("myChart4").getContext("2d");
     var data_ = {
@@ -857,7 +929,7 @@
             responsive: true,
             title:{
                 display:true,
-                text:'Problem Type Chart'
+                text:'Problem Type Chart | Total RFP : <?php echo $this->db->get(TB_RFP)->row()->jmlh_rfp;?>'
             },
             tooltips: {
                 callbacks: {
@@ -883,19 +955,31 @@
 //==================================================
 
     <?php 
-        $Q = 'SELECT kode_kantor, COUNT(*) as total_by_kk
-        FROM ticket_support.rfm_new_detail
-        GROUP BY kode_kantor';
-        $rfmGrouped = $this->db->query($Q)->result();
+        $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
+        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
+
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $this->db->group_by('rfm_new_detail.kode_kantor');
+        $this->db->order_by('rfm_new_detail.kode_kantor', 'asc');
+
+        $rfmGrouped = $this->db->get(TB_DETAIL)->result();
     ?>
 
     var ctx_ = document.getElementById("myChart5").getContext("2d");
     var data_ = {
         labels: [
             <?php 
-                foreach($applicationList as $r):
+                foreach($rfmGrouped as $r):
                     $data = array();
-                    $data = $r->project_name;
+                    $data = $r->nama_kantor;
                     echo json_encode($data).",";
                 endforeach;
             ?>
@@ -904,15 +988,9 @@
         [{
             data: [
                 <?php
-                    foreach($applicationList as $r):
+                    foreach($rfmGrouped as $r):
                         $data = array();
-                        $counter = 0;
-                        foreach($rfmList as $eachrfm):
-                            if ($eachrfm->project_id == $r->id) {
-                                $counter += 1;
-                            }
-                        endforeach;
-                        $data = $counter;
+                        $data = $r->total_by_kk;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
@@ -985,14 +1063,33 @@
     });
 
 //==================================================
+
+    <?php 
+        $this->db->select("COUNT(rfp_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
+        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfp_new_detail.kode_kantor');
+
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $this->db->group_by('rfp_new_detail.kode_kantor');
+        $this->db->order_by('rfp_new_detail.kode_kantor', 'asc');
+
+        $rfpGrouped = $this->db->get(TB_RFP)->result();
+    ?>
 
     var ctx_ = document.getElementById("myChart6").getContext("2d");
     var data_ = {
         labels: [
             <?php
-                foreach($applicationList as $r):
+                foreach($rfpGrouped as $r):
                     $data = array();
-                    $data = $r->project_name;
+                    $data = $r->nama_kantor;
                     echo json_encode($data).",";
                 endforeach;
             ?>
@@ -1001,15 +1098,9 @@
         [{
             data: [
                 <?php
-                    foreach($applicationList as $r):
+                    foreach($rfpGrouped as $r):
                         $data = array();
-                        $counter = 0;
-                        foreach($rfpList as $eachrfp):
-                            if ($eachrfp->project_id == $r->id) {
-                                $counter += 1;
-                            }
-                        endforeach;
-                        $data = $counter;
+                        $data = $r->total_by_kk;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
@@ -1082,13 +1173,32 @@
     });
 //==================================================
 
+    <?php 
+        $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
+        $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfm_new_detail.request_by');
+
+        $this->db->where('ticket_support.rfm_new_detail.request_status !=', STT_ON_QUEUE);
+        $this->db->where('ticket_support.rfm_new_detail.request_status !=', STT_REJECT);
+
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(ticket_support.rfm_new_detail.request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(ticket_support.rfm_new_detail.request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(ticket_support.rfm_new_detail.request_date)", $val_tahun);
+        }
+
+        $this->db->group_by('dpm_online.user.divisi_id');
+        $this->db->order_by('dpm_online.user.divisi_id', 'asc');
+
+        $groupedByDivision = $this->db->get(TB_DETAIL)->result();
+    ?>
+
     var ctx_ = document.getElementById("myChart7").getContext("2d");
     var data_ = {
         labels: [
             <?php 
-                foreach($applicationList as $r):
+                foreach($groupedByDivision as $r):
                     $data = array();
-                    $data = $r->project_name;
+                    $data = $r->divisi;
                     echo json_encode($data).",";
                 endforeach;
             ?>
@@ -1097,15 +1207,10 @@
         [{
             data: [
                 <?php
-                    foreach($applicationList as $r):
+                    foreach($groupedByDivision as $r):
                         $data = array();
-                        $counter = 0;
-                        foreach($rfmList as $eachrfm):
-                            if ($eachrfm->project_id == $r->id) {
-                                $counter += 1;
-                            }
-                        endforeach;
-                        $data = $counter;
+                        
+                        $data = $r->total_by_div;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
@@ -1179,13 +1284,32 @@
 
 //==================================================
 
+    <?php 
+        $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
+        $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfp_new_detail.request_by');
+
+        $this->db->where('ticket_support.rfp_new_detail.request_status !=', STT_ON_QUEUE);
+        $this->db->where('ticket_support.rfp_new_detail.request_status !=', STT_REJECT);
+
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(ticket_support.rfp_new_detail.request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(ticket_support.rfp_new_detail.request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(ticket_support.rfp_new_detail.request_date)", $val_tahun);
+        }
+
+        $this->db->group_by('dpm_online.user.divisi_id');
+        $this->db->order_by('dpm_online.user.divisi_id', 'asc');
+
+        $groupedByDivision = $this->db->get(TB_RFP)->result();
+    ?>
+
     var ctx_ = document.getElementById("myChart8").getContext("2d");
     var data_ = {
         labels: [
-            <?php
-                foreach($applicationList as $r):
+            <?php 
+                foreach($groupedByDivision as $r):
                     $data = array();
-                    $data = $r->project_name;
+                    $data = $r->divisi;
                     echo json_encode($data).",";
                 endforeach;
             ?>
@@ -1194,15 +1318,10 @@
         [{
             data: [
                 <?php
-                    foreach($applicationList as $r):
+                    foreach($groupedByDivision as $r):
                         $data = array();
-                        $counter = 0;
-                        foreach($rfpList as $eachrfp):
-                            if ($eachrfp->project_id == $r->id) {
-                                $counter += 1;
-                            }
-                        endforeach;
-                        $data = $counter;
+                        
+                        $data = $r->total_by_div;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
@@ -1260,7 +1379,257 @@
                 callbacks: {
                     label: function(tooltipItem, data) {
                     var dataLabel = data.labels[tooltipItem.index];
-                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfpList)?> * 100).toLocaleString()+'%';
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+//==================================================
+
+<?php
+    $applicationList = $this->db->get(TB_PROJECT)->result();
+    $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+
+    $this->db->where('request_status !=', STT_ON_QUEUE);
+    $this->db->where('request_status !=', STT_REJECT);
+    $rfmList = $this->db->get(TB_DETAIL)->result();
+    
+    $this->db->select("COUNT(*) AS jmlh_rfm");
+    $this->db->where('request_status !=', STT_ON_QUEUE);
+    $this->db->where('request_status !=', STT_REJECT);
+
+    $jmlh_rfm = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
+?>
+
+    var ctx_ = document.getElementById("myChart9").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php
+                foreach(DAFTAR_BULAN as $r):
+                    $data = array();
+                    $data = $r;
+                    
+                    if ($r == strtoupper(date("F"))) {
+                        echo json_encode($data).",";
+                        break;
+                    }
+
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            fill: false,
+            borderColor: "#b3ddd1",
+            data: [
+                <?php
+                    $data = array();
+                    $counter = 0;
+
+                    for ($x = 1; $x <= 12; $x++) {
+                        $this->db->select("COUNT(*) AS jmlh_rfm");
+                        $this->db->where('request_status !=', STT_ON_QUEUE);
+                        $this->db->where('request_status !=', STT_REJECT);
+                        $this->db->where("MONTH(request_date)", $x);
+                        $this->db->where("YEAR(request_date)", date("Y"));
+                        $jmlh_rfm_per_month = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
+                        $counter += $jmlh_rfm_per_month;
+                        $data = $counter;
+
+                        if ($x == date("m")) {
+                            echo json_encode($data).",";
+                            break;
+                        }
+                        echo json_encode($data).",";
+                    }
+                ?>
+            ],
+        },
+        {
+            fill: false,
+            borderColor: "#e89694",
+            data: [
+                <?php
+                    $data = array();
+
+                    for ($x = 1; $x <= 12; $x++) {
+                        $this->db->select("COUNT(*) AS jmlh_rfm");
+                        $this->db->where('request_status !=', STT_ON_QUEUE);
+                        $this->db->where('request_status !=', STT_REJECT);
+                        $this->db->where("MONTH(request_date)", $x);
+                        $this->db->where("YEAR(request_date)", date("Y"));
+                        $jmlh_rfm_per_month = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
+                        $data = $jmlh_rfm_per_month;
+
+                        if ($x == date("m")) {
+                            echo json_encode($data).",";
+                            break;
+                        }
+                        echo json_encode($data).",";
+                    }
+                ?>
+            ],
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'line',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'Total RFM : <?php echo $jmlh_rfm ?>'
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        suggestedMin: 0,
+                        stepSize: 1
+                    }
+                }]
+            },            
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = "RFM ";
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} `;
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+
+//==================================================
+<?php
+    $applicationList = $this->db->get(TB_PROJECT)->result();
+    $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+
+    $this->db->where('request_status !=', STT_ON_QUEUE);
+    $this->db->where('request_status !=', STT_REJECT);
+    $rfpList = $this->db->get(TB_RFP)->result();
+    
+    $this->db->select("COUNT(*) AS jmlh_rfp");
+    $this->db->where('request_status !=', STT_ON_QUEUE);
+    $this->db->where('request_status !=', STT_REJECT);
+
+    $jmlh_rfp = $this->db->get(TB_RFP)->row()->jmlh_rfp;
+?>
+
+    var ctx_ = document.getElementById("myChart10").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php
+                foreach(DAFTAR_BULAN as $r):
+                    $data = array();
+                    $data = $r;
+                    
+                    if ($r == strtoupper(date("F"))) {
+                        echo json_encode($data).",";
+                        break;
+                    }
+
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            fill: false,
+            borderColor: "#b3ddd1",
+            data: [
+                <?php
+                    $data = array();
+                    $counter = 0;
+
+                    for ($x = 1; $x <= 12; $x++) {
+                        $this->db->select("COUNT(*) AS jmlh_rfp");
+                        $this->db->where('request_status !=', STT_ON_QUEUE);
+                        $this->db->where('request_status !=', STT_REJECT);
+                        $this->db->where("MONTH(request_date)", $x);
+                        $this->db->where("YEAR(request_date)", date("Y"));
+                        $jmlh_rfp_per_month = $this->db->get(TB_RFP)->row()->jmlh_rfp;
+                        $counter += $jmlh_rfp_per_month;
+                        $data = $counter;
+
+                        if ($x == date("m")) {
+                            echo json_encode($data).",";
+                            break;
+                        }
+                        echo json_encode($data).",";
+                    }
+                ?>
+            ],
+        },
+        {
+            fill: false,
+            borderColor: "#e89694",
+            data: [
+                <?php
+                    $data = array();
+
+                    for ($x = 1; $x <= 12; $x++) {
+                        $this->db->select("COUNT(*) AS jmlh_rfp");
+                        $this->db->where('request_status !=', STT_ON_QUEUE);
+                        $this->db->where('request_status !=', STT_REJECT);
+                        $this->db->where("MONTH(request_date)", $x);
+                        $this->db->where("YEAR(request_date)", date("Y"));
+                        $jmlh_rfp_per_month = $this->db->get(TB_RFP)->row()->jmlh_rfp;
+                        $data = $jmlh_rfp_per_month;
+
+                        if ($x == date("m")) {
+                            echo json_encode($data).",";
+                            break;
+                        }
+                        echo json_encode($data).",";
+                    }
+                ?>
+            ],
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'line',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'Total RFP : <?php echo $jmlh_rfp ?>'
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        suggestedMin: 0,
+                        stepSize: 1
+                    }
+                }]
+            },            
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = "RFP ";
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} `;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
                         dataLabel[0] += value;
@@ -1330,32 +1699,6 @@
         
     });
 
-    document.getElementById("btnSearch").addEventListener("click", function(e) {
-        e.preventDefault();
-        var monthAwal = document.getElementById("monthAwal");
-        var monthAkhir = document.getElementById("monthAkhir");  
-
-        if (monthAwal.options[monthAwal.selectedIndex].value == "" || monthAkhir.options[monthAkhir.selectedIndex].value == "") {
-            alert('Bulan awal atau bulan akhir tidak boleh kosong!')
-        } else {
-            var startDate = `${year.options[year.selectedIndex].value}-${monthAwal.options[monthAwal.selectedIndex].value}-01`
-            var endDate = `${year.options[year.selectedIndex].value}-${monthAwal.options[monthAwal.selectedIndex].value == monthAkhir.options[monthAkhir.selectedIndex].value ? Number(monthAkhir.options[monthAkhir.selectedIndex].value)+2 : monthAkhir.options[monthAkhir.selectedIndex].value}-01`
-
-            console.log(startDate);
-            console.log(endDate);
-
-            <?php 
-                    
-                // $this->db->where('request_date >=', );
-                // $this->db->where('request_date <=', "");
-                // $filteredRFMList = $this->db->get(TB_DETAIL)->result();
-
-                // echo "console.log(". json_encode($_POST['monthAwal']) .")";
-            ?>
-
-        }
-        console.log('kepencet tu wa ga')
-    });
 </script>
 
 <div class="row pt-3">

@@ -20,7 +20,7 @@ class Track_rfm_controller extends CI_Controller {
             );
 
             $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
-            
+
             $this->template->load('template','rfm/track_rfm',$data);
         } else {
             $this->load->view('login/form_login');

@@ -90,39 +90,51 @@
     if($r->receive_date != NULL ) {
       $class_app_it ="done";
       $title_app_it= "RFM dengan No. $r->no_rfm telah disetujui oleh IT";
+      $class_assign ="active";
+      $title_assign = "Menunggu assign ke PIC";
     } else {
       if ($class_app_dept == "done") {
         $class_app_it = "active";
       } else {
         $class_app_it = "";
       }
-      
       $title_app_it = "Menunggu persetujuan dari IT";
     }
 
-    if($r->assign_date != NULL ) {
-      $class_assign ="active";
-      $title_assign = "RFM dengan No. $r->no_rfm sedang dikerjakan";
-      if ($r->done_date != NULL ) {
-        $class_assign ="done";
-        $title_assign= "RFM dengan No. $r->no_rfm telah selesai dikerjakan";
+    if($r->assign_date != NULL) {
+      $class_assign ="done";
+      $nama_pic = $this->db->where('user_id', $r->assign_to)->get('dpm_online.'.TB_USER)->row()->nama;
+      $title_assign = "RFM dengan No. $r->no_rfm telah di-assign ke $nama_pic";
+      if ($r->assign_date != NULL && $r->result_status=="PENDING")
+      {
+        $class_progress= "active";
+        $title_progress= "Menunggu dikerjakan oleh $nama_pic";
+      } else if ($r->done_date == NULL && $r->result_status == "ON PROGRESS"){
+        $class_progress ="active";
+        $nama_pic = $this->db->where('user_id', $r->assign_to)->get('dpm_online.'.TB_USER)->row()->nama;
+        $title_progress= "RFM dengan No. $r->no_rfm sedang dikerjakan oleh $nama_pic";
+      } else if ($r->done_date != NULL && $r->result_status == "DONE")
+      {
+        $class_progress = "done";
+        $class_confirmed = "active";
+        $title_progress= "RFM dengan No. $r->no_rfm telah selesai dikerjakan";
+        $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
+        $title_confirmed= "RFM dengan No. $r->no_rfm telah selesai dikerjakan, menunggu konfirmasi dari $nama_requestor";
       }
     } else {
       $class_assign = "";
+      $class_progress = "";
       $title_assign= "Menunggu assign ke PIC";
+      $title_progress= "Menunggu dikerjakan oleh PIC";
     }
 
-    if($r->confirm_date != NULL) {
-      $class_confirmed ="done";
-      $title_confirmed= "RFM dengan No. $r->no_rfm telah selesai dikerjakan, mohon konfirmasi penyelesaian";
-    } else {
-      if ($class_assign == "done") {
-        $class_confirmed = "active";
-      } else {
-        $class_confirmed = "";
-      }
+    if ($r->done_date != NULL ){
+      $class_confirmed = "active";
       $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
-      $title_confirmed = "Menunggu konfirmasi dari $nama_requestor";
+      $title_confirmed= "Menunggu konfirmasi penyelesaian dari $nama_requestor";
+    } else {
+      $class_confirmed = "";      
+      $title_confirmed = "Menunggu konfirmasi";
     }
 
 ?>
@@ -160,6 +172,36 @@
           (<?php echo !empty($r->assign_date) ? date('d-m-Y', strtotime($r->assign_date)) : '' ?> | <?php echo !empty($r->assign_date) ? date('H:i:s', strtotime($r->assign_date)) : '' ?>)
           </div>
         </li>
+
+        <?php if ($r->result_status == "ON PROGRESS") { ?>
+
+          <li class="<?php echo $class_progress ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_progress ?>">
+            ON PROGRESS
+            <div class="ml-4">
+            (<?php echo !empty($r->onprogress_date) ? date('d-m-Y', strtotime($r->onprogress_date)) : '' ?> | <?php echo !empty($r->onprogress_date) ? date('H:i:s', strtotime($r->onprogress_date)) : '' ?>)
+            </div>
+          </li>
+
+          <?php } else if ($r->result_status == "DONE") { ?>
+
+            <li class="<?php echo $class_progress ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_progress ?>">
+            DONE
+            <div class="ml-4">
+            (<?php echo !empty($r->onprogress_date) ? date('d-m-Y', strtotime($r->onprogress_date)) : '' ?> | <?php echo !empty($r->onprogress_date) ? date('H:i:s', strtotime($r->onprogress_date)) : '' ?>)
+            </div>
+          </li>
+
+          <?php } else {?>
+
+            <li class="<?php echo $class_progress ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_progress ?>">
+              PENDING
+              <div class="ml-4">
+              (<?php echo !empty($r->onprogress_date) ? date('d-m-Y', strtotime($r->onprogress_date)) : '' ?> | <?php echo !empty($r->onprogress_date) ? date('H:i:s', strtotime($r->onprogress_date)) : '' ?>)
+              </div>
+            </li>
+
+          <?php } ?>
+          
 
         <li class="<?php echo $class_confirmed?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_confirmed?>">
           Konfirmasi RFM

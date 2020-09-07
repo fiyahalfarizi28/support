@@ -3,9 +3,92 @@
 	
 		<div class="card-body">
 			<div class="pesan"></div>
-				<form class="mb-2" action="" method="post"></form>
+				<form class="mb-2" action="" method="post">
+					<label>
+						Cari berdasarkan bulan dan tahun
+						<!-- <span class="text-danger"><i>(belum ada aksi pencariannya)</i></span> -->
+					</label>
+					<div class="row">
+						<div class="col-md-3">
+							<select name="m" class="form-control">
+								<?php
+									$m = $this->input->post('m');
+									$y = $this->input->post('y');
 
-				<table class="colapse-table res3" width="100%" cellspacing="0">
+									if(empty($m && $y)) {
+										$m = date('m');
+										$y = date('Y');
+									}
+
+									function getMonth($month) {
+										if($month=='01'):
+											$mm = 'Januari';
+										elseif($month=='02'):
+											$mm = 'Februari';
+										elseif($month=='03'):
+											$mm = 'Maret';
+										elseif($month=='04'):
+											$mm = 'April';
+										elseif($month=='05'):
+											$mm = 'Mei';
+										elseif($month=='06'):
+											$mm = 'Juni';
+										elseif($month=='07'):
+											$mm = 'Juli';
+										elseif($month=='08'):
+											$mm = 'Agustus';
+										elseif($month=='09'):
+											$mm = 'September';
+										elseif($month=='10'):
+											$mm = 'Oktober';
+										elseif($month=='11'):
+											$mm = 'November';
+										elseif($month=='12'):
+											$mm = 'Desember';
+										endif;
+
+										return $mm;
+									}
+
+									$thisMonth = getMonth($m);
+	
+									if($m):
+										echo "<option value='$m'>$thisMonth</option>";
+									endif;
+								?>
+
+								<?php for ($x = 1; $x <= 12; $x++) { ?>
+									<?php if ($x != $m) { ?>
+										
+										<?php $thisMonth = getMonth($x); ?>
+
+										<option value=<?php echo $x ?>>
+											<?php echo $thisMonth ?>
+										</option>
+
+									<?php } ?>
+								<?php } ?>
+
+							</select>
+						</div>
+
+						<div class="col-md-2">
+							<select name="y" class="form-control">
+								<?php
+									if($y):
+										echo "<option value='$y'>$y</option>";
+									endif;
+								?>
+							</select>
+						</div>
+
+						<div class="col-md-1">
+							<input type="submit" name="" value="Cari" class="btn btn-block btn-outline-secondary">
+						</div>
+					</div>
+            	</form>
+
+				<table style ="margin-top: 15px !important" class="colapse-table res3" width="100%" cellspacing="0">
 					<thead>
 						<tr>
 							<th style="text-align: center">#</th>
@@ -29,17 +112,21 @@
 							$taskList = $this->db->get(TB_TASK)->result();
 							$rfmList = $this->db->get(TB_DETAIL)->result();
 							$rfpList = $this->db->get(TB_RFP)->result();
-							// $thisMonth = date("Y-m");
 						?>
 
                 		<?php foreach($ITList as $r): ?>
                     
 							<?php 
 								$this->db->where('user_id', $r->user_id);
-								// $this->db->where('date >', $thisMonth);
+								$this->db->where("MONTH(date_activity)", $m);
+								$this->db->where("YEAR(date_activity)", $y);
 								$this->db->order_by('last_update DESC');
 								$specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
 							?>
+
+							<script>
+								console.log(<?php echo json_encode($this->db->last_query()) ?>)
+							</script>
                     
 							<?php if (count($specificDailyActivity) > 0) { ?>
 								<?php foreach($specificDailyActivity as $row): ?>

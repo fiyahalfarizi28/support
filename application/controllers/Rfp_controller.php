@@ -865,6 +865,26 @@ class Rfp_controller extends CI_Controller {
                 'project_id'        => $project_id
             );
 
+            if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV)) {
+                $array_insert = array(
+                'no_rfm'            => $no_rfm,
+                'problem_type'      => $problem_type,
+                'request_type'      => $request_type,
+                'request_by'        => $user_id,
+                'request_date'      => $date_now,
+                'request_upline_by' => $head_id,
+                'approve_date'      => $date_now,
+                'approve_by'        => $head_id,
+                'kode_kantor'       => $kode_cabang,
+                'subject'           => $subject,
+                'rfm_detail'        => $detail,
+                'request_status'    => $req_stt,
+                'assign_to'         => $assign_to,
+                'assign_date'       => $assign_date,
+                'project_id'        => $project_id
+                );
+            }
+
             if(empty($_FILES['attachment']['name'])) {
                 $insert_data = $this->db->insert($table_destination, $array_insert);
             }else{

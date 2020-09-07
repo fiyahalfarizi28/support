@@ -139,7 +139,7 @@ class Dailyreport_controller extends ci_controller{
             $done_notes = $this->input->post('notes');
         }
         
-        if(empty($project_id) && empty($rfm_id) && empty($rfp_id) && empty($keterangan) ) {
+        if(empty($rfm_id) && empty($rfp_id) && empty($keterangan) ) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Task Harus Diisi !!!</div>";
         } elseif(empty($status)) {
@@ -194,6 +194,7 @@ class Dailyreport_controller extends ci_controller{
 
             $array_update_rfm = array(
                 'result_status' => $status,
+                'onprogress_date' => $date_now,
             );
 
             $this->db->where('id', $rfm_id);
@@ -201,6 +202,7 @@ class Dailyreport_controller extends ci_controller{
 
             $array_update_rfp = array(
                 'result_status' => $status,
+                'onprogress_date' => $date_now,
             );
 
             $this->db->where('id', $rfp_id);
@@ -253,7 +255,7 @@ class Dailyreport_controller extends ci_controller{
 
                 if ($check != 0) {
                     $array_update_comment = array(
-                        'date_activity' => $date_now,
+                        'date_comment' => $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );
@@ -265,7 +267,7 @@ class Dailyreport_controller extends ci_controller{
                 } else {
                     $array_insert_comment = array(
                         'id'            => !empty($rfm_id) ? $rfm_id : $rfp_id,
-                        'date_activity' => $date_now,
+                        'date_comment' => $date_now,
                         'user'          => $user_id,
                         'comment'       => $comment
                     );
