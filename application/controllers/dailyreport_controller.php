@@ -139,7 +139,7 @@ class Dailyreport_controller extends ci_controller{
             $done_notes = $this->input->post('notes');
         }
         
-        if(empty($rfm_id) && empty($rfp_id) && empty($keterangan) ) {
+        if(empty($project_id) && empty($rfm_id)  && empty($keterangan) ) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Task Harus Diisi !!!</div>";
         } elseif(empty($status)) {
