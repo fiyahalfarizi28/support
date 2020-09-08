@@ -11,9 +11,9 @@
             $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
             $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
         } else {
-            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required disabled>';
-            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required disabled>';
-            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required disabled>';
+            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required>';
+            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
+            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
         }
     ?>
 
@@ -145,7 +145,7 @@
             <textarea name="notes" placeholder="Notes..." rows="2"  style="resize: none" class="form-control"></textarea>
         </div>
         
-        <?php if($rows->assign_to == $this->session->userdata('USER_ID')): ?>
+        <?php if($rows->receive_by == $this->session->userdata('USER_ID')): ?>
         <div class="form-group">
             <label>Cara penyelesaian :</label>
             <textarea name="penyelesaian" style="resize: none" placeholder="Cara penyelesaian case tersebut..." rows="2" class="form-control"></textarea>
@@ -154,23 +154,7 @@
 
         <div class="row">
             <div class="col-md-6">
-                <?php if(!empty($rows->approve_by) AND $rows->request_status==STT_APPROVED AND $rows->receive_date != NULL): ?>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>PIC :</label>
-                        <select name="assign_pic" class="form-control">
-                            <option value="">PILIH P.I.C</option>
-                            <?php foreach($select_pic->result() as $r): ?>
-                                <option value="<?php echo $r->user_id ?>"><?php echo $r->nama ?></option>
-                            <?php endforeach ?>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>TARGET DATE :</label>
-                        <input type="date" name="target_date" class="form-control" ></input>
-                    </div>
-                </div>
-                <?php endif ?>
+            
             </div>
 
             <div class="col-md-6 text-right pt-4">

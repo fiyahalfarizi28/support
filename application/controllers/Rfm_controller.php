@@ -460,18 +460,19 @@ class Rfm_controller extends CI_Controller {
         $data['notes_name_confirm'] = $this->rfm_model->get_crud($array_crud)->row();
         //=======================================================
 
-        $explode_disabled = explode(":", $row->approve_by);
+        $explode_disabled = explode(":", $row->receive_by);
         foreach($explode_disabled as $r){
             $rows = $r;
             $data_explode_disabled[] = $rows;
         }
-        if(in_array($SESSION_USER_ID, $data_explode_disabled))
+
+        if(in_array($SESSION_USER_ID, $data_explode_disabled) AND $row->receive_date != NULL)
         {
             $data['disabled'] = "";
             $data['readonly'] = "readonly";
             $data['onclick'] = "set_assign_request()";
             $data['btnText'] = "Assign";
-            $data['btn_update'] = '<a href="javascript:void(0)" onclick="set_update_it()" class="btn btn-success"><i class="far fa-check-circle"></i> Update</a>';
+            
         }
         else
         {
@@ -479,7 +480,6 @@ class Rfm_controller extends CI_Controller {
             $data['readonly'] = "readonly";
             $data['onclick'] = "set_app_request()";
             $data['btnText'] = "Approve";
-            $data['btn_update'] = null;
         }
         
         if($SESSION_USER_ID === $row->assign_to)
@@ -1671,7 +1671,7 @@ class Rfm_controller extends CI_Controller {
         $notes = $this->input->post('notes');
         $date_now = date('Y-m-d H:i:s');
         $app_it = $this->db->where('id', 'RFM_AKSES_IT_APP')->get(TB_PARAMETER)->row();
-        $problem_type = $this->input->post('problem_type_hidden');
+        $problem_type = $this->input->post('problem_type');
         $project_id = $this->input->post('project_id_hidden');
         $subject = $this->input->post('subject');
         $detail = $this->input->post('detail');
@@ -2027,7 +2027,7 @@ class Rfm_controller extends CI_Controller {
                     'request_upline_by !=' => NULL,
                     'request_status' => STT_APPROVED,
                     'approve_by !=' => NULL,
-                    'receive_by' => $SESSION_UPLINE,
+                    'receive_by !=' => NULL,
                     'assign_to' => NULL,
                 )
         );
@@ -2089,18 +2089,15 @@ class Rfm_controller extends CI_Controller {
                 no_rfm AS `no_rfm`,
                 e.nama AS `pic`,
                 d.nama AS `request_by`,
-                b.`request_type` AS `request_type`,
-                c.`problem_type` AS `problem_type`,
+                b.`problem_type` AS `problem_type`,
                 `subject` AS `subject`,
                 rfm_detail AS `detail`,
                 request_status AS `status`,
                 request_date  AS `date`
             FROM
                 rfm_new_detail a 
-                LEFT JOIN rfm_new_request_type b 
+                LEFT JOIN rfm_new_problem_type b 
                 ON a.problem_type = b.id
-                LEFT JOIN rfm_new_problem_type c
-                ON a.request_type = c.id
                 LEFT JOIN `user` d
                 ON a.request_by = d.user_id
                 LEFT JOIN `user` e
@@ -2108,8 +2105,6 @@ class Rfm_controller extends CI_Controller {
             WHERE
                 MONTH(a.request_date)='$month' AND
                 YEAR(a.request_date)='$year'
-                -- AND b.system_type IS NULL
-            -- GROUP BY a.problem_type
         ";
         $data['row'] = $this->db->query($Q)->result();
         $this->load->view('export_to_excel', $data);

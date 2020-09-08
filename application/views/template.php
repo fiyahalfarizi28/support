@@ -76,6 +76,10 @@
                                 </li>
                             </ul>
                         <?php
+
+                            if($this->session->userdata('USER_JABATAN') === 'HEAD IT' || $this->session->userdata('USER_JABATAN') === 'SUPERVISOR IT') {
+                                echo "<li class='list-group-item'><a href='".base_url('project')."'><i class='far fa-calendar-plus'></i> PROJECT</a></li>";
+                            }
                             
                             if(in_array($this->session->userdata('USER_ID'), $menu)) {
                                 echo "<li class='list-group-item'><a href='".base_url('user_management')."'><i class='far fa-address-book'></i> USER MANAGEMENT</a></li>";
@@ -84,6 +88,8 @@
                             if($this->session->userdata('USER_DIVISI') === 'IT') {
                                 echo "<li class='list-group-item'><a href='".base_url('daily_report')."'><i class='far fa-bookmark'></i> DAILY ACTIVITY</a></li>";
                             }
+
+                            
 
                             echo $menu_kpi;
                         ?>
@@ -99,9 +105,7 @@
                 </div>
 
                 <div class="col text-right">
-                    <!-- <a href="<?php echo base_url('export_to_excel') ?>" title="Export To Excel" class="btn btn-primary btn-sm mr-3" target="_blank">
-                        <i class="fa fa-print"></i> Export To Excel
-                    </a> -->
+                    
                     <a href="javascript:void(0)" title="Export To Excel" class="btn btn-primary btn-sm mr-3" onclick="export_to_excel()">
                         <i class="fa fa-print"></i> Export To Excel
                     </a>

@@ -11,9 +11,9 @@
             $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
             $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
         } else {
-            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required disabled>';
-            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required disabled>';
-            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required disabled>';
+            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required>';
+            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
+            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
         }
     ?>
 
@@ -164,7 +164,7 @@
 
         <div class="row">
             <div class="col-md-6">
-                <?php if(!empty($rows->receive_by) AND $rows->request_status==STT_APPROVED): ?>
+                <?php if(!empty($rows->receive_by) AND $rows->receive_date != NULL): ?>
                 <div class="row">
                     <div class="col-md-6">
                         <label>PIC :</label>

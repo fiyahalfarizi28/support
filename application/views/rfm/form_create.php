@@ -42,9 +42,25 @@
                             </div>
                         </div>
                      </div>
-                </div>
 
+                     <div id="collapseRisk" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                            <div class="form-group">
+                                <label for="risk_type">MEMPENGARUHI FINANCIAL :</label>
+                                <select id="risk_type" class="form-control" name="risk_type" style="margin-bottom: 15px">
+                                    <option disabled selected="selected">- RISK TYPE -</option>
+                                    <option value="YES">IYA</option>
+                                    <option value="NO">TIDAK</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
 
             <div class="form-group">
                 <label>SUBJECT :<?php $cc ?></label>
@@ -87,6 +103,7 @@
 
     var activities = document.getElementById("request_type");
     var activities2 = document.getElementById("project_id");
+    var activities3 = document.getElementById("problem_type");
 
     activities.addEventListener("change", function() {
 
@@ -97,6 +114,8 @@
 
         $('#problem_type').empty();
         $('#project_id').empty();
+        $("#collapseRisk").collapse('hide');
+        $('#risk_type').prop('disabled', 'disabled');
 
         $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>');
         $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>');
@@ -132,7 +151,8 @@
 
             $('#problem_type').empty();
             $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>');
-
+            $("#collapseRisk").collapse('hide');
+            $('#risk_type').prop('disabled', 'disabled');
             arrayProblem2.forEach( (problemType) => {
                 if (problemType.id > 5 && problemType.id < 9) {
                     $('#problem_type').append(`<option value="${problemType.id}">${problemType.problem_type}</option>`);
@@ -142,6 +162,8 @@
         } else {
             $('#problem_type').empty();
             $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>');
+            $("#collapseRisk").collapse('hide');
+            $('#risk_type').prop('disabled', 'disabled');
 
             arrayProblem2.forEach( (problemType) => {
                 if (problemType.id < 6) {
@@ -151,5 +173,21 @@
         }
 
     });
+
+    activities3.addEventListener("change", function() {
+
+    var optionSelected = $("option:selected", this).text();
+
+    if  (optionSelected == "SUPPORT DATA HUMAN ERROR") {
+
+        $("#collapseRisk").collapse('show');
+        $('#risk_type').prop('disabled', false);
+
+    } else {
+        $("#collapseRisk").collapse('hide');
+        $('#risk_type').prop('disabled', 'disabled');
+    }
+
+});
 
 </script>   

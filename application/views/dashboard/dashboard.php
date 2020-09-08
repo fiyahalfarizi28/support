@@ -341,11 +341,14 @@
     echo "
                             </select>
                         </div>
+                        <div class='col-md-1'>
+                            <h6 style = 'margin-top: 8px; margin-left: 30px'> s/d </h6>
+                        </div>
                         <div class='col-md-3'>
                             <select name='monthAkhir' id='monthAkhir' class='form-control'>
                             </select>
                         </div>
-                        <div class='col-md-4'>
+                        <div class='col-md-3'>
                             <select name='year' id='year' class='form-control'>
                                 <option value='$val_tahun'>$text_tahun</option>
                                 ";
@@ -432,7 +435,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PERSENTASE RFP BERDASARKAN PROBLEM TYPE</b>
+                <b>PERSENTASE RFP BERDASARKAN REQUEST TYPE</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart4"></canvas>
@@ -456,7 +459,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>PERSENTASE RFP BERDASARKAN KANTOR</b>
+                <b>PERSENTASE RFM BERDASARKAN AREA</b>
             </div>
             <div class="card-body">
                 <canvas id="myChart6"></canvas>
@@ -929,7 +932,7 @@
             responsive: true,
             title:{
                 display:true,
-                text:'Problem Type Chart | Total RFP : <?php echo $this->db->get(TB_RFP)->row()->jmlh_rfp;?>'
+                text:'Request Type Chart | Total RFP : <?php echo $this->db->get(TB_RFP)->row()->jmlh_rfp;?>'
             },
             tooltips: {
                 callbacks: {
@@ -1064,9 +1067,9 @@
 
 //==================================================
 
-    <?php 
-        $this->db->select("COUNT(rfp_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
-        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfp_new_detail.kode_kantor');
+<?php 
+        $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
+        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
 
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -1077,19 +1080,19 @@
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
 
-        $this->db->group_by('rfp_new_detail.kode_kantor');
-        $this->db->order_by('rfp_new_detail.kode_kantor', 'asc');
+        $this->db->group_by('rfm_new_detail.kode_kantor');
+        $this->db->order_by('rfm_new_detail.kode_kantor', 'asc');
 
-        $rfpGrouped = $this->db->get(TB_RFP)->result();
+        $rfmGrouped = $this->db->get(TB_DETAIL)->result();
     ?>
 
     var ctx_ = document.getElementById("myChart6").getContext("2d");
     var data_ = {
         labels: [
-            <?php
-                foreach($rfpGrouped as $r):
+            <?php 
+                foreach($rfmGrouped as $r):
                     $data = array();
-                    $data = $r->nama_kantor;
+                    $data = $r->kode_area;
                     echo json_encode($data).",";
                 endforeach;
             ?>
@@ -1098,9 +1101,9 @@
         [{
             data: [
                 <?php
-                    foreach($rfpGrouped as $r):
+                    foreach($rfmGrouped as $r):
                         $data = array();
-                        $data = $r->total_by_kk;
+                        $data = $r->total_by_area;
                         echo json_encode($data).",";
                     endforeach;
                 ?>
@@ -1152,13 +1155,13 @@
             responsive: true,
             title:{
                 display:true,
-                text:'RFP Chart'
+                text:'RFM Chart'
             },
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
                     var dataLabel = data.labels[tooltipItem.index];
-                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfpList)?> * 100).toLocaleString()+'%';
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
                         dataLabel[0] += value;
@@ -1171,6 +1174,7 @@
             }
         }
     });
+
 //==================================================
 
     <?php 

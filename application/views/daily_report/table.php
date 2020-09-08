@@ -98,7 +98,6 @@
 							<th>PROJECT</th>
 							<th>TASK</th>
 							<th>No. RFM</th>
-							<th>No. RFP</th>
 							<th>STATUS</th>
 							<th>KETERANGAN</th>
 							<th>PIC</th>
@@ -227,23 +226,7 @@
 													echo $tableDataNoRFM;
 												?>
 											</td>
-											<td>
-												<?php $tableDataNoRFP = null;
-													if (!empty($row->rfp_id))
-													{
-														foreach($rfpList as $rowRfp):
-															if ($row->rfp_id == $rowRfp->id) {
-																$tableDataNoRFP = $rowRfp->no_rfp;
-																break;
-															}
-														endforeach;
-													}
-													else {
-														$tableDataNoRFP = "-";
-													}
-													echo $tableDataNoRFP;
-												?>
-											</td>
+											
 											<td><?php echo $row->status ?></td>
 											<td><?php echo $row->keterangan ?></td>
 											<td><?php echo $r->nama ?></td>
@@ -263,7 +246,6 @@
 														<th>PROJECT</th>
 														<th>TASK</th>
 														<th>No. RFM</th>
-														<th>No. RFP</th>
 														<th>STATUS</th>
 														<th>KETERANGAN</th>
 													</tr>
@@ -369,23 +351,7 @@
 																		echo $tableDataNoRFM;
 																	?>
 																</td>
-																<td>
-																	<?php $tableDataNoRFP = null;
-																		if (!empty($row->rfp_id))
-																		{
-																			foreach($rfpList as $rowRfp):
-																				if ($row->rfp_id == $rowRfp->id) {
-																					$tableDataNoRFP = $rowRfp->no_rfp;
-																					break;
-																				}
-																			endforeach;
-																		}
-																		else {
-																			$tableDataNoRFP = "-";
-																		}
-																		echo $tableDataNoRFP;
-																	?>
-																</td>
+																
 																<td><?php echo $row->status ?></td>
 																<td><?php echo $row->keterangan ?></td>
 															</tr>
@@ -421,7 +387,6 @@
 							<th>PROJECT</th>
 							<th>TASK</th>
 							<th>No. RFM</th>
-							<th>No. RFP</th>
 							<th>STATUS</th>
 							<th>KETERANGAN</th>
 						</tr>
@@ -527,23 +492,7 @@
 									echo $tableDataNoRFM;
 								?>
 							</td>
-							<td>
-								<?php $tableDataNoRFP = null;
-									if (!empty($r->rfp_id))
-									{
-										foreach($rfpList->result() as $row):
-											if ($r->rfp_id == $row->id) {
-												$tableDataNoRFP = $row->no_rfp;
-												break;
-											}
-										endforeach;
-									}
-									else {
-										$tableDataNoRFP = "-";
-									}
-									echo $tableDataNoRFP;
-								?>
-							</td>
+							
 							<td><?php echo $r->status ?></td>
 							<td><?php echo $r->keterangan ?></td>
 						</tr>
@@ -573,7 +522,7 @@
 							<select id="projectFlag" name="projectFlag" class="form-control">
 								<option disabled selected="selected" value="">- Pilih Task -</option>
 								<option>RFM</option>
-								<option>RFP</option>
+								<option>Project</option>
 								<option>Other</option>
 							</select>
 						</div>
@@ -710,7 +659,7 @@
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;
 
-					if (valueSelected === "RFP") {
+					if (valueSelected === "Project") {
 						// $('#RfmDetail').val("");
 						$("#collapseDetail").collapse('hide');
 						$('#collapseProject').collapse('show');

@@ -16,6 +16,9 @@ $(document).ready(function(){
         "bSort" : false,
         "processing": true, 
         "serverSide": true,
+        "buttons": [
+            'excelHtml5',
+        ],
          
         "ajax": {
             "url": "rfm_controller/get_tb_detail",
@@ -62,6 +65,9 @@ $(document).ready(function(){
         "bSort" : false,
         "processing": true, 
         "serverSide": true,
+        "buttons": [
+            'excelHtml5',
+        ],
          
         "ajax": {
             "url": "rfp_controller/get_tb_detail",
@@ -211,9 +217,6 @@ $(document).ready(function(){
         });
     })
 
-
-    
-
     //RFP=============================
     $('#modal-create-rfp').on('show.bs.modal', function (e) {
         var data = $(e.relatedTarget).data('id');
@@ -296,6 +299,21 @@ $(document).ready(function(){
         });
     })
 
+})
+
+//PROJECT =============================
+
+$('#modal-task-rfp').on('show.bs.modal', function (e) {
+    var data = $(e.relatedTarget).data('id');
+    $.ajax({
+        type : 'post',
+        url : 'project_controller/btn_create',
+        data :  'idx='+ data,
+        cache: false,
+        success : function(res) {
+            $('#view-modal-task').html(res);
+        }
+    });
 })
     
 function preloader()
@@ -766,6 +784,6 @@ function export_to_excel() {
     var mm = String(today.getMonth() + 1).padStart(2, '0')
     if(prm_month==='') prm_month = mm;
 
-    window.open('rfm_controller/export_to_excel/'+prm_month+'/'+prm_year, '_blank');
+    window.open('rfm_controller/export_to_excel/'+prm_month+'/'+prm_year);
 }
 //-------------------------------------
