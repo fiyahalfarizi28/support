@@ -39,8 +39,8 @@
 
         <div class="row" style="margin-left: 2px !important; margin-top: 8px">
             <!-- Choose file buat attachment bakal disini -->
-            Attachment:  <a href="javascript:void(0)" class="btn btn-warning text-white" style ="margin-top: -5px; margin-left: 5px; margin-bottom: 5px" onclick="addFile_task();"><i class="fa fa-paperclip"></i></a>         
-            <div id="files"></div>
+            Attachment:  <a href="javascript:void(0)" class="btn btn-warning text-white" style ="margin-top: -5px; margin-left: 5px; margin-bottom: 5px" onclick="addFile_task(<?php echo $idfield ?>);"><i class="fa fa-paperclip"></i></a>         
+            <div id="files<?php echo $idfield ?>"></div>
         </div>
     </div>
 
@@ -55,12 +55,12 @@
         }
 
         var fileId = 0;
-        function addFile_task() {
+        function addFile_task(param) {
             fileId++;
             var html =  '<input type="file" name="attachment[]" />'+
                         ' <a href="javascript:void(0)" onclick="javascript:removeElement(\'file-' + fileId + '\'); return false;">'+
                         '<i class="far fa-window-close fa-lg text-danger"></i></a>';
-            addElement('files', 'p', 'file-' + fileId, html);
+            addElement(`files${param}`, 'p', 'file-' + fileId, html);
         }
     </script>
 </div>
