@@ -565,7 +565,7 @@
 								</div>
 
 								<div id="collapseRFM" class="panel-collapse collapse">
-								<div class="panel-body">
+									<div class="panel-body">
 										<div class="form-group">
 											<label for="rfm_id">No. RFM:</label>
 											<select id="rfm_id" class="form-control" name="rfm_id" style="margin-bottom: 15px">

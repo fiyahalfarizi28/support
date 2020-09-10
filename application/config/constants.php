@@ -106,6 +106,7 @@ define('TB_DETAIL','rfm_new_detail');
 define('TB_RFP','rfp_new_detail');
 define('TB_ATTACHMENT_RFM','rfm_new_attachment');
 define('TB_ATTACHMENT_RFP','rfp_new_attachment');
+define('TB_ATTACHMENT_PROJECT','rfp_project_attachment');
 define('TB_COMMENT_RFM','rfm_new_comment');
 define('TB_COMMENT_RFP','rfp_new_comment');
 define('TB_PROBLEM_TYPE','rfm_new_problem_type');
@@ -120,6 +121,7 @@ define('REQUEST_TYPE_MAINTENANCE', 2);
 define('REQUEST_TYPE_PROJECT', 3);
 define('KODE_PENAMBAHAN_APLIKASI', 9);
 define('KODE_PERUBAHAN_APLIKASI', 10);
+define('KODE_LAINNYA', 1);
 
 define('STT_ON_QUEUE','ON QUEUE');
 define('STT_VALIDATED','VALIDATED');

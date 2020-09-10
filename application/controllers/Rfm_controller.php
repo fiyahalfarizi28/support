@@ -392,6 +392,7 @@ class Rfm_controller extends CI_Controller {
     {
         $id = $this->input->post('idx');
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
         $array_crud = array(
             'table' => TB_DETAIL,
@@ -466,7 +467,7 @@ class Rfm_controller extends CI_Controller {
             $data_explode_disabled[] = $rows;
         }
 
-        if(in_array($SESSION_USER_ID, $data_explode_disabled) AND $row->receive_date != NULL)
+        if( $SESSION_USER_JABATAN === 'HEAD IT' || $SESSION_USER_JABATAN === 'SUPERVISOR IT' AND $row->receive_date != NULL)
         {
             $data['disabled'] = "";
             $data['readonly'] = "readonly";
@@ -607,6 +608,7 @@ class Rfm_controller extends CI_Controller {
         $table_destination = TB_DETAIL;
         $problem_type = null;
         $project_id = $this->input->post('project_id');
+        $risk_type = $this->input->post('risk_type');
 
         if ($request_type == 2) {
             $problem_type = $this->input->post('problem_type');
@@ -891,7 +893,8 @@ class Rfm_controller extends CI_Controller {
                 'request_status'    => $req_stt,
                 'assign_to'         => $assign_to,
                 'assign_date'       => $assign_date,
-                'project_id'        => $project_id
+                'project_id'        => $project_id,
+                'risk_type'         => $risk_type,
             );
 
             if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV)) {
@@ -910,7 +913,8 @@ class Rfm_controller extends CI_Controller {
                 'request_status'    => $req_stt,
                 'assign_to'         => $assign_to,
                 'assign_date'       => $assign_date,
-                'project_id'        => $project_id
+                'project_id'        => $project_id,
+                'risk_type'         => $risk_type,
                  );
 
             }
@@ -1677,15 +1681,12 @@ class Rfm_controller extends CI_Controller {
         $detail = $this->input->post('detail');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
-        if ($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' ||  $SESSION_USER_JABATAN === 'DIREKSI'){
+        if ($SESSION_USER_JABATAN == 'HEAD IT' ||$SESSION_USER_JABATAN == 'SUPERVISOR IT'){
             $array_insert = array(
                 'request_status' => STT_APPROVED,
-                'approve_by'     => $SESSION_USER_ID,
-                'approve_date'   => $date_now,
                 'receive_by'     => $SESSION_USER_ID,
                 'receive_date'   => $date_now,
                 'receive_notes'  => $notes,
-                'project_id'     => $project_id,
                 'problem_type'   => $problem_type
             );
             $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
@@ -1697,7 +1698,6 @@ class Rfm_controller extends CI_Controller {
                 'approve_date'   => $date_now,
                 'approve_notes'  => $notes,
                 'receive_by'     => $app_it->value,
-                'project_id'     => $project_id,
                 'problem_type'   => $problem_type
             );
             $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);    
@@ -1961,6 +1961,7 @@ class Rfm_controller extends CI_Controller {
     public function bell()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
         
         $this->db->where('id', 'RFM_RFP_ID');
         $row_rfp = $this->db->get(TB_PARAMETER)->row()->value;
@@ -2027,37 +2028,39 @@ class Rfm_controller extends CI_Controller {
                     'request_upline_by !=' => NULL,
                     'request_status' => STT_APPROVED,
                     'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
+                    'receive_by' =>  $SESSION_UPLINE,
                     'assign_to' => NULL,
+                    
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;
 
-        $array_crud = array(
+
+        if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') {
+            $array_crud = array(
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
                     'request_upline_by !=' => NULL,
-                    'request_status' => STT_ASSIGNED,
-                    'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
-                    'assign_to' => $SESSION_USER_ID,
+                    'request_status' => STT_APPROVED,
+                    'receive_date !=' => NULL,
+                    'assign_to' => NULL,
                 )
-        );
+            );
+        }   
         $assign = $this->rfm_model->get_crud($array_crud)->row()->total;
 
         $array_crud = array(
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
-                    'request_upline_by' => NULL,
                     'request_status' => STT_ASSIGNED,
-                    'approve_by' => NULL,
-                    'receive_by' => NULL,
+                    'approve_by !=' => NULL,
+                    'receive_by !=' => NULL,
                     'assign_to' => $SESSION_USER_ID,
                 )
         );
-        $auto_assign = $this->rfm_model->get_crud($array_crud)->row()->total;
+        $assigned = $this->rfm_model->get_crud($array_crud)->row()->total;
         
         $array_crud = array(
             'select' => 'count(*) as total',
@@ -2073,7 +2076,7 @@ class Rfm_controller extends CI_Controller {
         );
         $done = $this->rfm_model->get_crud($array_crud)->row()->total;
 
-        echo $upline + $approve + $assign + $auto_assign + $done;
+        echo $upline + $approve + $assign + $assigned + $done;
     }
 
     public function export_to_excel($month='', $year='')

@@ -19,7 +19,7 @@
 
     <form id="frm-app" method="post" enctype="multipart/form-data">
         <div class="pesan"></div>
-            <div class="row">
+        <div class="row">
                 <div class="col-md-12">
                     <label>REQUEST TYPE :</label>
                     <?php echo $selectRequestType?>
@@ -155,16 +155,16 @@
             <textarea name="notes" placeholder="Notes..." rows="2"  style="resize: none" class="form-control"></textarea>
         </div>
         
-        <?php if($rows->assign_to == $this->session->userdata('USER_ID')): ?>
+        <!-- <?php if($rows->assign_to == $this->session->userdata('USER_ID')): ?>
         <div class="form-group">
             <label>Cara penyelesaian :</label>
             <textarea name="penyelesaian" style="resize: none" placeholder="Cara penyelesaian case tersebut..." rows="2" class="form-control"></textarea>
         </div>
-        <?php endif ?>
+        <?php endif ?> -->
 
         <div class="row">
             <div class="col-md-6">
-                <?php if(!empty($rows->receive_by) AND $rows->receive_date != NULL): ?>
+                <?php if($rows->receive_date != NULL): ?>
                 <div class="row">
                     <div class="col-md-6">
                         <label>PIC :</label>

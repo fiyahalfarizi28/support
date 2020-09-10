@@ -284,7 +284,7 @@
             <thead>
                 <tr>
                     <th style="text-align: center">#</th>
-                    <th>NAMA PROJECT</th>
+                    <th>PROJECT</th>
                     <th>STATUS</th>
                     <th>LAST UPDATE</th>
                 </tr>
@@ -298,8 +298,6 @@
                         $this->db->order_by('last_update DESC');
                         $specificTask = $this->db->get(TB_TASK)->result();
                     ?>
-
-                    <script>console.log(<?php echo json_encode($specificTask)?>)</script>
                     
                     <tr>
                         <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
@@ -317,7 +315,6 @@
                                     <thead>
                                         <tr>
                                             <th>NAMA TASK</th>
-                                            <th>TANGGAL DIBUAT</th>
                                             <th>TARGET DATE</th>
                                             <th>STATUS</th>
                                             <th>LAST UPDATE</th>
@@ -330,7 +327,6 @@
                                             <?php if ($row->status != STT_DONE && $this->db->where('no_rfp', $row->no_rfp)->get(TB_RFP)->row()->result_status != STT_SOLVED ) {?>
                                                 <tr>
                                                     <td><?php echo $row->task_name?></td>
-                                                    <td><?php echo date("d-m-Y",strtotime( $row->create_date)) ?></td>
                                                     <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>
                                                     <td><?php echo $row->status?></td>
                                                     <td><?php echo date("d-m-Y | H:i:s",strtotime( $row->last_update))?></td>

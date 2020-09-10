@@ -85,6 +85,7 @@ class Dailyreport_controller extends ci_controller{
         );
         return $this->daily_report_model->get_crud($array_crud);
     }
+    
 	public function getDailyActivity()
     {
         

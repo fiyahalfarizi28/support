@@ -70,6 +70,7 @@
             <div class="form-group">
                 <textarea style="resize: none" name="detail" class="form-control" placeholder="Detail. . ." rows="5" required></textarea>
             </div>
+            
             <div class="form-group text-primary">
                 <i class="far fa-clock"></i> <?php echo date('d-m-Y') ?>
             </div>
@@ -178,16 +179,14 @@
 
     var optionSelected = $("option:selected", this).text();
 
-    if  (optionSelected == "SUPPORT DATA HUMAN ERROR") {
+         if  (optionSelected == "SUPPORT DATA HUMAN ERROR") {
+            $("#collapseRisk").collapse('show');
+            $('#risk_type').prop('disabled', false);
+        } else {    
+            $("#collapseRisk").collapse('hide');
+            $('#risk_type').prop('disabled', 'disabled');
+        }
 
-        $("#collapseRisk").collapse('show');
-        $('#risk_type').prop('disabled', false);
-
-    } else {
-        $("#collapseRisk").collapse('hide');
-        $('#risk_type').prop('disabled', 'disabled');
-    }
-
-});
+    });
 
 </script>   

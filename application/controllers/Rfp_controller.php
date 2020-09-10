@@ -452,7 +452,8 @@ class Rfp_controller extends CI_Controller {
             $data['btnText'] = "Approve";
         }
         
-        if($SESSION_USER_ID === $row->receive_by)
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+        if($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' || $SESSION_USER_JABATAN === 'DIREKSI' )
         {
             if($row->request_upline_by===NULL AND $row->approve_by===NULL AND $row->receive_by===NULL)
             {
@@ -1944,6 +1945,7 @@ class Rfp_controller extends CI_Controller {
     public function bell()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
         
         $this->db->where('id', 'RFM_RFP_ID');
         $row_rfp = $this->db->get(TB_PARAMETER)->row()->value;
@@ -2010,48 +2012,23 @@ class Rfp_controller extends CI_Controller {
                     'request_upline_by !=' => NULL,
                     'request_status' => STT_APPROVED,
                     'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
+                    'receive_by' => NULL,
                     'assign_to' => NULL,
                 )
         );
         $approve = $this->rfp_model->get_crud($array_crud)->row()->total;
-
-        $array_crud = array(
-            'select' => 'count(*) as total',
-            'table' => TB_RFP,
-            'where' => array(
-                    'request_upline_by !=' => NULL,
-                    'request_status' => STT_ASSIGNED,
-                    'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
-                    'assign_to !=' => $SESSION_USER_ID,
-                )
-        );
-        $assign = $this->rfp_model->get_crud($array_crud)->row()->total;
-
-        $array_crud = array(
-            'select' => 'count(*) as total',
-            'table' => TB_RFP,
-            'where' => array(
-                    'request_upline_by' => NULL,
-                    'request_status' => STT_ASSIGNED,
-                    'approve_by' => NULL,
-                    'receive_by' => NULL,
-                    'assign_to' => $SESSION_USER_ID,
-                )
-        );
-        $auto_assign = $this->rfp_model->get_crud($array_crud)->row()->total;
         
-        $array_crud = array(
-            'select' => 'count(*) as total',
-            'table' => TB_RFP,
-            'where' => array(
-                    'receive_by' => $SESSION_USER_ID,
-                    'request_status' => STT_APPROVED,
-                    'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
-                )
-        );
+        if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT'){
+            $array_crud = array(
+                'select' => 'count(*) as total',
+                'table' => TB_RFP,
+                'where' => array(
+                        'request_status' => STT_APPROVED,
+                        'approve_by !=' => NULL,
+                        'receive_by !=' => NULL,
+                    )
+            );
+        }
         $case = $this->rfp_model->get_crud($array_crud)->row()->total;
         
         $array_crud = array(
@@ -2068,7 +2045,7 @@ class Rfp_controller extends CI_Controller {
         );
         $done = $this->rfp_model->get_crud($array_crud)->row()->total;
 
-        echo $upline + $approve + $assign + $auto_assign + $case + $done;
+        echo $upline + $approve + $case + $done;
  
     }
 
