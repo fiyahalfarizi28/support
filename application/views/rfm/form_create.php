@@ -43,15 +43,15 @@
                         </div>
                      </div>
 
-                     <div id="collapseRisk" class="panel-collapse collapse">
+                    <div id="collapseRisk" class="panel-collapse collapse">
                         <div class="panel-body">
 
                             <div class="form-group">
                                 <label for="risk_type">MEMPENGARUHI FINANCIAL :</label>
                                 <select id="risk_type" class="form-control" name="risk_type" style="margin-bottom: 15px">
                                     <option disabled selected="selected">- RISK TYPE -</option>
-                                    <option value="YES">IYA</option>
-                                    <option value="NO">TIDAK</option>
+                                    <option value="IYA">IYA</option>
+                                    <option value="TIDAK">TIDAK</option>
                                 </select>
                             </div>
 
@@ -115,15 +115,15 @@
 
         $('#problem_type').empty();
         $('#project_id').empty();
-        $("#collapseRisk").collapse('hide');
-        $('#risk_type').prop('disabled', 'disabled');
-
+        
         $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>');
         $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>');
 
         if (optionSelected == "REQUEST FOR MAINTENANCE") {
             $('#problem_type').empty();
             $('#project_id').empty();
+            $("#collapseRisk").collapse('hide');
+            $('#risk_type').prop('disabled', 'disabled');
 
             $('#problem_type').append('<option disabled selected="selected" value="">- SELECT PROBLEM TYPE -</option>');
             $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>');

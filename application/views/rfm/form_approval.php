@@ -76,6 +76,15 @@
                         <?php endforeach ?>
                     </select>
                 </div>
+
+                <?php if ($rows->risk_type != NULL ) { ?>
+                    <div class="col-md-12">
+                        <label style="margin-top: 8px">MEMPENGARUHI FINANCIAL :</label>
+                        <select disabled id="risk_type"name="risk_type" class="form-control" required>
+                            <option value="<?php echo $rows->risk_type ?>"><?php echo $rows->risk_type ?></option>
+                        </select>
+                    </div>
+                <?php } ?>
         </div>
 
         <div class="form-group">

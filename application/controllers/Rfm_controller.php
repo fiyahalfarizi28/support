@@ -2014,7 +2014,6 @@ class Rfm_controller extends CI_Controller {
             'where' => array(
                     'request_upline_by' => $SESSION_UPLINE,
                     'request_status' => STT_ON_QUEUE,
-                    'approve_by' => NULL,
                     'receive_by' => NULL,
                     'assign_to' => NULL,
                 )
