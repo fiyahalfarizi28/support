@@ -107,7 +107,7 @@
     var activities3 = document.getElementById("problem_type");
 
     activities.addEventListener("change", function() {
-
+        
         var arrayProblem = <?php echo json_encode($problem_type->result()) ?>;
         var arrayProject = <?php echo json_encode($projectList->result()) ?>;  
 
@@ -129,7 +129,7 @@
             $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>');
 
             arrayProject.forEach( (Project) => {
-                if (Project.id > 1) {
+                if (Project.id >= 1) {
                     $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                 }
             });
@@ -143,7 +143,22 @@
     });
 
     activities2.addEventListener("change", function() {
+        var data = $('#project_id').val();
+        if (data === '42' || data === '49') {
+            activities3.addEventListener("change", function() {
 
+            var optionSelected = $("option:selected", this).text();
+
+                if  (optionSelected == "SUPPORT DATA HUMAN ERROR") {
+                    $("#collapseRisk").collapse('show');
+                    $('#risk_type').prop('disabled', false);
+                } else {    
+                    $("#collapseRisk").collapse('hide');
+                    $('#risk_type').prop('disabled', 'disabled');
+                }
+
+            });
+        }
         var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
 
         var optionSelected = $("option:selected", this).text();
@@ -172,21 +187,6 @@
                 }
             });
         }
-
-    });
-
-    activities3.addEventListener("change", function() {
-
-    var optionSelected = $("option:selected", this).text();
-
-         if  (optionSelected == "SUPPORT DATA HUMAN ERROR") {
-            $("#collapseRisk").collapse('show');
-            $('#risk_type').prop('disabled', false);
-        } else {    
-            $("#collapseRisk").collapse('hide');
-            $('#risk_type').prop('disabled', 'disabled');
-        }
-
     });
 
 </script>   

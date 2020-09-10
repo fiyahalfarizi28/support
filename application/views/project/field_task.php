@@ -64,4 +64,3 @@
         }
     </script>
 </div>
-<hr>
