@@ -601,7 +601,7 @@
 						<div class="form-group collapse" id="collapseProjectDetail">
 							<label for="DetailProject">Detail :</label>
 							<textarea class="form-control" id="DetailProject" rows="3" style="resize: none"></textarea></br>
-							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
+							<label for="TargetDate">Target Date : <span id="targetDateProject">-</span></label></br>
 							
 							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
 							<div id="attachmentElement" style="margin-top: 8px">
@@ -732,7 +732,7 @@
 				});
 
 				$('#task_id').on('change', function (e){
-					$('#targetDate').val("");
+					$('#targetDateProject').text("-");
 					$('#DetailProject').val("");
 					$("#DetailProject").prop('disabled', 'disabled');
 					$('#attachmentElement').empty();
@@ -750,35 +750,33 @@
 							}
 						})
 						
-						for (var i=0; i<taskList.length; i++) {
-							if ( taskList[i].id == thisTask.id) {
-								var month = new Date(taskList[i].target_date).getMonth();
-								var date = new Date(taskList[i].target_date).getDate();
-								var year = new Date(taskList[i].target_date).getFullYear();
-								var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
-								
-								$('#DetailProject').val(taskList[i].detail);
-								$('#targetDate').text(targetDate);
-							}
-						}
+						var month = new Date(thisTask.target_date).getMonth();
+						var date = new Date(thisTask.target_date).getDate();
+						var year = new Date(thisTask.target_date).getFullYear();
+						var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
+						
+						$('#DetailProject').val(thisTask.detail);
+						$('#targetDateProject').text(targetDate);
 
-						$.ajax({
-							type : 'post',
-							url : 'rfm_controller/getattachment',
-							data :  {
-								'id_rfm': null,
-								'task_id': valueSelected
-							},
-							cache: false,
-							success : function(res) {
-								$('#attachmentElement').html(res);
-							}
-						});
+						console.log(targetDate);
+						
+						// $.ajax({
+						// 	type : 'post',
+						// 	url : 'rfm_controller/getattachment',
+						// 	data :  {
+						// 		'id_rfm': null,
+						// 		'task_id': valueSelected
+						// 	},
+						// 	cache: false,
+						// 	success : function(res) {
+						// 		$('#attachmentElement').html(res);
+						// 	}
+						// });
 
 						$("#collapseProjectDetail").collapse('show');
 						
 					} else {
-						$('#targetDate').val("");
+						$('#targetDateProject').val("");
 						$('#DetailProject').val("");
 						$("#DetailProject").prop('disabled', 'disabled');
 						$("#collapseProjectDetail").collapse('hide');
