@@ -1815,7 +1815,7 @@ class Rfm_controller extends CI_Controller {
     public function set_done_request()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
-        $id_rfm = $this->input->post('id_rfm');
+        $id_rfp = $this->input->post('id_rfp');
         $notes = $this->input->post('notes');
         $penyelesaian = $this->input->post('penyelesaian');
         $date_now = date('Y-m-d H:i:s');
@@ -1831,29 +1831,31 @@ class Rfm_controller extends CI_Controller {
         
         $array_insert = array(
             'request_status' => STT_CONFIRMED,
+            'result_status' => STT_DONE,
             'done_date'   => $date_now,
             'done_notes'  => $notes,
+            
         );
-        $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
+        $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
         
         $array_insert = array(
-            'id' => $id_rfm,
+            'id' => $id_rfp,
             'user' => $SESSION_USER_ID,
             'date_comment' => $date_now,
             'comment' => $penyelesaian
         );
-        $this->db->insert(TB_COMMENT_RFM, $array_insert);
+        $this->db->insert(TB_COMMENT_RFP, $array_insert);
 
         if(!$insert_data) {
             $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Gagal Menyelesaikan RFM</div>";
+            $isPesan = "<div class='alert alert-danger'>Gagal Menyelesaikan RFP</div>";
             
             $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
             echo json_encode($data);
             die(); 
         }else {
             $isValid = 1;
-            $isPesan = "<div class='alert alert-success'>Berhasil Menyelesaikan RFM</div>";
+            $isPesan = "<div class='alert alert-success'>Berhasil Menyelesaikan RFP</div>";
         }
 
         $data = array('isValid' => $isValid, 'isPesan' => $isPesan);

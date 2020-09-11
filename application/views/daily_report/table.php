@@ -367,7 +367,7 @@
 	<?php } else { ?>
 		<div class="card-header">
 			<button class="btn btn-success btn-sm" id="btn_create" data-toggle="modal" data-target="#modal-create-task">
-				<i class="far fa-comments"></i> Tulis Task
+				<i class="far fa-comments"></i> Tulis Activity
 			</button>
 		</div>
 	
@@ -843,14 +843,18 @@
 				$('#status').on('change', function (e) {
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;
+					var flagSelected = $("#projectFlag option:selected").text();
 
 					if (valueSelected === "DONE") {
-						$('#penyelesaian').prop('disabled', false);
-						$('#penyelesaian').prop('disabled', false);
-						$("#collapseStatus").collapse('show');
+						if (flagSelected === "RFM") {
+							$("#collapseStatus").collapse('show');
+							$('#penyelesaian').prop('disabled', false);
+						} else {
+							$("#collapseStatus").collapse('hide');
+							$('#penyelesaian').prop('disabled', 'disabled');
+						}
 					} else {
 						$("#collapseStatus").collapse('hide');
-						$('#penyelesaian').prop('disabled', 'disabled');
 						$('#penyelesaian').prop('disabled', 'disabled');
 					}
 				});

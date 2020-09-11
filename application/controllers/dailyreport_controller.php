@@ -132,10 +132,6 @@ class Dailyreport_controller extends ci_controller{
             $rfm_id = $this->input->post('rfm_id');
         }
 
-        if ($this->input->post('rfp_id') !== "") {
-            $rfp_id = $this->input->post('rfp_id');
-        }
-
         if ($this->input->post('notes') !== "") {
             $done_notes = $this->input->post('notes');
         }
@@ -185,7 +181,6 @@ class Dailyreport_controller extends ci_controller{
                 'project_id'    => $project_id,
                 'task_id'       => $task_id,
                 'rfm_id'        => $rfm_id,
-                'rfp_id'        => $rfp_id,
                 'status'        => $status,
                 'keterangan' 	=> $keterangan,
                 'update_by'     => $user_id,
@@ -201,14 +196,6 @@ class Dailyreport_controller extends ci_controller{
             $this->db->where('id', $rfm_id);
             $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
 
-            $array_update_rfp = array(
-                'result_status' => $status,
-                'onprogress_date' => $date_now,
-            );
-
-            $this->db->where('id', $rfp_id);
-            $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
-
             if ($status == STT_DONE) {
                 
                 $array_update_rfm = array(
@@ -220,62 +207,59 @@ class Dailyreport_controller extends ci_controller{
     
                 $this->db->where('id', $rfm_id);
                 $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
-    
-                $array_update_rfp = array(
-                    'result_status' => $status,
-                    'done_notes'    => $done_notes,
-                    'done_date'     => $date_now,
-                    'request_status' => STT_CONFIRMED,
-                );
-    
-                $this->db->where('id', $rfp_id);
-                $update_rfp = $this->db->update(TB_RFP, $array_update_rfp);
-    
+                
+                if (!empty($task_id)) {
+                    $array_update_task = array(
+                        'result_status' => $status,
+                        'update_by'    => $this->session->userdata('USER_ID'),
+                        'last_update'     => $date_now,
+                    );
+        
+                    $this->db->where('id', $task_id);
+                    $update_task = $this->db->update(TB_TASK, $array_update_task);
+                }
             }
 
             if ($this->input->post('penyelesaian') !== "") {
                 $comment = $this->input->post('penyelesaian');
             }
 
-            if(empty($comment && $status == STT_DONE)) {
-                $isValid = 0;
-                $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
-            }
-
             if (!empty($comment) && $status == STT_DONE) {
-
-                // TODO: Check row in tb comment, if null then insert, if not null then update comment
-                $array_crud = array(
-                    'table' => !empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP,
-                    'where' => array(
-                        'id' => !empty($rfm_id) ? $rfm_id : $rfp_id,
-                    )
-                );
-                
-                $check = $this->rfm_model->get_crud($array_crud)->num_rows();
-
-                if ($check != 0) {
-                    $array_update_comment = array(
-                        'date_comment' => $date_now,
-                        'user'          => $user_id,
-                        'comment'       => $comment
+                if (!empty($rfm_id)) {
+                    // TODO: Check row in tb comment, if null then insert, if not null then update comment
+                    $array_crud = array(
+                        'table' => TB_COMMENT_RFM,
+                        'where' => array(
+                            'id' => $rfm_id,
+                        )
                     );
                 
-                    $this->db->where('id', !empty($rfm_id) ? $rfm_id : $rfp_id);
+                    $check = $this->rfm_model->get_crud($array_crud)->num_rows();
 
-                    $update_comment = $this->db->update( !empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_update_comment);
+                    if ($check != 0) {
+                        $array_update_comment = array(
+                            'date_comment' => $date_now,
+                            'user'          => $user_id,
+                            'comment'       => $comment
+                        );
 
-                } else {
-                    $array_insert_comment = array(
-                        'id'            => !empty($rfm_id) ? $rfm_id : $rfp_id,
-                        'date_comment' => $date_now,
-                        'user'          => $user_id,
-                        'comment'       => $comment
-                    );
-                
-                    $insert_comment = $this->db->insert(!empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_insert_comment);
+                        $this->db->where('id', $rfm_id);
+
+                        $update_comment = $this->db->update( TB_COMMENT_RFM, $array_update_comment);
+
+                    } else {
+                        $array_insert_comment = array(
+                            'id'            => $rfm_id,
+                            'date_comment'  => $date_now,
+                            'user'          => $user_id,
+                            'comment'       => $comment
+                        );
+
+                        $insert_comment = $this->db->insert(TB_COMMENT_RFM, $array_insert_comment);
+                    }
+
                 }
-            } else if(empty($comment && $status == STT_DONE)) {
+            } else if(empty($comment) && $status == STT_DONE) {
                 $isValid = 0;
                 $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
             }

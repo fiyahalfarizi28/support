@@ -692,7 +692,7 @@ function set_done_request() {
                 $('.pesan').html(isPesan);
             }else {
                 $('.pesan').html(isPesan);
-                $('#modal-approve-rfm').modal('hide');
+                $('#modal-approve-rfp').modal('hide');
                 reload_table();
             }
         }
