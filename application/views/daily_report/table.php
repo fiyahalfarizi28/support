@@ -122,10 +122,6 @@
 								$this->db->order_by('last_update DESC');
 								$specificDailyActivity = $this->db->get(TB_DAILY_ACTIVITY)->result();
 							?>
-
-							<script>
-								console.log(<?php echo json_encode($this->db->last_query()) ?>)
-							</script>
                     
 							<?php if (count($specificDailyActivity) > 0) { ?>
 								<?php foreach($specificDailyActivity as $row): ?>
@@ -593,7 +589,7 @@
 							<textarea rows="2" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
 							
 							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
-							<div id="attachmentElement" style="margin-top: 8px">
+							<div id="attachmentElementRFM" style="margin-top: 8px">
 								
 							</div>
 						</div>
@@ -604,7 +600,7 @@
 							<label for="TargetDate">Target Date : <span id="targetDateProject">-</span></label></br>
 							
 							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
-							<div id="attachmentElement" style="margin-top: 8px">
+							<div id="attachmentElementProject" style="margin-top: 8px">
 								
 							</div>
 						</div>
@@ -735,7 +731,7 @@
 					$('#targetDateProject').text("-");
 					$('#DetailProject').val("");
 					$("#DetailProject").prop('disabled', 'disabled');
-					$('#attachmentElement').empty();
+					$('#attachmentElementProject').empty();
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
@@ -758,20 +754,18 @@
 						$('#DetailProject').val(thisTask.detail);
 						$('#targetDateProject').text(targetDate);
 
-						console.log(targetDate);
-						
-						// $.ajax({
-						// 	type : 'post',
-						// 	url : 'rfm_controller/getattachment',
-						// 	data :  {
-						// 		'id_rfm': null,
-						// 		'task_id': valueSelected
-						// 	},
-						// 	cache: false,
-						// 	success : function(res) {
-						// 		$('#attachmentElement').html(res);
-						// 	}
-						// });
+						$.ajax({
+							type : 'post',
+							url : 'rfm_controller/getattachment',
+							data :  {
+								'id_rfm': null,
+								'task_id': valueSelected
+							},
+							cache: false,
+							success : function(res) {
+								$('#attachmentElementProject').html(res);
+							}
+						});
 
 						$("#collapseProjectDetail").collapse('show');
 						
@@ -780,7 +774,7 @@
 						$('#DetailProject').val("");
 						$("#DetailProject").prop('disabled', 'disabled');
 						$("#collapseProjectDetail").collapse('hide');
-						$('#attachmentElement').empty();
+						$('#attachmentElementProject').empty();
 					}	
 
 				});
@@ -792,7 +786,7 @@
 					$('#DetailRfm').val("");
 					$('#Revisi').val("");
 					$("#DetailRfm").prop('disabled', 'disabled');
-					$('#attachmentElement').empty();
+					$('#attachmentElementRFM').empty();
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
@@ -824,11 +818,11 @@
 							url : 'rfm_controller/getattachment',
 							data :  {
 								'id_rfm': valueSelected,
-								'id_rfp': null
+								'task_id': null
 							},
 							cache: false,
 							success : function(res) {
-								$('#attachmentElement').html(res);
+								$('#attachmentElementRFM').html(res);
 							}
 						});
 
@@ -841,7 +835,7 @@
 						$('#Revisi').val("");
 						$("#DetailRfm").prop('disabled', 'disabled');
 						$("#collapseRfmDetail").collapse('hide');
-						$('#attachmentElement').empty();
+						$('#attachmentElementRFM').empty();
 					}	
 
 				});

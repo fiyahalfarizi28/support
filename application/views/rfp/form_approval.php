@@ -146,10 +146,10 @@
         </div>
         
         <?php $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN'); 
-        if($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' || $SESSION_USER_JABATAN === 'DIREKSI' ): ?>
+        if($rows->receive_by != NULL && ($SESSION_USER_JABATAN === 'HEAD IT' || $SESSION_USER_JABATAN === 'SUPERVISOR IT')): ?>
         <div class="form-group">
             <label>Cara penyelesaian :</label>
-            <textarea name="penyelesaian" style="resize: none" placeholder="Cara penyelesaian case tersebut..." rows="2" class="form-control"></textarea>
+            <textarea id ="penyelesaian" name="penyelesaian" style="resize: none" placeholder="Cara penyelesaian case tersebut..." rows="2" class="form-control"></textarea>
         </div>
         <?php endif ?>
 

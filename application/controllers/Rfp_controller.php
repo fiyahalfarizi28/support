@@ -440,8 +440,8 @@ class Rfp_controller extends CI_Controller {
         {
             $data['disabled'] = "";
             $data['readonly'] = "readonly";
-            $data['onclick'] = "set_assign_request()";
-            $data['btnText'] = "Assign";
+            $data['onclick'] = "set_done_request()";
+            $data['btnText'] = "Done";
             
         }
         else
@@ -453,7 +453,7 @@ class Rfp_controller extends CI_Controller {
         }
         
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
-        if($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' || $SESSION_USER_JABATAN === 'DIREKSI' )
+        if($row->receive_date != NULL && ($SESSION_USER_JABATAN === 'HEAD IT' || $SESSION_USER_JABATAN === 'SUPERVISOR IT'))
         {
             if($row->request_upline_by===NULL AND $row->approve_by===NULL AND $row->receive_by===NULL)
             {
@@ -1805,13 +1805,14 @@ class Rfp_controller extends CI_Controller {
             'result_status' => STT_DONE,
             'done_date'   => $date_now,
             'done_notes'  => $notes,
+            
         );
         $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
         
         $array_insert = array(
             'id' => $id_rfp,
             'user' => $SESSION_USER_ID,
-            'date' => $date_now,
+            'date_comment' => $date_now,
             'comment' => $penyelesaian
         );
         $this->db->insert(TB_COMMENT_RFP, $array_insert);
@@ -1895,7 +1896,6 @@ class Rfp_controller extends CI_Controller {
 
         if ($isOk == 'tidak') {
             $array_insert = array(
-                'request_status' => STT_ASSIGNED,
                 'result_status' => STT_PENDING,
                 'confirm_by' => $SESSION_USER_ID,
                 'confirm_notes'  => $notes,

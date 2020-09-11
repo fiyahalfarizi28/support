@@ -87,9 +87,13 @@
       $title_app_dept = "Menunggu persetujuan dari Department Head";
     }
 
+    $class_progress = "";
+    $title_progress = "Menunggu dikerjakan";
     if($r->receive_date != NULL ) {
       $class_app_it ="done";
       $title_app_it= "RFP dengan No. $r->no_rfp telah disetujui oleh IT";
+      $class_progress = "active";
+      $title_progress = "RFP dengan No. $r->no_rfp sedang dikerjakan";
     } else {
       if ($class_app_dept == "done") {
         $class_app_it = "active";
@@ -99,39 +103,9 @@
       $title_app_it = "Menunggu persetujuan dari IT";
     }
 
-    if($r->assign_date != NULL) {
-      $class_assign ="done";
-      $nama_pic = $this->db->where('user_id', $r->assign_to)->get('dpm_online.'.TB_USER)->row()->nama;
-      $title_assign = "RFP dengan No. $r->no_rfp telah di-assign ke $nama_pic";
-      if ($r->assign_date != NULL && $r->result_status=="PENDING")
-      {
-        $class_progress= "active";
-        $title_progress= "Menunggu dikerjakan oleh $nama_pic";
-      } else if ($r->done_date == NULL && $r->result_status == "ON PROGRESS"){
-        $class_progress ="active";
-        $nama_pic = $this->db->where('user_id', $r->assign_to)->get('dpm_online.'.TB_USER)->row()->nama;
-        $title_progress= "RFP dengan No. $r->no_rfp sedang dikerjakan oleh $nama_pic";
-      } else if ($r->done_date != NULL && $r->result_status == "DONE")
-      {
-        $class_progress = "done";
-        $class_confirmed = "active";
-        $title_progress= "RFP dengan No. $r->no_rfp telah selesai dikerjakan";
-        $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
-        $title_confirmed= "RFP dengan No. $r->no_rfp telah selesai dikerjakan, menunggu konfirmasi dari $nama_requestor";
-      }
-    } else {
-      if ($class_app_it == "done")
-      {
-        $class_assign = "active";
-      } else {
-        $class_assign = "";
-      }
-      $class_progress = "";
-      $title_assign= "Menunggu assign ke PIC";
-      $title_progress= "Menunggu dikerjakan oleh PIC";
-    }
-
     if ($r->done_date != NULL ){
+      $class_progress = "done";
+      $title_progress = "RFP dengan No. $r->no_rfp telah selesai dikerjakan";
       $class_confirmed = "active";
       $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
       $title_confirmed= "Menunggu konfirmasi penyelesaian dari $nama_requestor";
@@ -169,28 +143,21 @@
           </div>
         </li>
 
-        <li class="<?php echo $class_assign ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_assign?>">
-          Assigned
-          <div class="ml-4">
-          (<?php echo !empty($r->assign_date) ? date('d-m-Y', strtotime($r->assign_date)) : '' ?> | <?php echo !empty($r->assign_date) ? date('H:i:s', strtotime($r->assign_date)) : '' ?>)
-          </div>
-        </li>
-
-        <?php if ($r->result_status == "ON PROGRESS") { ?>
+        <?php if ($r->receive_date != NULL && $r->result_status == "PENDING") { ?>
 
           <li class="<?php echo $class_progress ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_progress ?>">
             ON PROGRESS
             <div class="ml-4">
-            (<?php echo !empty($r->onprogress_date) ? date('d-m-Y', strtotime($r->onprogress_date)) : '' ?> | <?php echo !empty($r->onprogress_date) ? date('H:i:s', strtotime($r->onprogress_date)) : '' ?>)
+            (<?php echo !empty($r->receive_date) ? date('d-m-Y', strtotime($r->receive_date)) : '' ?> | <?php echo !empty($r->receive_date) ? date('H:i:s', strtotime($r->receive_date)) : '' ?>)
             </div>
           </li>
 
-          <?php } else if ($r->result_status == "DONE") { ?>
+          <?php } else if ($r->receive_date != NULL && $r->result_status == "DONE") { ?>
 
             <li class="<?php echo $class_progress ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_progress ?>">
             DONE
             <div class="ml-4">
-            (<?php echo !empty($r->onprogress_date) ? date('d-m-Y', strtotime($r->onprogress_date)) : '' ?> | <?php echo !empty($r->onprogress_date) ? date('H:i:s', strtotime($r->onprogress_date)) : '' ?>)
+            (<?php echo !empty($r->done_date) ? date('d-m-Y', strtotime($r->done_date)) : '' ?> | <?php echo !empty($r->done_date) ? date('H:i:s', strtotime($r->done_date)) : '' ?>)
             </div>
           </li>
 
@@ -199,7 +166,7 @@
             <li class="<?php echo $class_progress ?>" data-toggle="tooltip" data-placement="left" title="<?php echo $title_progress ?>">
               PENDING
               <div class="ml-4">
-              (<?php echo !empty($r->onprogress_date) ? date('d-m-Y', strtotime($r->onprogress_date)) : '' ?> | <?php echo !empty($r->onprogress_date) ? date('H:i:s', strtotime($r->onprogress_date)) : '' ?>)
+              (<?php echo !empty($r->receive_date) ? date('d-m-Y', strtotime($r->receive_date)) : '' ?> | <?php echo !empty($r->receive_date) ? date('H:i:s', strtotime($r->receive_date)) : '' ?>)
               </div>
             </li>
 

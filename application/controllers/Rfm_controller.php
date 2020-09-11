@@ -1839,7 +1839,7 @@ class Rfm_controller extends CI_Controller {
         $array_insert = array(
             'id' => $id_rfm,
             'user' => $SESSION_USER_ID,
-            'date' => $date_now,
+            'date_comment' => $date_now,
             'comment' => $penyelesaian
         );
         $this->db->insert(TB_COMMENT_RFM, $array_insert);
