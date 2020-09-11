@@ -224,14 +224,6 @@ class Dailyreport_controller extends ci_controller{
                 $comment = $this->input->post('penyelesaian');
             }
 
-<<<<<<< HEAD
-=======
-            if(empty($comment) && $status == STT_DONE)) {
-                $isValid = 0;
-                $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
-            }
-
->>>>>>> aa7027e850e5ca12dd002508e29f4d261e616807
             if (!empty($comment) && $status == STT_DONE) {
                 if (!empty($rfm_id)) {
                     // TODO: Check row in tb comment, if null then insert, if not null then update comment
@@ -241,22 +233,15 @@ class Dailyreport_controller extends ci_controller{
                             'id' => $rfm_id,
                         )
                     );
-<<<<<<< HEAD
-                
-                    $check = $this->rfm_model->get_crud($array_crud)->num_rows();
-
-=======
                     
                     $check = $this->rfm_model->get_crud($array_crud)->num_rows();
     
->>>>>>> aa7027e850e5ca12dd002508e29f4d261e616807
                     if ($check != 0) {
                         $array_update_comment = array(
                             'date_comment' => $date_now,
                             'user'          => $user_id,
                             'comment'       => $comment
                         );
-<<<<<<< HEAD
 
                         $this->db->where('id', $rfm_id);
 
@@ -274,26 +259,8 @@ class Dailyreport_controller extends ci_controller{
                     }
 
                 }
+            
             } else if(empty($comment) && $status == STT_DONE) {
-=======
-                    
-                        $this->db->where('id', $rfm_id);
-    
-                        $update_comment = $this->db->update( TB_COMMENT_RFM, $array_update_comment);
-    
-                    } else {
-                        $array_insert_comment = array(
-                            'id'            => $rfm_id,
-                            'date_comment' => $date_now,
-                            'user'          => $user_id,
-                            'comment'       => $comment
-                        );
-                    
-                        $insert_comment = $this->db->insert(TB_COMMENT_RFM, $array_insert_comment);
-                    }
-                }
-            } else if(empty($comment) && $status == STT_DONE)) {
->>>>>>> aa7027e850e5ca12dd002508e29f4d261e616807
                 $isValid = 0;
                 $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
             }
