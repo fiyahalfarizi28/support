@@ -57,7 +57,7 @@
         var fileId = 0;
         function addFile_task(param) {
             fileId++;
-            var html =  '<input type="file" name="attachment[]" />'+
+            var html =  '<input type="file" name="attachment'+param+'[]" />'+
                         ' <a href="javascript:void(0)" onclick="javascript:removeElement(\'file-' + fileId + '\'); return false;">'+
                         '<i class="far fa-window-close fa-lg text-danger"></i></a>';
             addElement(`files${param}`, 'p', 'file-' + fileId, html);

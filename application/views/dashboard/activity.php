@@ -324,7 +324,7 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach($specificTask as $row): ?>
-                                            <?php if ($row->status != STT_DONE && $this->db->where('no_rfp', $row->no_rfp)->get(TB_RFP)->row()->result_status != STT_SOLVED ) {?>
+                                            <?php if ($row->status != STT_DONE ) {?>
                                                 <tr>
                                                     <td><?php echo $row->task_name?></td>
                                                     <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>

@@ -1,7 +1,7 @@
 <?php
     $no = 1;
-    $this->db->where(!empty($id_rfm) ? 'rfm_id' : 'rfp_id', !empty($id_rfm) ? $id_rfm : $id_rfp);
-    $qAtt = $this->db->get(!empty($id_rfm) ? TB_ATTACHMENT_RFM : TB_ATTACHMENT_RFP);
+    $this->db->where(!empty($id_rfm) ? 'rfm_id' : 'task_id', !empty($id_rfm) ? $id_rfm : $task_id);
+    $qAtt = $this->db->get(!empty($id_rfm) ? TB_ATTACHMENT_RFM : TB_ATTACHMENT_PROJECT);
     foreach($qAtt->result() as $rAtt){
         $nama_file = $rAtt->filename;
         $explode_file_ext = explode(".", $nama_file);

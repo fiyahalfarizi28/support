@@ -2115,12 +2115,12 @@ class Rfm_controller extends CI_Controller {
     public function getattachment() {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $id_rfm = $this->input->post('id_rfm');
-        $id_rfp = $this->input->post('id_rfp');
+        $task_id = $this->input->post('task_id');
         $data = array();
 
         $data['cekController'] = true;
         $data['id_rfm'] = $id_rfm;
-        $data['id_rfp'] = $id_rfp;
+        $data['task_id'] = $task_id;
         $this->load->view('daily_report/attachment', $data);
 
     }

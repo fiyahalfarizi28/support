@@ -158,7 +158,13 @@
                 }
 
             });
+        } else {
+            $("#collapseRisk").collapse('hide');
+            $('#risk_type').prop('disabled', 'disabled');
         }
+        
+        $("#collapseRisk").collapse('hide');
+        $('#risk_type').prop('disabled', 'disabled');
         var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
 
         var optionSelected = $("option:selected", this).text();

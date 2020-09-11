@@ -56,6 +56,7 @@ $route['track_rfm'] = 'track_rfm_controller';
 $route['rfp'] = 'rfp_controller';
 $route['track_rfp'] = 'track_rfp_controller';
 $route['project'] = 'project_controller';
+$route['report'] = 'reportrfm_controller';
 $route['daily_report'] = 'dailyreport_controller';
 $route['activity'] = 'activity_controller';
 $route['user_management'] = 'um_controller';

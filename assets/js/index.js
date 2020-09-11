@@ -782,7 +782,7 @@ function post_assign_task() {
     var data = new FormData(form);
     $.ajax({
         type: "post",
-        url: "project_controller/set_assign_request",
+        url: "project_controller/set_assign_task",
         data: data,
         processData: false,
         contentType: false,
@@ -794,13 +794,16 @@ function post_assign_task() {
         success: function (res) {
             var isValid = res.isValid,
                 isPesan = res.isPesan;
+
+            console.log(isValid);
+            console.log(isPesan);
             if(isValid == 0) {
                 $('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request()" class="btn btn-success"><i class="fa fa-check"></i> Assign</a>');
                 $('.pesan').html(isPesan);
             }else {
                 $('.pesan').html(isPesan);
                 $('#modal-task-rfp').modal('hide');
-                reload_table();
+                // reload_table();
             }
         }
     });

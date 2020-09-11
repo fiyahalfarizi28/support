@@ -584,13 +584,24 @@
 							</div>
 						</div>
 						
-						<div class="form-group collapse" id="collapseDetail">
+						<div class="form-group collapse" id="collapseRfmDetail">
 							<label for="RequestBy">Request By : <span id="requestBy">-</span></label></br>
-							<label for="Detail">Detail :</label>
-							<textarea class="form-control" id="Detail" rows="3" style="resize: none"></textarea></br>
+							<label for="DetailRfm">Detail :</label>
+							<textarea class="form-control" id="DetailRfm" rows="3" style="resize: none"></textarea></br>
 							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
 							<label for="Revisi">Notes Revisi:</label>
 							<textarea rows="2" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
+							
+							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
+							<div id="attachmentElement" style="margin-top: 8px">
+								
+							</div>
+						</div>
+
+						<div class="form-group collapse" id="collapseProjectDetail">
+							<label for="DetailProject">Detail :</label>
+							<textarea class="form-control" id="DetailProject" rows="3" style="resize: none"></textarea></br>
+							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
 							
 							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
 							<div id="attachmentElement" style="margin-top: 8px">
@@ -660,35 +671,38 @@
 					var valueSelected = this.value;
 
 					if (valueSelected === "Project") {
-						// $('#RfmDetail').val("");
-						$("#collapseDetail").collapse('hide');
+						$("#collapseRfmDetail").collapse('hide');
+						$("#collapseProjectDetail").collapse('hide');
 						$('#collapseProject').collapse('show');
 						$('#collapseRFM').collapse('hide');
 						
 						$('#rfm_id').prop('disabled', 'disabled');
 						$('#project_id').prop('disabled', false);
 						$('#task_id').prop('disabled', false);
-						$("#Detail").prop('disabled', 'disabled');
+						$("#DetailRfm").prop('disabled', 'disabled');
+						$("#DetailProject").prop('disabled', 'disabled');
 					} else if (valueSelected === "RFM") {
-						// $('#RfmDetail').val("");
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('show');
-						$("#collapseDetail").collapse('hide');
+						$("#collapseRfmDetail").collapse('hide');
+						$("#collapseProjectDetail").collapse('hide');
+
 
 						$('#rfm_id').prop('disabled', false);
 						$('#project_id').prop('disabled', 'disabled');
 						$('#task_id').prop('disabled', 'disabled');
-						$("#Detail").prop('disabled', 'disabled');
+						$("#DetailRfm").prop('disabled', 'disabled');
+						$("#DetailProject").prop('disabled', 'disabled');
 					} else {
-						// $('#RfmDetail').val("");
 						$('#collapseProject').collapse('hide');
 						$('#collapseRFM').collapse('hide');
-						$("#collapseDetail").collapse('hide');
+						$("#collapseRfmDetail").collapse('hide');
+						$("#collapseProjectDetail").collapse('hide');
 
 						$('#rfm_id').prop('disabled', 'disabled');
 						$('#project_id').prop('disabled', 'disabled');
 						$('#task_id').prop('disabled', 'disabled');
-						$("#Detail").prop('disabled', 'disabled');
+						$("#DetailProject").prop('disabled', 'disabled');
 					}
 				});
 
@@ -718,18 +732,15 @@
 				});
 
 				$('#task_id').on('change', function (e){
-					$('#requestBy').val("");
 					$('#targetDate').val("");
-					$('#Detail').val("");
-					$('#Revisi').val("");
-					$("#Detail").prop('disabled', 'disabled');
+					$('#DetailProject').val("");
+					$("#DetailProject").prop('disabled', 'disabled');
 					$('#attachmentElement').empty();
 
 					var optionSelected = $("option:selected", this);
 					var valueSelected = this.value;	
 
 					if (valueSelected !== null) {
-						var rfpList = <?php echo json_encode($rfpList->result()) ?>;
 						var arrayTask = <?php echo json_encode($taskList->result()) ?>;
 						var thisTask;
 
@@ -739,23 +750,15 @@
 							}
 						})
 						
-						for (var i=0; i<rfpList.length; i++) {
-							if ( rfpList[i].no_rfp == thisTask.no_rfp) {
-								var requestBy = "";
-								var month = new Date(rfpList[i].target_date).getMonth();
-								var date = new Date(rfpList[i].target_date).getDate();
-								var year = new Date(rfpList[i].target_date).getFullYear();
+						for (var i=0; i<taskList.length; i++) {
+							if ( taskList[i].id == thisTask.id) {
+								var month = new Date(taskList[i].target_date).getMonth();
+								var date = new Date(taskList[i].target_date).getDate();
+								var year = new Date(taskList[i].target_date).getFullYear();
 								var targetDate = `${date}-${String(month).length == 1 ? "0"+String(month+1) : String(month+1)}-${year}`;
-								for (var j=0; j<userList.length; j++) {
-									if (rfpList[i].request_by == userList[j].user_id) {
-										requestBy = userList[j].nama;
-									}
-								}
-
-								$('#Detail').val(rfpList[i].rfp_detail);
-								$('#requestBy').text(requestBy);
+								
+								$('#DetailProject').val(taskList[i].detail);
 								$('#targetDate').text(targetDate);
-								$('#Revisi').val(rfpList[i].confirm_notes);
 							}
 						}
 
@@ -764,7 +767,7 @@
 							url : 'rfm_controller/getattachment',
 							data :  {
 								'id_rfm': null,
-								'id_rfp': valueSelected
+								'task_id': valueSelected
 							},
 							cache: false,
 							success : function(res) {
@@ -772,15 +775,13 @@
 							}
 						});
 
-						$("#collapseDetail").collapse('show');
+						$("#collapseProjectDetail").collapse('show');
 						
 					} else {
-						$('#requestBy').val("");
 						$('#targetDate').val("");
-						$('#Detail').val("");
-						$('#Revisi').val("");
-						$("#Detail").prop('disabled', 'disabled');
-						$("#collapseDetail").collapse('hide');
+						$('#DetailProject').val("");
+						$("#DetailProject").prop('disabled', 'disabled');
+						$("#collapseProjectDetail").collapse('hide');
 						$('#attachmentElement').empty();
 					}	
 
@@ -790,9 +791,9 @@
 					
 					$('#requestBy').val("");
 					$('#targetDate').val("");
-					$('#Detail').val("");
+					$('#DetailRfm').val("");
 					$('#Revisi').val("");
-					$("#Detail").prop('disabled', 'disabled');
+					$("#DetailRfm").prop('disabled', 'disabled');
 					$('#attachmentElement').empty();
 
 					var optionSelected = $("option:selected", this);
@@ -813,7 +814,7 @@
 									}
 								}
 
-								$('#Detail').val(rfmList[i].rfm_detail);
+								$('#DetailRfm').val(rfmList[i].rfm_detail);
 								$('#requestBy').text(requestBy);
 								$('#targetDate').text(targetDate);
 								$('#Revisi').val(rfmList[i].confirm_notes);
@@ -833,15 +834,15 @@
 							}
 						});
 
-						$("#collapseDetail").collapse('show');
+						$("#collapseRfmDetail").collapse('show');
 						
 					} else {
 						$('#requestBy').val("");
 						$('#targetDate').val("");
-						$('#Detail').val("");
+						$('#DetailRfm').val("");
 						$('#Revisi').val("");
-						$("#Detail").prop('disabled', 'disabled');
-						$("#collapseDetail").collapse('hide');
+						$("#DetailRfm").prop('disabled', 'disabled');
+						$("#collapseRfmDetail").collapse('hide');
 						$('#attachmentElement').empty();
 					}	
 

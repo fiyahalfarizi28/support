@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">TULIS TASK RFP BARU</h4>
+    <h4 class="modal-title">TULIS TASK BARU</h4>
     <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
 
@@ -86,6 +86,12 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="col-md-12 text-right">
+                <div class="btn_post_request">
+                    <a href="javascript:void(0)" onclick="post_assign_task()" class="btn btn-success"><i class="fa fa-check"></i> Assign</a>
+                </div>
+            </div>
 
     </form>
 </div>
@@ -160,12 +166,7 @@
 
             $("#collapseTanpaRFP").collapse('show');
             $('#project_id').prop('disabled', false);
-            
-            var activitiesTidakBerdasarkanRfp = document.getElementById("project_id");
-            activitiesTidakBerdasarkanRfp.addEventListener("change", function() {
-
-                $("#collapseAssignTask").collapse('show');
-            });
+            $("#collapseAssignTask").collapse('show');
 
         } else {
             $("#collapseRFP").collapse('hide');

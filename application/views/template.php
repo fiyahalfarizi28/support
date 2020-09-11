@@ -60,7 +60,7 @@
                         <li class="list-group-item"><a href="#rfmSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-clipboard"></i> RFM</a></li>
                         <ul class="collapse list-unstyled" id="rfmSubmenu">
                                 <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
-                                    <a href="<?php echo base_url('rfm') ?>"><i class="far fa-folder-open"></i> LIST RFM</a>
+                                    <a href="<?php echo base_url('rfm') ?>"><i class="far fa-calendar-check"></i> INPUT RFM</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
                                     <a href="<?php echo base_url('track_rfm') ?>"><i class="far fa-eye"></i> TRACK RFM</a>
@@ -69,7 +69,7 @@
                         <li class="list-group-item"><a href="#rfpSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-clipboard"></i> RFP</a></li>
                         <ul class="collapse list-unstyled" id="rfpSubmenu">
                                 <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
-                                    <a href="<?php echo base_url('rfp') ?>"><i class="far fa-folder-open"></i> LIST RFP</a>
+                                    <a href="<?php echo base_url('rfp') ?>"><i class="far fa-calendar-check"></i> INPUT RFP</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
                                     <a href="<?php echo base_url('track_rfp') ?>"><i class="far fa-eye"></i> TRACK RFP</a>
@@ -77,8 +77,9 @@
                             </ul>
                         <?php
 
-                            if($this->session->userdata('USER_JABATAN') === 'HEAD IT' || $this->session->userdata('USER_JABATAN') === 'SUPERVISOR IT') {
+                            if($this->session->userdata('USER_JABATAN') === 'HEAD IT' || $this->session->userdata('USER_JABATAN') === 'SUPERVISOR IT' || $this->session->userdata('USER_JABATAN') === 'DIREKSI') {
                                 echo "<li class='list-group-item'><a href='".base_url('project')."'><i class='far fa-calendar-plus'></i> PROJECT</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('report')."'><i class='far fa-file-alt'></i> REPORT</a></li>";
                             }
                             
                             if(in_array($this->session->userdata('USER_ID'), $menu)) {

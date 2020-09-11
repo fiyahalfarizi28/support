@@ -51,7 +51,7 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach($specificTask as $row): ?>
-                                            <?php if ($row->status != STT_DONE && $this->db->where('no_rfp', $row->no_rfp)->get(TB_RFP)->row()->result_status != STT_SOLVED ) {?>
+                                            <?php if ($row->status != STT_DONE) {?>
                                                 <tr>
                                                     <td><?php echo $row->task_name?></td>
                                                     <td><?php echo $row->detail ?></td>
@@ -86,8 +86,8 @@
 </div>
 
 <div class="modal fade" id="modal-task-rfp">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" id="view-modal-task"></div>
+    <div class="modal-dialog modal-lg" style="margin-left: 200px">
+        <div class="modal-content" style="width:980px;"id="view-modal-task"></div>
     </div>
 </div>
 

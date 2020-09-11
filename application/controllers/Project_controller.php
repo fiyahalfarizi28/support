@@ -62,125 +62,188 @@ class Project_controller extends CI_Controller {
         return $this->rfp_model->get_crud($array_crud);
     }
 
-    public function set_assign_request()
+    public function set_assign_task()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
-        $id_rfp = $this->input->post('id_rfp');
-        $notes = $this->input->post('notes');
+        $date_now = date('Y-m-d H:i:s');
+        $table_destination = TB_TASK;
+        $extensionList = array("jpg", "jpeg", "png", "bmp", "gif", "JPG", "JPEG", "PNG", "BMP", "GIF", "pdf", "docx", "xlsx", "pptx", "txt", "TXT");
+
+        $specificTask = $this->input->post('specificTask');
+        $deskripsi = $this->input->post('deskripsi');
         $assign_pic = $this->input->post('assign_pic');
         $target_date = $this->input->post('target_date');
-        $date_now = date('Y-m-d H:i:s');
-        $project_id = $this->input->post('project_id');
-        $task_name = $this->input->post('task_name');
-        $detail = $this->input->post('detail');
-        $table_destination = TB_TASK;
+        
+        $rfp_id = null;
+        $no_rfp = null;
+        $project_id = null;
+        $new_project = null;
+        $description = null;
 
-        if(empty($assign_pic) || empty($target_date))
+        if ($this->input->post('rfp_id') != "" || $this->input->post('rfp_id') != null) {
+            $rfp_id = $this->input->post('rfp_id');
+            $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
+            $no_rfp = $thisRfp->no_rfp;
+
+            $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
+            $project_id = $thisRfp->project_id;
+        } 
+        
+        if ($this->input->post('project_id') != "" || $this->input->post('project_id') != null) {
+            $project_id = $this->input->post('project_id');
+        } 
+        
+        if ($this->input->post('new_project') != "" || $this->input->post('new_project') != null) {
+            $new_project = $this->input->post('new_project');
+            $description = $this->input->post('description');
+
+            $array_insert = array(
+                'project_name'      => $new_project,
+                'description'        => $description,
+                'create_by'         => $SESSION_USER_ID,
+                'create_date'       => $date_now,
+                'last_update'       => $date_now,
+            );
+
+            $insert_data_project = $this->db->insert(TB_PROJECT, $array_insert);
+            $project_id = $this->db->insert_id();
+        }
+
+        if(empty($specificTask))
         {
             $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Pic Atau Tanggal Target Tidak Boleh Kosong</div>";
+            $isPesan = "<div class='alert alert-danger'>Task Tidak Boleh Kosong</div>";
             
             $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
             echo json_encode($data);
             die(); 
         }
-        
-        $no_rfp = $this->db->where('id', $id_rfp)->get(TB_RFP)->row()->no_rfp;
 
-        $array_insert = array(
-            'no_rfp'            => $no_rfp,
-            'project_id'        => $project_id,
-            'task_name'         => $task_name,
-            'description'       => $detail,
-            'create_date'       => $date_now,
-            'create_by'         => $SESSION_USER_ID,
-            'assign_to'         => $assign_pic,
-            'assign_date'       => $date_now,
-            'target_date'       => $target_date,
-            'status'            => STT_PENDING,
-            'update_by'         => $SESSION_USER_ID,
-        );
+        $status = array();
+        $insertedData = array();
 
-        $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
-
-        if(!$insert_data) {
-            $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Gagal Menambah Task RFP</div>";
-            
-            $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-            echo json_encode($data);
-            die(); 
-        } else {
-            $isValid = 1;
-            $isPesan = "<div class='alert alert-success'>Berhasil Menambah Task RFP</div>";
-        }
-
-        $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-
-        if(empty($_FILES['attachment']['name'])) {
-            $insert_data = $this->db->insert($table_destination, $array_insert);
-        } else{
-            $insert_data = $this->db->insert($table_destination, $array_insert);
-            $no=1;
-            foreach ($_FILES['attachment']['name'] as $key => $value) {
-                $name = $_FILES['attachment']['name'][$key];
-                $tmp = $_FILES['attachment']['tmp_name'][$key];
-                $size = $_FILES['attachment']['size'][$key];
-                $ext = explode(".", $name);
-                $extensi = end($ext);
-                $maxsize = 1024 * 2000;
-                $path = "upload/";
-
-                if($size>=$maxsize) {
+        for ($i = 1; $i <= count($specificTask); $i++)  {
+            if (!empty($specificTask[$i])) {
+                if(empty($assign_pic[$i]) || empty($target_date[$i]))
+                {
                     $isValid = 0;
-                    $isPesan = "<div class='alert alert-danger'>Attachment $name max 2mb</div>";
-                            
+                    $isPesan = "<div class='alert alert-danger'>Pic Atau Tanggal Target Tidak Boleh Kosong</div>";
+                    
                     $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-                    echo json_encode($data);
-                    die();
-                } elseif(!in_array($extensi, $extensionList)) {
+                    $status[] = $data;
+                    continue;
+
+                }
+                
+                $array_insert = array(
+                    'no_rfp'            => $no_rfp,
+                    'project_id'        => $project_id,
+                    'task_name'         => $specificTask[$i],
+                    'detail'            => $deskripsi[$i],
+                    'assign_to'         => $assign_pic[$i],
+                    'assign_date'       => $date_now,
+                    'target_date'       => $target_date[$i],
+                    'status'            => STT_PENDING,
+                    'create_by'         => $SESSION_USER_ID,
+                    'create_date'       => $date_now,
+                    'update_by'         => $SESSION_USER_ID,
+                    'last_update'       => $date_now,
+                );
+
+                $insertedData[] = $array_insert;
+
+                $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
+                $task_id = $this->db->insert_id();
+
+                if(!$insert_data_task) {
+                    $isValid = 0;
+                    $isPesan = "<div class='alert alert-danger'>Gagal Menambah Task RFP</div>";
+                    
+                    $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                    $status[] = $data;
+                    continue;
+                } else {
+                    $isValid = 1;
+                    $isPesan = "<div class='alert alert-success'>Berhasil Menambah Task RFP</div>";
+                    $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                }
+
+                $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+
+                if(!empty($_FILES["attachment$i"]['name'])) {
+                    $no=1;
+                    foreach ($_FILES["attachment$i"]['name'] as $key => $value) {
+                        $name = $_FILES["attachment$i"]['name'][$key];
+                        $tmp = $_FILES["attachment$i"]['tmp_name'][$key];
+                        $size = $_FILES["attachment$i"]['size'][$key];
+                        $ext = explode(".", $name);
+                        $extensi = end($ext);
+                        $maxsize = 1024 * 2000;
+                        $path = "upload/";
+
+                        if($size>=$maxsize) {
+                            $isValid = 0;
+                            $isPesan = "<div class='alert alert-danger'>Attachment $name max 2mb</div>";
+                                    
+                            $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                            $status[] = $data;
+                            continue;
+                        } elseif(!in_array($extensi, $extensionList)) {
+                            $isValid = 0;
+                            $isPesan = "<div class='alert alert-danger'>Format attachment tidak di izinkan</div>";
+                                    
+                            $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                            $status[] = $data;
+                            continue;
+                        } else {
+                            if(trim($name)!=null) {
+                                $explode_name = explode(".", $name);
+                                $random_name = round(microtime(true)).'.'.end($explode_name);
+                                $new_name = md5(date('YmdHis'))."-".$no++."-".$random_name;
+
+                                $array_insert = array(
+                                    'task_id'       => $task_id,
+                                    'filename'      => $name,
+                                    'full_filename' => $new_name,
+                                    'data_file'     => "upload/$new_name",
+                                    'assign_to'     => $assign_pic[$i],
+                                );
+                                $insert_attachment = $this->db->insert(TB_ATTACHMENT_PROJECT, $array_insert);
+
+                                if($insert_attachment) {
+                                    move_uploaded_file($tmp, $path.null.$new_name);
+                                } else {
+                                    $isValid = 0;
+                                    $isPesan = "<div class='alert alert-danger'>Attachment gagal terkirim, tidak Terhubung Database.</div>";
+                                    
+                                    $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                                    $status[] = $data;
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if(!$insert_data_task) {
                     $isValid = 0;
                     $isPesan = "<div class='alert alert-danger'>Format attachment tidak di izinkan</div>";
                             
                     $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-                    echo json_encode($data);
-                    die();
-                } else {
-                    if(trim($name)!=null) {
-                        $explode_name = explode(".", $name);
-                        $random_name = round(microtime(true)).'.'.end($explode_name);
-                        $new_name = md5(date('YmdHis'))."-".$no++."-".$random_name;
-
-                        $array_insert = array(
-                            'filename'      => $name,
-                            'full_filename' => $new_name,
-                            'data_file'     => "upload/$new_name"
-                        );
-                        $insert_attachment = $this->db->insert(TB_ATTACHMENT_PROJECT, $array_insert);
-
-                        if($insert_attachment) {
-                            move_uploaded_file($tmp, $path.null.$new_name);
-                        } else {
-                            $isValid = 0;
-                            $isPesan = "<div class='alert alert-danger'>Attachment gagal terkirim, tidak Terhubung Database.</div>";
-                            
-                            $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-                            echo json_encode($data);
-                            die();
-                        }
-                    }
+                    $status[] = $data;
+                    continue;
                 }
+
+                $status[] = $data;
             }
         }
-        
-        if(!$insert_data) {
-            $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Format attachment tidak di izinkan</div>";
-                    
-            $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-            echo json_encode($data);
-            die(); 
-        }
+
+        // $data['specificTask'] = $specificTask;
+        // $data['deskripsi'] = $deskripsi;
+        // $data['assign_pic'] = $assign_pic;
+        // $data['target_date'] = $target_date;
+        $data['allStatus'] = $status;
+        $data['insertedData'] = $insertedData;
 
         echo json_encode($data);
     }
