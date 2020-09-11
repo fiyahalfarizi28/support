@@ -237,45 +237,46 @@ class Dailyreport_controller extends ci_controller{
                 $comment = $this->input->post('penyelesaian');
             }
 
-            if(empty($comment && $status == STT_DONE)) {
+            if(empty($comment) && $status == STT_DONE)) {
                 $isValid = 0;
                 $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
             }
 
             if (!empty($comment) && $status == STT_DONE) {
-
-                // TODO: Check row in tb comment, if null then insert, if not null then update comment
-                $array_crud = array(
-                    'table' => !empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP,
-                    'where' => array(
-                        'id' => !empty($rfm_id) ? $rfm_id : $rfp_id,
-                    )
-                );
-                
-                $check = $this->rfm_model->get_crud($array_crud)->num_rows();
-
-                if ($check != 0) {
-                    $array_update_comment = array(
-                        'date_comment' => $date_now,
-                        'user'          => $user_id,
-                        'comment'       => $comment
+                if (!empty($rfm_id)) {
+                    // TODO: Check row in tb comment, if null then insert, if not null then update comment
+                    $array_crud = array(
+                        'table' => TB_COMMENT_RFM,
+                        'where' => array(
+                            'id' => $rfm_id,
+                        )
                     );
-                
-                    $this->db->where('id', !empty($rfm_id) ? $rfm_id : $rfp_id);
-
-                    $update_comment = $this->db->update( !empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_update_comment);
-
-                } else {
-                    $array_insert_comment = array(
-                        'id'            => !empty($rfm_id) ? $rfm_id : $rfp_id,
-                        'date_comment' => $date_now,
-                        'user'          => $user_id,
-                        'comment'       => $comment
-                    );
-                
-                    $insert_comment = $this->db->insert(!empty($rfm_id) ? TB_COMMENT_RFM : TB_COMMENT_RFP, $array_insert_comment);
+                    
+                    $check = $this->rfm_model->get_crud($array_crud)->num_rows();
+    
+                    if ($check != 0) {
+                        $array_update_comment = array(
+                            'date_comment' => $date_now,
+                            'user'          => $user_id,
+                            'comment'       => $comment
+                        );
+                    
+                        $this->db->where('id', $rfm_id);
+    
+                        $update_comment = $this->db->update( TB_COMMENT_RFM, $array_update_comment);
+    
+                    } else {
+                        $array_insert_comment = array(
+                            'id'            => $rfm_id,
+                            'date_comment' => $date_now,
+                            'user'          => $user_id,
+                            'comment'       => $comment
+                        );
+                    
+                        $insert_comment = $this->db->insert(TB_COMMENT_RFM, $array_insert_comment);
+                    }
                 }
-            } else if(empty($comment && $status == STT_DONE)) {
+            } else if(empty($comment) && $status == STT_DONE)) {
                 $isValid = 0;
                 $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
             }
