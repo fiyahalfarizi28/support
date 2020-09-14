@@ -2076,8 +2076,12 @@ class Rfm_controller extends CI_Controller {
                 )
         );
         $done = $this->rfm_model->get_crud($array_crud)->row()->total;
-
+        
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            echo $assigned;
+        } else {
         echo $upline + $approve + $assign + $assigned + $done;
+        }
     }
 
     public function export_to_excel($month='', $year='')

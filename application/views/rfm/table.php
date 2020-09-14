@@ -1,8 +1,12 @@
 <div class="card mb-3" id="table">
     <div class="card-header">
-        <button class="btn btn-success btn-sm" id="btn_create" data-id="<?php echo $SESSION_USER_ID ?>" data-toggle="modal" data-target="#modal-create-rfm">
-            <i class="far fa-comments"></i> Tulis RFM
-        </button>
+        <?php if ($this->session->userdata('USER_JABATAN') === 'IT STAFF') { ?>
+            <b>DAFTAR RFM </b>
+        <?php } else { ?>
+            <button class="btn btn-success btn-sm" id="btn_create" data-id="<?php echo $SESSION_USER_ID ?>" data-toggle="modal" data-target="#modal-create-rfm">
+                <i class="far fa-comments"></i> Tulis RFM
+            </button>
+        <?php } ?>
     </div>
     <div class="card-body">
     <div class="pesan"></div>

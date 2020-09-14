@@ -1798,6 +1798,40 @@ class Rfp_controller extends CI_Controller {
             $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
             echo json_encode($data);
             die(); 
+        } else {
+            if (!empty($rfp_id)) {
+                // TODO: Check row in tb comment, if null then insert, if not null then update comment
+                $array_crud = array(
+                    'table' => TB_COMMENT_RFP,
+                    'where' => array(
+                        'id' => $rfp_id,
+                    )
+                );
+                
+                $check = $this->rfp_model->get_crud($array_crud)->num_rows();
+
+                if ($check != 0) {
+                    $array_update_comment = array(
+                        'date_comment' => $date_now,
+                        'user'          => $user_id,
+                        'comment'       => $comment
+                    );
+
+                    $this->db->where('id', $rfp_id);
+
+                    $update_comment = $this->db->update( TB_COMMENT_RFP, $array_update_comment);
+
+                } else {
+                    $array_insert_comment = array(
+                        'id'            => $rfp_id,
+                        'date_comment'  => $date_now,
+                        'user'          => $user_id,
+                        'comment'       => $comment
+                    );
+
+                    $insert_comment = $this->db->insert(TB_COMMENT_RFP, $array_insert_comment);
+                }
+            }
         }
         
         $array_insert = array(
@@ -1809,6 +1843,10 @@ class Rfp_controller extends CI_Controller {
         );
         $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
         
+        if ($this->input->post('penyelesaian') !== "") {
+            $comment = $this->input->post('penyelesaian');
+        }
+
         $array_insert = array(
             'id' => $id_rfp,
             'user' => $SESSION_USER_ID,
@@ -2039,12 +2077,25 @@ class Rfp_controller extends CI_Controller {
                     'result_status' => STT_DONE,
                     'approve_by !=' => NULL,
                     'receive_by !=' => NULL,
-                    'assign_to !=' => NULL,
                 )
         );
         $done = $this->rfp_model->get_crud($array_crud)->row()->total;
 
+        $array_crud = array(
+            'select' => 'count(*) as total',
+            'table' => TB_TASK,
+            'where' => array(
+                    'assign_to' => $SESSION_USER_ID,
+                    'status !=' => STT_DONE,
+                )
+        );
+        $project = $this->rfp_model->get_crud($array_crud)->row()->total;
+
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            echo $project;
+        } else {
         echo $upline + $approve + $case + $done;
+        }
  
     }
 
