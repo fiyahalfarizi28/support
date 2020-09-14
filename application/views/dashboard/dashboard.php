@@ -504,6 +504,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
+        $this->db->join(TB_PROJECT, "project.id = rfm_new_detail.project_id");
 
         $rfmList = $this->db->get(TB_DETAIL)->result();
         
@@ -590,8 +591,19 @@
                 display: false
             },
             'onClick' : function (evt, item) {
-                        console.log('ini klik',item);
+                        console.log('ini klik',item[0]["_index"]);
+                        var label = this.data.labels[item[0]["_index"]];
+
+                        var rfmList = <?php echo json_encode($rfmList); ?>;
+
+                        rfmList.forEach( (rfm) => {
+                            if (rfm.project_name == label) {
+                                
+                            }
+                        })
+
                         $('#modal-Chart1').modal('show');
+
             },
             responsive: true,
             title:{
