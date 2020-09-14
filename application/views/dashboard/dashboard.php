@@ -602,13 +602,16 @@
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
 
-                console.log(rfmList, userList);
-
                 rfmList.forEach( (rfm) => {
                     if (rfm.project_name == label) {
                         var nama_requestor;
                         var jabatan_requestor;
-                        var nama_pic;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        
+
+                        console.log(date, "ini date")
 
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
@@ -634,7 +637,7 @@
                                     ${rfm.no_rfm}
                                 </td>
                                 <td>
-                                    ${rfm.request_date}
+                                    ${formattedDate}
                                 </td>
                                 <td>
                                     ${rfm.request_status}
