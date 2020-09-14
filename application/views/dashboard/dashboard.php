@@ -508,6 +508,7 @@
 
         $rfmList = $this->db->get(TB_DETAIL)->result();
         
+        
         $this->db->select("COUNT(*) AS jmlh_rfm");
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -544,7 +545,10 @@
                         $data = $counter;
                         echo json_encode($data).",";
                     endforeach;
+
                 ?>
+
+                
             ],
             backgroundColor: [
                 "rgb(240, 185, 185)",
@@ -601,10 +605,6 @@
                                 
                             }
                         })
-
-                        $('#modal-Chart1').modal('show');
-
-            },
             responsive: true,
             title:{
                 display:true,
@@ -632,16 +632,54 @@
 </script>
 
 <div class="modal fade" id="modal-Chart1" role="dialog">
-    <div class="modal-dialog modal-lg" style="margin-left: 200px">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
         <!-- Modal content-->
-        <div class="modal-content" style="width:980px;">
+        <div class="modal-content" style="width:1000px;">
             <div class="modal-header">
                 <h3 class="modal-title">Detail RFM</h3>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <div class="modal-body">
-
+                <table>
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table">
+                        <tr>
+                            <td>
+                                HAMSUDI
+                            </td>
+                            <td>
+                                HEAD IT
+                            </td>
+                            <td>
+                            IT/RFM/04.000025
+                            </td>
+                            <td>
+                                20-08-2020
+                            </td>
+                            <td>
+                                APPROVED
+                            </td>
+                            <td>
+                                PENDING
+                            </td>
+                            <td>
+                                IRVAN MUHAMMAD SINDY
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -1467,7 +1505,7 @@
         datasets:
         [{
             fill: false,
-            borderColor: "#b3ddd1",
+            borderColor: "#9bc1eb",
             data: [
                 <?php
                     $data = array();
@@ -1592,7 +1630,7 @@
         datasets:
         [{
             fill: false,
-            borderColor: "#b3ddd1",
+            borderColor: "#9bc1eb",
             data: [
                 <?php
                     $data = array();
