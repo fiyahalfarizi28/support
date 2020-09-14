@@ -506,6 +506,7 @@
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
         $this->db->join(TB_PROJECT, "project.id = rfm_new_detail.project_id");
+        $this->db->join(TB_PROBLEM_TYPE, "rfm_new_problem_type.id = rfm_new_detail.problem_type");
 
         $rfmList = $this->db->get(TB_DETAIL)->result();
         
@@ -691,7 +692,7 @@
             </div>
 
             <div class="modal-body">
-                <table>
+                <table style="margin-left: auto; margin-right: auto">
                     <thead class ="table">
                         <tr>
                             <th>REQUEST BY</th>
@@ -798,7 +799,66 @@
             legend: {
                 display: false
             },
-            
+            'onClick' : function (evt, item) {
+                $('#tablePTrfm').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                
+                rfmList.forEach( (rfm) => {
+                    if (rfm.problem_type == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#tablePTrfm').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart2').modal('show');
+
+            }, 
             responsive: true,
             title:{
                 display:true,
@@ -837,7 +897,7 @@
             </div>
 
             <div class="modal-body">
-                <table>
+                <table style="margin-left: auto; margin-right: auto">
                     <thead class ="table">
                         <tr>
                             <th>REQUEST BY</th>
@@ -864,6 +924,7 @@
 <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+        $userList = $this->db->get('dpm_online.'.TB_USER)->result();
 
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -872,6 +933,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
+        $this->db->join(TB_PROJECT, "project.id = rfp_new_detail.project_id");
         
         $rfpList = $this->db->get(TB_RFP)->result();
 
@@ -959,10 +1021,9 @@
             },
             'onClick' : function (evt, item) {
                 $('#tableRfp').empty();
-                
                 var label = this.data.labels[item[0]["_index"]];
                 var rfpList = <?php echo json_encode($rfpList); ?>;
-                var userList = <?php echo json_encode($userList); ?>;\
+                var userList = <?php echo json_encode($userList); ?>;
 
                 rfpList.forEach( (rfp) => {
                     if (rfp.project_name == label) {
@@ -976,10 +1037,6 @@
                             if (rfp.request_by == user.user_id) {
                                 nama_requestor = user.nama;
                                 jabatan_requestor = user.jabatan;
-                            }
-
-                            if (rfp.assign_to == user.user_id) {
-                                nama_pic = user.nama;
                             }
                         })
 
@@ -1003,9 +1060,6 @@
                                 </td>
                                 <td>
                                     ${rfp.result_status}
-                                </td>
-                                <td>
-                                    ${nama_pic}
                                 </td>
                             </tr>
                         `);
@@ -1042,16 +1096,16 @@
 </script>
 
 <div class="modal fade" id="modal-Chart3" role="dialog">
-    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+    <div class="modal-dialog modal-lg" style="margin-left: 225px">
         <!-- Modal content-->
-        <div class="modal-content" style="width:1000px;">
+        <div class="modal-content" style="width: 900px;">
             <div class="modal-header">
                 <h3 class="modal-title">Detail RFP</h3>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
             <div class="modal-body">
-                <table>
+                <table style="margin-left: auto; margin-right: auto">
                     <thead class ="table">
                         <tr>
                             <th>REQUEST BY</th>
@@ -1060,7 +1114,6 @@
                             <th>DATE</th>
                             <th>REQUEST STATUS</th>
                             <th>RESULT STATUS</th>
-                            <th>PIC</th>
                         </tr>
                     </thead>
                     
