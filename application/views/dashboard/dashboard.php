@@ -496,6 +496,7 @@
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+        $userList = $this->db->get('dpm_online.'.TB_USER)->result();
     
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -595,16 +596,64 @@
                 display: false
             },
             'onClick' : function (evt, item) {
-                        console.log('ini klik',item[0]["_index"]);
-                        var label = this.data.labels[item[0]["_index"]];
+                $('#tableRfm').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
 
-                        var rfmList = <?php echo json_encode($rfmList); ?>;
+                console.log(rfmList, userList);
 
-                        rfmList.forEach( (rfm) => {
-                            if (rfm.project_name == label) {
-                                
+                rfmList.forEach( (rfm) => {
+                    if (rfm.project_name == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
                             }
                         })
+
+
+                        $('#tableRfm').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${rfm.request_date}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart1').modal('show');
+
+            },            
             responsive: true,
             title:{
                 display:true,
@@ -654,30 +703,8 @@
                         </tr>
                     </thead>
                     
-                    <tbody class ="table">
-                        <tr>
-                            <td>
-                                HAMSUDI
-                            </td>
-                            <td>
-                                HEAD IT
-                            </td>
-                            <td>
-                            IT/RFM/04.000025
-                            </td>
-                            <td>
-                                20-08-2020
-                            </td>
-                            <td>
-                                APPROVED
-                            </td>
-                            <td>
-                                PENDING
-                            </td>
-                            <td>
-                                IRVAN MUHAMMAD SINDY
-                            </td>
-                        </tr>
+                    <tbody class ="table" id="tableRfm">
+                        
                     </tbody>
                 </table>
             </div>
