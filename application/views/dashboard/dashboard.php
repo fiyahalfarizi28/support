@@ -602,13 +602,14 @@
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
 
-                console.log(rfmList, userList);
-
+                
                 rfmList.forEach( (rfm) => {
                     if (rfm.project_name == label) {
                         var nama_requestor;
                         var jabatan_requestor;
-                        var nama_pic;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
 
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
@@ -634,7 +635,7 @@
                                     ${rfm.no_rfm}
                                 </td>
                                 <td>
-                                    ${rfm.request_date}
+                                    ${formattedDate}
                                 </td>
                                 <td>
                                     ${rfm.request_status}
@@ -797,6 +798,7 @@
             legend: {
                 display: false
             },
+            
             responsive: true,
             title:{
                 display:true,
@@ -823,7 +825,41 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart2" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail Problem Type</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table>
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablePTrfm">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
 <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
@@ -921,6 +957,65 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tableRfp').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfpList = <?php echo json_encode($rfpList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;\
+
+                rfpList.forEach( (rfp) => {
+                    if (rfp.project_name == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfp.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfp.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfp.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#tableRfp').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfp.no_rfp}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfp.request_status}
+                                </td>
+                                <td>
+                                    ${rfp.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart3').modal('show');
+
+            },
             responsive: true,
             title:{
                 display:true,
@@ -943,7 +1038,42 @@
             }
         }
     });
-//==================================================
+
+</script>
+
+<div class="modal fade" id="modal-Chart3" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFP</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table>
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tableRfp">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
 <?php 
     $this->db->select("COUNT(*) AS jmlh_rfp");
@@ -1531,6 +1661,7 @@
         ],
         datasets:
         [{
+            label: 'Kumulatif',
             fill: false,
             borderColor: "#9bc1eb",
             data: [
@@ -1558,6 +1689,7 @@
             ],
         },
         {
+            label: 'RFM',
             fill: false,
             borderColor: "#e89694",
             data: [
@@ -1656,6 +1788,7 @@
         ],
         datasets:
         [{
+            label: 'Kumulatif',
             fill: false,
             borderColor: "#9bc1eb",
             data: [
@@ -1683,6 +1816,7 @@
             ],
         },
         {
+            label: 'RFP',
             fill: false,
             borderColor: "#e89694",
             data: [
