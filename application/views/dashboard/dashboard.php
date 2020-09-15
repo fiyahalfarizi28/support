@@ -505,8 +505,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-        $this->db->join(TB_PROJECT, "project.id = rfm_new_detail.project_id");
-        $this->db->join(TB_PROBLEM_TYPE, "rfm_new_problem_type.id = rfm_new_detail.problem_type");
+        $this->db->join(TB_PROJECT." as Project", "Project.id = rfm_new_detail.project_id");
 
         $rfmList = $this->db->get(TB_DETAIL)->result();
         
@@ -716,7 +715,7 @@
 
 <script>
 
-<?php 
+    <?php 
     $this->db->select("COUNT(*) AS jmlh_rfm");
     $this->db->where('request_status !=', STT_ON_QUEUE);
     $this->db->where('request_status !=', STT_REJECT);
@@ -725,8 +724,8 @@
         $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
         $this->db->where("YEAR(request_date)", $val_tahun);
     }
+    ?>
     
-?>
     var ctx_ = document.getElementById("myChart2").getContext("2d");
     var data_ = {
         labels: [
@@ -803,18 +802,26 @@
                 $('#tablePTrfm').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
+                var problem_type_id;
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
+                var problemTypeList = <?php echo json_encode($problemTypeList); ?>;
 
-                
+                problemTypeList.forEach( (problem) => {
+                    if (label == problem.problem_type) {
+                        problem_type_id = problem.id;
+                    }
+                })
+
                 rfmList.forEach( (rfm) => {
-                    if (rfm.problem_type == label) {
+                    if (rfm.problem_type == problem_type_id) {
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
                         var date = new Date(rfm.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
-
+                        var problem_type;
+                        
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
                                 nama_requestor = user.nama;
@@ -921,7 +928,7 @@
 
 <script>
 
-<?php
+    <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
         $userList = $this->db->get('dpm_online.'.TB_USER)->result();
@@ -945,7 +952,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-?>
+    ?>
 
     var ctx_ = document.getElementById("myChart3").getContext("2d");
     var data_ = {
@@ -1128,16 +1135,16 @@
 
 <script>
 
-<?php 
-    $this->db->select("COUNT(*) AS jmlh_rfp");
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
-    if(!empty($post_monthAwal && $post_monthAkhir)) {
-        $this->db->where("MONTH(request_date) >=", $post_monthAwal);
-        $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
-        $this->db->where("YEAR(request_date)", $val_tahun);
-    }
-?>
+    <?php 
+        $this->db->select("COUNT(*) AS jmlh_rfp");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+    ?>
 
     var ctx_ = document.getElementById("myChart4").getContext("2d");
     var data_ = {
@@ -1211,6 +1218,62 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tablePTrfp').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfpList = <?php echo json_encode($rfpList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                
+                rfpList.forEach( (rfp) => {
+                    if (rfp.problem_type == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfp.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfp.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+                        })
+
+
+                        $('#tablePTrfp').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart4').modal('show');
+
+            }, 
             responsive: true,
             title:{
                 display:true,
@@ -1237,7 +1300,40 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart4" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail Problem Type</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablePTrfp">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
     <?php 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
@@ -1251,9 +1347,11 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-
+        // $this->db->join(TB_KODE_KANTOR, "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
         $this->db->group_by('rfm_new_detail.kode_kantor');
         $this->db->order_by('rfm_new_detail.kode_kantor', 'asc');
+
+        
 
         $rfmGrouped = $this->db->get(TB_DETAIL)->result();
     ?>
