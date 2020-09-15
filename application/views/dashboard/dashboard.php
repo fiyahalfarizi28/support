@@ -1551,7 +1551,7 @@
 
     <?php   
         $officeList = $this->db->get(TB_KODE_KANTOR)->result();
-        $rfmList = $this->db->get(TB_DETAIL)->result();
+        $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
         $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
@@ -1645,16 +1645,16 @@
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
                 var officeList = <?php echo json_encode($officeList); ?>;
-                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;  
-
-                officeList.forEach( (kantor) => {
-                    if (label == kantor.kode_area) {    
-                        kode_kantor_id = kantor.kode_kantor;
-                    }
-                })
+                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;
+                
+                console.log(label, 'ini label');
+                console.log(officeList, 'ini office list');
+                console.log(rfmList, 'ini rfm list');
+                console.log(kode_kantor_id, 'ini kode kantor dari label')
 
                 rfmList.forEach( (rfm) => {
-                    if (rfm.kode_kantor == kode_kantor_id) {
+                    if (rfm.kode_area == label) {
+                        console.log('im here')
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
