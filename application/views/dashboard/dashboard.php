@@ -1339,7 +1339,8 @@
 
     <?php 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
-        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
+        $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+        // $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
 
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -1427,7 +1428,6 @@
                 
                 var label = this.data.labels[item[0]["_index"]];
                 var kode_kantor_id;
-                var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
                 var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;
 
@@ -1437,7 +1437,7 @@
                     }
                 })
 
-                rfmList.forEach( (rfm) => {
+                rfmGrouped.forEach( (rfm) => {
                     if (rfm.kode_kantor == kode_kantor_id) {
                         var nama_requestor;
                         var jabatan_requestor;
@@ -1550,8 +1550,8 @@
 
 <?php 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
-        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
-
+        $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+        
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
 
@@ -1633,6 +1633,72 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#table_kode_area').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var kode_kantor_id;
+                var userList = <?php echo json_encode($userList); ?>;
+                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;
+
+                rfmGrouped.forEach( (kantor) => {
+                    if (label == kantor.kode_kantor) {
+                        kode_kantor_id = kantor.id;
+                    }
+                })
+
+                rfmGrouped.forEach( (rfm) => {
+                    if (rfm.kode_kantor == kode_kantor_id) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var kode_kantor;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#table_kode_area').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart6').modal('show');
+            },
             responsive: true,
             title:{
                 display:true,
@@ -1656,7 +1722,41 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart6" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Area</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="table_kode_area">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
     <?php 
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
@@ -1744,6 +1844,72 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tablerfm_divisi').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var user_divisi_id;
+                var userList = <?php echo json_encode($userList); ?>;
+                var groupedByDivision = <?php echo json_encode($groupedByDivision); ?>;
+
+                groupedByDivision.forEach( (divisi) => {
+                    if (label == divisi.user.divisi_id) {
+                        user_divisi_id = divisi.user.divisi_id;
+                    }
+                })
+
+                groupedByDivision.forEach( (rfm) => {
+                    if (rfm.user.divisi_id == user_divisi_id) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var divisi_id;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#tablerfm_divisi').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart7').modal('show');
+            },
             responsive: true,
             title:{
                 display:true,
@@ -1767,7 +1933,41 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart7" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Divisi</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablerfm_divisi">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
     <?php 
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
@@ -1855,6 +2055,72 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tablerfp_divisi').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var user_divisi_id;
+                var userList = <?php echo json_encode($userList); ?>;
+                var groupedByDivision = <?php echo json_encode($groupedByDivision); ?>;
+
+                groupedByDivision.forEach( (divisi) => {
+                    if (label == divisi.user.divisi_id) {
+                        user_divisi_id = divisi.user.divisi_id;
+                    }
+                })
+
+                groupedByDivision.forEach( (rfp) => {
+                    if (rfp.user.divisi_id == user_divisi_id) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfp.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var divisi_id;
+
+                        userList.forEach( (user) => {
+                            if (rfp.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfp.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#tablerfp_divisi').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfp.no_rfp}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfp.request_status}
+                                </td>
+                                <td>
+                                    ${rfp.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart8').modal('show');
+            },
             responsive: true,
             title:{
                 display:true,
@@ -1877,7 +2143,41 @@
             }
         }
     });
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart8" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFP Berdasarkan Divisi</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablerfp_divisi">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
 <?php
     $applicationList = $this->db->get(TB_PROJECT)->result();
