@@ -520,6 +520,8 @@
         }
     ?>
 
+    console.log(<?php echo json_encode($rfmList)?>)
+
     var ctx_ = document.getElementById("myChart1").getContext("2d");
     var data_ = {
         labels: [
