@@ -823,7 +823,6 @@
                         var date = new Date(rfm.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
                         var problem_type;
-                        
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
                                 nama_requestor = user.nama;
