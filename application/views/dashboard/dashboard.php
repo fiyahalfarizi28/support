@@ -814,7 +814,7 @@
                         problem_type_id = problem.id;
                     }
                 })
-
+                
                 rfmList.forEach( (rfm) => {
                     if (rfm.problem_type == problem_type_id) {
                         var nama_requestor;
