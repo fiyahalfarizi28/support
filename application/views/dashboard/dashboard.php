@@ -930,6 +930,7 @@
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
         $userList = $this->db->get('dpm_online.'.TB_USER)->result();
+        $officeList = $this->db->get(TB_KODE_KANTOR)->result();
 
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -1429,15 +1430,31 @@
                 var kode_kantor_id;
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
-                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;
+                var officeList = <?php echo json_encode($officeList); ?>; // Mengambil daftar kantor dari tabel kantor
+                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>; // Ngga diperlukan
+                
+                console.log(label, 'ini label');
+                console.log(rfmList, 'ini rfm list');
+                console.log(rfmGrouped, 'ini rfm grouped');
+                console.log(officeList, 'ini daftar kantor');
+                // Cek isi label, rfmList dan rfmGrouped, dan daftar kantor. mana data yang kita perlukan?
+                // Ternyata rfmGrouped kita ngga perlu, karena dari rfmList udah di join dengan TB kantor
+                // Dan sudah memiliki kode kantor
 
-                rfmGrouped.forEach( (kantor) => {
-                    if (label == kantor.kode_kantor) {
-                        kode_kantor_id = kantor.id;
+                // Looping isi data kantor
+                officeList.forEach( (kantor) => {
+                    // Pengecekan kondisi jika label sama dengan kode kantornya
+                    if (label == kantor.nama_kantor) {
+                        // Set kode_kantor_id dengan id yang sesuai label
+                        kode_kantor_id = kantor.kode_kantor;
                     }
                 })
 
+                console.log(kode_kantor_id, 'ini kode kantor id dari label');
+
+                // Looping isi data rfm
                 rfmList.forEach( (rfm) => {
+                    // Filter untuk mengambil rfm yang kode kantornya sama dengan label yang diklik
                     if (rfm.kode_kantor == kode_kantor_id) {
                         var nama_requestor;
                         var jabatan_requestor;
@@ -1446,6 +1463,7 @@
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
                         var kode_kantor;
 
+                        // Looping untuk mengecek nama user berdasarkan request_by dan assign_to
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
                                 nama_requestor = user.nama;
