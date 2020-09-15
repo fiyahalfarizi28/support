@@ -505,8 +505,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-        $this->db->join(TB_PROJECT, "project.id = rfm_new_detail.project_id");
-        $this->db->join(TB_PROBLEM_TYPE, "rfm_new_problem_type.id = rfm_new_detail.problem_type");
+        $this->db->join(TB_PROJECT." as Project", "Project.id = rfm_new_detail.project_id");
 
         $rfmList = $this->db->get(TB_DETAIL)->result();
         
@@ -520,6 +519,8 @@
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
     ?>
+
+    console.log(<?php echo json_encode($rfmList)?>)
 
     var ctx_ = document.getElementById("myChart1").getContext("2d");
     var data_ = {
@@ -803,17 +804,25 @@
                 $('#tablePTrfm').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
+                var problem_type_id;
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
+                var problemTypeList = <?php echo json_encode($problemTypeList); ?>;
 
+                problemTypeList.forEach( (problem) => {
+                    if (label == problem.problem_type) {
+                        problem_type_id = problem.id;
+                    }
+                })
                 
                 rfmList.forEach( (rfm) => {
-                    if (rfm.problem_type == label) {
+                    if (rfm.problem_type == problem_type_id) {
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
                         var date = new Date(rfm.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var problem_type;
 
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
@@ -825,7 +834,6 @@
                                 nama_pic = user.nama;
                             }
                         })
-
 
                         $('#tablePTrfm').append(`
                             <tr>
