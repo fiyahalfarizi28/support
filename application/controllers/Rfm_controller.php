@@ -153,7 +153,7 @@ class Rfm_controller extends CI_Controller {
 
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
                 $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
-                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI')
+                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT')
                 {
                     $btn_option = $btn_edit.$btn_option;
                 }

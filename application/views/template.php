@@ -109,10 +109,9 @@
                 </div>
 
                 <div class="col text-right">
-                    
-                    <a href="javascript:void(0)" title="Export To Excel" class="btn btn-primary btn-sm mr-3" onclick="export_to_excel()">
+                    <!-- <a href="javascript:void(0)" title="Export To Excel" class="btn btn-primary btn-sm mr-3" onclick="export_to_excel()">
                         <i class="fa fa-print"></i> Export To Excel
-                    </a>
+                    </a> -->
                     <a href="<?php echo base_url('rfm#table') ?>" title="RFM">
                         <i class="far fa-bell fa-lg"></i><sup class="badge badge-danger rfm-bells"></sup>
                     </a>

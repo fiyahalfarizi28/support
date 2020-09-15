@@ -51,28 +51,26 @@
                                     </thead>
                                     <tbody>
                                         <?php foreach($specificTask as $row): ?>
-                                            <?php if ($row->status != STT_DONE) {?>
-                                                <tr>
-                                                    <td><?php echo $row->task_name?></td>
-                                                    <td><?php echo $row->detail ?></td>
-                                                    <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>
-                                                    <td><?php echo $row->status?></td>
-                                                    <td><?php echo date("d-m-Y | H:i:s",strtotime( $row->last_update))?></td>
-                                                    <td>
-                                                        <?php 
-                                                            $this->db->where('user_id', $row->assign_to);
-                                                            echo $this->db->get(TB_USER)->row()->nama;
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php 
-                                                            if (date("d-m-Y",strtotime($row->last_update)) > date("d-m-Y",strtotime($row->target_date))) {
-                                                                echo'Task telah melewati target date';
-                                                            }
-                                                        ?>
-                                                    </td>
-                                                </tr>
-                                            <?php } ?>
+                                            <tr>
+                                                <td><?php echo $row->task_name?></td>
+                                                <td><?php echo $row->detail ?></td>
+                                                <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>
+                                                <td><?php echo $row->status?></td>
+                                                <td><?php echo date("d-m-Y | H:i:s",strtotime( $row->last_update))?></td>
+                                                <td>
+                                                    <?php 
+                                                        $this->db->where('user_id', $row->assign_to);
+                                                        echo $this->db->get(TB_USER)->row()->nama;
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php 
+                                                        if (date("d-m-Y",strtotime($row->last_update)) > date("d-m-Y",strtotime($row->target_date))) {
+                                                            echo'Task telah melewati target date';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
                                         <?php endforeach ?>
                                     </tbody>
                                 </table>

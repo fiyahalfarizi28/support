@@ -2151,20 +2151,20 @@
 
 <script>
 
-<?php
-    $applicationList = $this->db->get(TB_PROJECT)->result();
-    $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+    <?php
+        $applicationList = $this->db->get(TB_PROJECT)->result();
+        $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
 
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
-    $rfmList = $this->db->get(TB_DETAIL)->result();
-    
-    $this->db->select("COUNT(*) AS jmlh_rfm");
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        $rfmList = $this->db->get(TB_DETAIL)->result();
+        
+        $this->db->select("COUNT(*) AS jmlh_rfm");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
 
-    $jmlh_rfm = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
-?>
+        $jmlh_rfm = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
+    ?>
 
     var ctx_ = document.getElementById("myChart9").getContext("2d");
     var data_ = {
@@ -2188,6 +2188,7 @@
             label: 'Kumulatif',
             fill: false,
             borderColor: "#9bc1eb",
+            backgroundColor: "#9bc1eb",
             data: [
                 <?php
                     $data = array();
@@ -2216,6 +2217,7 @@
             label: 'RFM',
             fill: false,
             borderColor: "#e89694",
+            backgroundColor: "#e89694",
             data: [
                 <?php
                     $data = array();
@@ -2244,7 +2246,9 @@
         data: data_,
         options: {
             legend: {
-                display: false
+                labels : {
+                    useLineStyle: true,
+                },
             },
             responsive: true,
             title:{
@@ -2262,7 +2266,7 @@
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
-                    var dataLabel = "RFM ";
+                    var dataLabel = "Total RFM ";
                     var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} `;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
@@ -2315,6 +2319,7 @@
             label: 'Kumulatif',
             fill: false,
             borderColor: "#9bc1eb",
+            backgroundColor: "#9bc1eb",
             data: [
                 <?php
                     $data = array();
@@ -2343,6 +2348,7 @@
             label: 'RFP',
             fill: false,
             borderColor: "#e89694",
+            backgroundColor: "#e89694",
             data: [
                 <?php
                     $data = array();
@@ -2371,7 +2377,9 @@
         data: data_,
         options: {
             legend: {
-                display: false
+                labels : {
+                    useLineStyle: true,
+                },
             },
             responsive: true,
             title:{
@@ -2389,7 +2397,7 @@
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
-                    var dataLabel = "RFP ";
+                    var dataLabel = "Total RFP ";
                     var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} `;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();

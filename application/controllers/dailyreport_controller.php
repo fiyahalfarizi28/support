@@ -65,7 +65,7 @@ class Dailyreport_controller extends ci_controller{
             $QTask = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING') AND assign_to = ". $this->session->userdata('USER_ID') ."";
             $QTaskAll = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING')";
 
-             if ($this->session->userdata('USER_JABATAN')==="HEAD IT" || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT') {
+             if ($this->session->userdata('USER_JABATAN')==="HEAD IT" || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT' || $this->session->userdata('USER_JABATAN')==='DIREKSI') {
                  $data['taskList'] = $this->db->query($QTaskAll)->result();
              } else {
                 $data['taskList'] = $this->db->query($QTask);
