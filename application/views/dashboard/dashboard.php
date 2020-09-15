@@ -1338,7 +1338,7 @@
 <script>
 
     <?php
-        $officeList = $this->db->get(TB_KODE_KANTOR)->result();
+        $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
         $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
@@ -1428,25 +1428,16 @@
                 $('#table_kode_kantor').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
-                var kode_kantor_id;
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
-                var officeList = <?php echo json_encode($officeList); ?>; 
-
-                officeList.forEach( (kantor) => {
-                    if (label == kantor.nama_kantor) {
-                        kode_kantor_id = kantor.kode_kantor;
-                    }
-                })
 
                 rfmList.forEach( (rfm) => {
-                    if (rfm.kode_kantor == kode_kantor_id) {
+                    if (rfm.nama_kantor == label) {
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
                         var date = new Date(rfm.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
-                        var kode_kantor;
 
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
@@ -1550,7 +1541,6 @@
 <script>
 
     <?php   
-        $officeList = $this->db->get(TB_KODE_KANTOR)->result();
         $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
@@ -1641,26 +1631,16 @@
                 $('#table_kode_area').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
-                var kode_kantor_id;
                 var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
-                var officeList = <?php echo json_encode($officeList); ?>;
-                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;
-                
-                console.log(label, 'ini label');
-                console.log(officeList, 'ini office list');
-                console.log(rfmList, 'ini rfm list');
-                console.log(kode_kantor_id, 'ini kode kantor dari label')
 
                 rfmList.forEach( (rfm) => {
                     if (rfm.kode_area == label) {
-                        console.log('im here')
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
                         var date = new Date(rfm.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
-                        var kode_kantor;
 
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
@@ -1672,7 +1652,6 @@
                                 nama_pic = user.nama;
                             }
                         })
-
 
                         $('#table_kode_area').append(`
                             <tr>
@@ -1765,6 +1744,8 @@
 <script>
 
     <?php 
+        $rfmList = $this->db->join('dpm_online.'.TB_USER, 'dpm_online.'.TB_USER.".user_id=".TB_DETAIL.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
         $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfm_new_detail.request_by');
 
@@ -1854,24 +1835,16 @@
                 $('#tablerfm_divisi').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
-                var user_divisi_id;
+                var rfmList = <?php echo json_encode($rfmList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
-                var groupedByDivision = <?php echo json_encode($groupedByDivision); ?>;
 
-                groupedByDivision.forEach( (divisi) => {
-                    if (label == divisi.user.divisi_id) {
-                        user_divisi_id = divisi.user.divisi_id;
-                    }
-                })
-
-                groupedByDivision.forEach( (rfm) => {
-                    if (rfm.user.divisi_id == user_divisi_id) {
+                rfmList.forEach( (rfm) => {
+                    if (rfm.divisi_id == label) {
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
                         var date = new Date(rfm.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
-                        var divisi_id;
 
                         userList.forEach( (user) => {
                             if (rfm.request_by == user.user_id) {
@@ -1883,7 +1856,6 @@
                                 nama_pic = user.nama;
                             }
                         })
-
 
                         $('#tablerfm_divisi').append(`
                             <tr>
@@ -1976,6 +1948,8 @@
 <script>
 
     <?php 
+        $rfpList = $this->db->join('dpm_online.'.TB_USER, 'dpm_online.'.TB_USER.".user_id=".TB_RFP.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_RFP)->result();
+
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
         $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfp_new_detail.request_by');
 
@@ -2065,24 +2039,16 @@
                 $('#tablerfp_divisi').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
-                var user_divisi_id;
+                var rfpList = <?php echo json_encode($rfpList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
-                var groupedByDivision = <?php echo json_encode($groupedByDivision); ?>;
 
-                groupedByDivision.forEach( (divisi) => {
-                    if (label == divisi.user.divisi_id) {
-                        user_divisi_id = divisi.user.divisi_id;
-                    }
-                })
-
-                groupedByDivision.forEach( (rfp) => {
-                    if (rfp.user.divisi_id == user_divisi_id) {
+                rfpList.forEach( (rfp) => {
+                    if (rfp.divisi_id == label) {
                         var nama_requestor;
                         var jabatan_requestor;
                         var nama_pic = "-";
                         var date = new Date(rfp.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
-                        var divisi_id;
 
                         userList.forEach( (user) => {
                             if (rfp.request_by == user.user_id) {
