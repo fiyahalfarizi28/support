@@ -833,7 +833,6 @@
                             }
                         })
 
-
                         $('#tablePTrfm').append(`
                             <tr>
                                 <td>
