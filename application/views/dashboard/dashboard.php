@@ -520,8 +520,6 @@
         }
     ?>
 
-    console.log(<?php echo json_encode($rfmList)?>)
-
     var ctx_ = document.getElementById("myChart1").getContext("2d");
     var data_ = {
         labels: [
@@ -940,7 +938,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-        $this->db->join(TB_PROJECT, "project.id = rfp_new_detail.project_id");
+        $this->db->join(TB_PROJECT." as Project", "Project.id = rfp_new_detail.project_id");
         
         $rfpList = $this->db->get(TB_RFP)->result();
 
@@ -1222,17 +1220,24 @@
                 $('#tablePTrfp').empty();
                 
                 var label = this.data.labels[item[0]["_index"]];
+                var problem_type_id;
                 var rfpList = <?php echo json_encode($rfpList); ?>;
                 var userList = <?php echo json_encode($userList); ?>;
+                var problemTypeList = <?php echo json_encode($problemTypeList); ?>;
 
-                
+                problemTypeList.forEach( (problem) => {
+                    if (label == problem.problem_type) {
+                        problem_type_id = problem.id;
+                    }
+                })
+
                 rfpList.forEach( (rfp) => {
-                    if (rfp.problem_type == label) {
+                    if (rfp.problem_type == problem_type_id) {
                         var nama_requestor;
                         var jabatan_requestor;
-                        var nama_pic = "-";
                         var date = new Date(rfp.request_date);
                         var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var problem_type;
 
                         userList.forEach( (user) => {
                             if (rfp.request_by == user.user_id) {
@@ -1251,19 +1256,16 @@
                                     ${jabatan_requestor}
                                 </td>
                                 <td>
-                                    ${rfm.no_rfm}
+                                    ${rfp.no_rfp}
                                 </td>
                                 <td>
                                     ${formattedDate}
                                 </td>
                                 <td>
-                                    ${rfm.request_status}
+                                    ${rfp.request_status}
                                 </td>
                                 <td>
-                                    ${rfm.result_status}
-                                </td>
-                                <td>
-                                    ${nama_pic}
+                                    ${rfp.result_status}
                                 </td>
                             </tr>
                         `);
@@ -1347,11 +1349,9 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-        // $this->db->join(TB_KODE_KANTOR, "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+
         $this->db->group_by('rfm_new_detail.kode_kantor');
         $this->db->order_by('rfm_new_detail.kode_kantor', 'asc');
-
-        
 
         $rfmGrouped = $this->db->get(TB_DETAIL)->result();
     ?>
@@ -1422,6 +1422,73 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#table_kode_kantor').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var kode_kantor_id;
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+                var rfmGrouped = <?php echo json_encode($rfmGrouped); ?>;
+
+                rfmGrouped.forEach( (kantor) => {
+                    if (label == kantor.kode_kantor) {
+                        kode_kantor_id = kantor.id;
+                    }
+                })
+
+                rfmList.forEach( (rfm) => {
+                    if (rfm.kode_kantor == kode_kantor_id) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var kode_kantor;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#table_kode_kantor').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart5').modal('show');
+            },
             responsive: true,
             title:{
                 display:true,
@@ -1445,7 +1512,41 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart5" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Kantor</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="table_kode_kantor">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
 <?php 
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
