@@ -1,9 +1,68 @@
+<div class="card mb-3" style="margin-top: 15px">
+    <div class="card-header" >
+        <b>PROFILE DEPARTMENT IT</b>
+    </div>
+
+    <div class="card-body">
+        <div class ="row">
+            <div class="col-sm-3">
+                <div class="card text-center">
+                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
+                        <!-- <div class="card-body"> -->
+                            <h4 class="card-title">Elvia Nur Anggraini</h4>
+                            <p class="card-text">IT Programmer paling cantik</p>
+                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
+                        <!-- <div class="card-body"> -->
+                            <h4 class="card-title">Elvia Nur Anggraini</h4>
+                            <p class="card-text">IT Programmer paling cantik</p>
+                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
+                        <!-- <div class="card-body"> -->
+                            <h4 class="card-title">Elvia Nur Anggraini</h4>
+                            <p class="card-text">IT Programmer paling cantik</p>
+                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
+                        <!-- <div class="card-body"> -->
+                            <h4 class="card-title">Elvia Nur Anggraini</h4>
+                            <p class="card-text">IT Programmer paling cantik</p>
+                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+</div>
+
 <div class="card mb-3" id="table" style="margin-top: 15px">
     <div class="card-header" >
         <b>DAILY ACTIVITY DEPARTMENT IT</b>
     </div>
     <div class="card-body">
-    <!-- table table-bordered table-hover -->
         <table class="colapse-table res3"  width="100%" cellspacing="0">
             <thead>
                 <tr>
