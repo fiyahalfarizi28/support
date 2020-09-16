@@ -812,12 +812,18 @@ function post_assign_task() {
 //-------------------------------------
 
 function export_to_excel() {
-    var prm_month = $('select[name="month"]').val();
-    var prm_year = $('select[name="year"]').val();
-    var today = new Date();
-    var mm = String(today.getMonth() + 1).padStart(2, '0')
-    if(prm_month==='') prm_month = mm;
+    var tanggal_awal = $("#tanggal_awal").val();
+    var tanggal_akhir = $("#tanggal_akhir").val();
+    var request_status = $('select[name="request_status"]').val();
 
-    window.open('rfm_controller/export_to_excel/'+prm_month+'/'+prm_year);
+    if (tanggal_awal == "" || tanggal_akhir == "" || request_status == null)
+    {
+        alert('Harap isi Tanggal Awal, Tanggal Akhir dan Request Status!');
+    } else if (tanggal_akhir < tanggal_awal)
+    {
+        alert('Input Tanggal Akhir Salah!');
+    } else {
+    window.open('rfm_controller/export_to_excel/'+tanggal_awal+'/'+tanggal_akhir+'/'+request_status);
+    }
 }
 //-------------------------------------

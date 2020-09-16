@@ -2084,37 +2084,58 @@ class Rfm_controller extends CI_Controller {
         }
     }
 
-    public function export_to_excel($month='', $year='')
+    public function export_to_excel($first_date='', $second_date='', $request_status='')
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $startDate = date('Y-m-d', strtotime($first_date));
+        $endDate = date('Y-m-d', strtotime($second_date));
+
+        if ($request_status != "SEMUANYA") {
+            $customStatus = "(RFM.request_date BETWEEN '$startDate' AND '$endDate') AND (RFM.request_status = '$request_status')";
+        } else {
+            $customStatus = "RFM.request_date BETWEEN '$startDate' AND '$endDate'";
+        }
+
         if(!$SESSION_USER_ID)
         {
             redirect(base_url());
         }
-        if(empty($month)) $month = "MONTH(CURDATE())";
+
+        if (empty($first_date) || empty($second_date)) {
+            die();
+        }
 
         $Q = "SELECT 
-                no_rfm AS `no_rfm`,
-                e.nama AS `pic`,
-                d.nama AS `request_by`,
-                b.`problem_type` AS `problem_type`,
-                `subject` AS `subject`,
-                rfm_detail AS `detail`,
-                request_status AS `status`,
-                request_date  AS `date`
+                RFM.no_rfm AS `no_rfm`,
+                USER.nama AS `request_by`,
+                RFM.request_date  AS `date`,
+                PROJECT.project_name AS `project_name`,
+                PROBLEM_TYPE.`problem_type` AS `problem_type`,
+                RFM.`subject` AS `subject`,
+                RFM.rfm_detail AS `detail`,
+                RFM.request_status AS `status`,
+                PIC.nama AS `pic`
             FROM
-                rfm_new_detail a 
-                LEFT JOIN rfm_new_problem_type b 
-                ON a.problem_type = b.id
-                LEFT JOIN `user` d
-                ON a.request_by = d.user_id
-                LEFT JOIN `user` e
-                ON a.assign_to = e.user_id
+                ticket_support.rfm_new_detail RFM
+                LEFT JOIN ticket_support.rfm_new_problem_type PROBLEM_TYPE
+                ON RFM.problem_type = PROBLEM_TYPE.id
+                LEFT JOIN ticket_support.project PROJECT
+                ON RFM.project_id = PROJECT.id
+                LEFT JOIN dpm_online.user USER
+                ON RFM.request_by = USER.user_id
+                LEFT JOIN dpm_online.user PIC
+                ON RFM.assign_to = PIC.user_id
             WHERE
-                MONTH(a.request_date)='$month' AND
-                YEAR(a.request_date)='$year'
+                $customStatus
+            ORDER BY
+                RFM.request_date ASC
         ";
+    
         $data['row'] = $this->db->query($Q)->result();
+        $data['startDate'] = $startDate;
+        $data['endDate'] = $endDate;
+        $data['first_date'] = $first_date;
+        $data['second_date'] = $second_date;
         $this->load->view('export_to_excel', $data);
     }
 
