@@ -180,7 +180,6 @@ class Dailyreport_controller extends ci_controller{
                 $update_project = $this->db->update(TB_PROJECT, $array_update_project);
 
                 $no_rfp = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfp;
-                $rfp_id = $this->db->where('no_rfp', $no_rfp)->get(TB_RFP)->row()->id;
             }
 
             $array_insert = array(

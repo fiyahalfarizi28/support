@@ -110,7 +110,7 @@
 
             <div class="col-sm-3">
                  <div class="card text-center">
-                    <img class="card-img-top" src="assets/img/Rudy.png" style="width:100%">
+                    <img class="card-img-top" src="assets/img/Rudy.jpg" style="width:100%">
                     <div class="card-body">
                         <h5 class="card-title">RUDY NOVRIANTO</h5>
                         <p class="card-text">IT Programmer</p>
@@ -475,7 +475,7 @@
                         <td>
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $progressValue?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $progressValue?>%">
-                                    <?php echo $progressValue?>%
+                                    <?php echo (round($progressValue))?>%
                                 </div>
                             </div>
                         </td>
