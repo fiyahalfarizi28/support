@@ -4,57 +4,148 @@
     </div>
 
     <div class="card-body">
-        <div class ="row">
-            <div class="col-sm-3">
-                <div class="card text-center">
-                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
-                        <!-- <div class="card-body"> -->
-                            <h4 class="card-title">Elvia Nur Anggraini</h4>
-                            <p class="card-text">IT Programmer paling cantik</p>
-                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
-                        </div>
-                    </div> 
+        <div class ="row justify-content-center">
+
+            <div class="col-3 text-center">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Darwhin.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">DARWHIN SINARTA</h5>
+                        <p class="card-text">DIREKSI</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-3 text-center">
                  <div class="card text-center">
-                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
-                        <!-- <div class="card-body"> -->
-                            <h4 class="card-title">Elvia Nur Anggraini</h4>
-                            <p class="card-text">IT Programmer paling cantik</p>
-                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
-                        </div>
-                    </div> 
+                    <img class="card-img-top" src="assets/img/Hamsudi.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">HAMSUDI</h5>
+                        <p class="card-text">HEAD IT</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-3 text-center">
                  <div class="card text-center">
-                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
-                        <!-- <div class="card-body"> -->
-                            <h4 class="card-title">Elvia Nur Anggraini</h4>
-                            <p class="card-text">IT Programmer paling cantik</p>
-                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
-                        </div>
-                    </div> 
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                 <div class="card text-center">
-                    <!-- <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%"> -->
-                        <!-- <div class="card-body"> -->
-                            <h4 class="card-title">Elvia Nur Anggraini</h4>
-                            <p class="card-text">IT Programmer paling cantik</p>
-                            <a href="#" class="btn btn-primary stretched-link">See Profile</a>
-                        </div>
-                    </div> 
+                    <img class="card-img-top" src="assets/img/Indra.jpg" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">INDRA MAULANA</h5>
+                        <p class="card-text">SUPERVISOR IT</p>
+                    </div>
                 </div>
             </div>
 
         </div>
-        
+
+        <div class ="row" style="margin-top: 30px">
+            <div class="col-sm-3">
+                <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Alan.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">ALAN GENTINA</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Bonar.jpg" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">BONAR PURBA</h5>
+                        <p class="card-text">IT Infrastructure Specialist</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">ELVIA NUR ANGGRAINI</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Irvan.jpg" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">IRVAN MUHAMMAD SINDY</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class ="row" style="margin-top: 15px">
+            <div class="col-sm-3">
+                <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Nanang.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">NANANG ANDRIANI</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Reynaldi.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">REYNALDI</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Rudy.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">RUDY NOVRIANTO</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                 <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Suluh.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">SULUH DAMAR GRAHITA</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class ="row" style="margin-top: 15px">
+            <div class="col-sm-3">
+                <div class="card text-center">
+                    <img class="card-img-top" src="assets/img/Yosef.png" style="width:100%">
+                    <div class="card-body">
+                        <h5 class="card-title">YOSEP HERYANA</h5>
+                        <p class="card-text">IT Programmer</p>
+                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>
 
@@ -438,3 +529,4 @@
         </table>
     </div>
 </div>
+

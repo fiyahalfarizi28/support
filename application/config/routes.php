@@ -59,6 +59,7 @@ $route['project'] = 'project_controller';
 $route['report'] = 'reportrfm_controller';
 $route['daily_report'] = 'dailyreport_controller';
 $route['activity'] = 'activity_controller';
+$route['profile'] = 'profile_controller';
 $route['user_management'] = 'um_controller';
 $route['kpi'] = 'um_controller/kpi_pic';
 $route['export_to_excel'] = 'rfm_controller/export_to_excel';
