@@ -2,6 +2,7 @@
     <div class="card-header">
         <h4>KPI IT</h4>
     </div>
+    
     <div class="card-body">
         <div class="table-responsive">
             <form class="mb-2" action="" method="post">
@@ -101,24 +102,24 @@
                             $query_kehadiran = $this->db->query("SELECT COUNT(DISTINCT date_activity) AS KEHADIRAN FROM daily_activity WHERE user_id='$r->user_id' AND MONTH(date_activity) = $m AND YEAR(date_activity) = $y")->row();
                            
                             $query_assigned_rfm = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
-                            $query_assigned_rfp = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
-                            $query_assigned =  $query_assigned_rfm->ASSIGNED_RFM + $query_assigned_rfp->ASSIGNED_RFP;
+                            $query_assigned_task = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_TASK FROM task WHERE assign_to='$r->user_id' AND (status != 'ON PROGRESS') AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_assigned =  $query_assigned_rfm->ASSIGNED_RFM + $query_assigned_task->ASSIGNED_TASK;
 
                             $query_progress_rfm = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status = 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
-                            $query_progress_rfp = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND result_status = 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
-                            $query_progress = $query_progress_rfm->ON_PROGRESS_RFM + $query_progress_rfp->ON_PROGRESS_RFP;
+                            $query_progress_task = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_TASK FROM task WHERE assign_to='$r->user_id' AND (status = 'ON PROGRESS') AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_progress = $query_progress_rfm->ON_PROGRESS_RFM + $query_progress_task->ON_PROGRESS_TASK;
 
                             $query_done_rfm = $this->db->query("SELECT COUNT(done_date) AS DONE_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
-                            $query_done_rfp = $this->db->query("SELECT COUNT(done_date) AS DONE_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
-                            $query_done = $query_done_rfm->DONE_RFM + $query_done_rfp->DONE_RFP;
+                            $query_done_task = $this->db->query("SELECT COUNT(done_date) AS DONE_TASK FROM task WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_done = $query_done_rfm->DONE_RFM + $query_done_task->DONE_TASK;
 
                             $query_total_rfm = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
-                            $query_total_rfp = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
-                            $query_total = $query_total_rfm->TOTAL_RFM + $query_total_rfp->TOTAL_RFP;
+                            $query_total_task = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_TASK FROM task WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_total = $query_total_rfm->TOTAL_RFM + $query_total_task->TOTAL_TASK;
 
                             $query_lewat_rfm = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
-                            $query_lewat_rfp = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFP FROM rfp_new_detail WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
-                            $query_lewat = $query_lewat_rfm->LEWAT_RFM + $query_lewat_rfp->LEWAT_RFP;
+                            $query_lewat_task = $this->db->query("SELECT COUNT(done_date) AS LEWAT_TASK FROM task WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_lewat = $query_lewat_rfm->LEWAT_RFM + $query_lewat_task->LEWAT_TASK;
 
                             $assigned = $query_assigned - $query_done;
 
@@ -140,9 +141,6 @@
                             <td class="text-right"><?php echo $query_total?></td>
                             <td class="text-right"><?php echo $persen ?></td>
                         </tr>
-                        <script>
-                        console.log(<?php echo json_encode(!empty($query_kehadiran->KEHADIRAN) ? $query_kehadiran->KEHADIRAN : "KOSONG" )?>)
-                    </script>
                     <?php endforeach ?>
                 </tbody>
             </table>

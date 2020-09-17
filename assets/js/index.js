@@ -803,7 +803,7 @@ function post_assign_task() {
             }else {
                 $('.pesan').html(isPesan);
                 $('#modal-task-rfp').modal('hide');
-                // reload_table();
+                setTimeout (()=> window.location.reload(), 2000);
             }
         }
     });

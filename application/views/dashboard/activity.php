@@ -12,6 +12,7 @@
                     <div class="card-body">
                         <h5 class="card-title">DARWHIN SINARTA</h5>
                         <p class="card-text">DIREKSI</p>
+                        <a href="<?php echo base_url('Darwhin_Sinarta') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -22,6 +23,7 @@
                     <div class="card-body">
                         <h5 class="card-title">HAMSUDI</h5>
                         <p class="card-text">HEAD IT</p>
+                        <a href="<?php echo base_url('Hamsudi') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -32,6 +34,7 @@
                     <div class="card-body">
                         <h5 class="card-title">INDRA MAULANA</h5>
                         <p class="card-text">SUPERVISOR IT</p>
+                        <a href="<?php echo base_url('Indra_Maulana') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -45,7 +48,7 @@
                     <div class="card-body">
                         <h5 class="card-title">ALAN GENTINA</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Alan_Gentina') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -56,7 +59,7 @@
                     <div class="card-body">
                         <h5 class="card-title">BONAR PURBA</h5>
                         <p class="card-text">IT Infrastructure Specialist</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Bonar_Purba') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -67,7 +70,7 @@
                     <div class="card-body">
                         <h5 class="card-title">ELVIA NUR ANGGRAINI</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Elvia_Nur_Anggraini') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -78,7 +81,7 @@
                     <div class="card-body">
                         <h5 class="card-title">IRVAN MUHAMMAD SINDY</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Irvan_Muhammad_Sindy') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -92,7 +95,7 @@
                     <div class="card-body">
                         <h5 class="card-title">NANANG ANDRIANI</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Nanang_Andriani') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -103,7 +106,7 @@
                     <div class="card-body">
                         <h5 class="card-title">REYNALDI</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Reynaldi') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -114,7 +117,7 @@
                     <div class="card-body">
                         <h5 class="card-title">RUDY NOVRIANTO</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Rudy_Novrianto') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -125,7 +128,7 @@
                     <div class="card-body">
                         <h5 class="card-title">SULUH DAMAR GRAHITA</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Suluh_Damar_Grahita') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -139,7 +142,7 @@
                     <div class="card-body">
                         <h5 class="card-title">YOSEP HERYANA</h5>
                         <p class="card-text">IT Programmer</p>
-                        <a href="<?php echo base_url('profile') ?>" class="btn btn-primary stretched-link">See Profile</a>
+                        <a href="<?php echo base_url('Yosep_Heryana') ?>" class="btn btn-primary stretched-link">See Profile</a>
                     </div>
                 </div>
             </div>
@@ -234,8 +237,6 @@
                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                     <td>
                                         <?php 
-                                            // $data = json_encode($projectList->result());
-                                            // echo "<script>console.log($data);</script>";
                                             $tableDataProjectName = null;
                                             if (!empty($row->project_id))
                                             {
@@ -355,8 +356,6 @@
                                                     <td><?php echo date("H:i",strtotime( $row->last_update)) ?></td>
                                                     <td>
                                                         <?php 
-                                                            // $data = json_encode($projectList->result());
-                                                            // echo "<script>console.log($data);</script>";
                                                             $tableDataProjectName = null;
                                                             if (!empty($row->project_id))
                                                             {

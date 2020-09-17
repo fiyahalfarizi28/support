@@ -1,6 +1,6 @@
 <style>
 .profile {
-  font-size: 18px;
+  font-size: 16px;
 }
 </style>
 
@@ -12,16 +12,68 @@
     </div>
 
     <div class="card-body">
-        <div class="row justify-content-center" >
-            <div class="col-sm-3" style="margin-left: 25px">
+    <?php
+            $this->db->select("COUNT(*) AS rfm_assigned");
+            $this->db->where('assign_to', '663'); 
+            $rfm_assigned = $this->db->get(TB_DETAIL)->row()->rfm_assigned;
+
+            $this->db->select("COUNT(*) AS rfm_done");
+            $this->db->where('assign_to', '663');
+            $this->db->where('request_status', STT_DONE); 
+            $rfm_done = $this->db->get(TB_DETAIL)->row()->rfm_done;
+
+            $this->db->select("COUNT(*) AS task_assigned");
+            $this->db->where('assign_to', '663'); 
+            $task_assigned = $this->db->get(TB_TASK)->row()->task_assigned;
+
+            $this->db->select("COUNT(*) AS task_done");
+            $this->db->where('assign_to', '663');
+            $this->db->where('status', STT_DONE); 
+            $task_done = $this->db->get(TB_TASK)->row()->task_done;
+        
+            $this->db->select("COUNT(*) AS rfm_lewat");
+            $this->db->where('assign_to', '663');
+            $this->db->where('done_date !=', NULL);
+            $this->db->where('request_status', STT_DONE);
+            $this->db->where('done_date >', date('Y-m-d ', strtotime('target_date')));
+            $rfm_lewat = $this->db->get(TB_DETAIL)->row()->rfm_lewat;
+
+            $this->db->select("COUNT(*) AS task_lewat");
+            $this->db->where('assign_to', '663');
+            $this->db->where('done_date !=', NULL);
+            $this->db->where('status', STT_DONE);
+            $this->db->where('done_date >', date('Y-m-d ', strtotime('target_date')));
+            $task_lewat = $this->db->get(TB_TASK)->row()->task_lewat;
+
+            $this->db->select("SUM(rates) AS totalrates");
+            $this->db->where('assign_to', '663');
+            $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
+
+            $assigned = $rfm_assigned + $task_assigned;
+            $done = $rfm_done + $task_done;
+            $lewat = $rfm_lewat + $task_lewat;
+
+            if($done == 0){
+                $persen = '0 %';
+            } else {
+                $persen = ($done * 100) / $assigned;
+                $persen = ROUND(ROUND($persen))." %";
+            }
+
+            if ($totalrates == 0){
+                $rating = '0';
+            } else {
+                $rating = $totalrates / $rfm_done;
+            }
+        ?>
+        <div class="row">
+            <div class="col-sm-2">
                  <div class="card">
-                    <img class="card-img-top" src="assets/img/Elvia.jpg" style="width:100%">
+                    <img class="card-img-top" src="assets/img/Bonar.jpg" style="width:100%">
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-sm-2" style="margin-top: 25px; margin-left: 25px">
+            <div class="col-sm-2">
                 <table class="profile">
                     <tr>
                         <td >Nama</td>
@@ -30,45 +82,51 @@
                         <td>NIK</td>
                     </tr>
                     <tr>
-                        <td>Tempat, tanggal lahir</td>
-                    </tr>
-                    <tr>
-                        <td>Alamat</td>
-                    </tr>
-                    <tr>
                         <td>No. HP</td>
                     </tr>
                     <tr>
                         <td>Email</td>
                     </tr>
+                    <tr>
+                        <td>Performance</td>
+                    </tr>
+                    <tr>
+                        <td>Rating</td>
+                    </tr>
                 </table>
             </div>
 
-            <div class="col-sm-5" style="margin-top: 25px">
+            <div class="col-sm-4">
                 <table class="profile">
-                    <tr>
-                        <td> : <?php echo "Elvia Nur Anggraini"; ?> </td>
-                    </tr>
-                    <tr>
-                        <td> : <?php echo "022007125"; ?> </td>
-                    </tr>
-                    <tr>
-                        <td> : <?php echo "Bengkulu, 28 Agustus 1998"; ?> </td>
-                    </tr>
-                    <tr>
-                        <td> : <?php echo "Perum. Pesona Serpong Blok F1 No.2, Kota Tangerang Selatan"; ?> </td>
-                    </tr>
-                    <tr>
-                        <td> : <?php echo "0895-3443-54454"; ?> </td>
-                    </tr>
-                    <tr>
-                        <td> : <?php echo "staf_tidev10@kreditmandiri.co.id"; ?> </td>
-                    </tr>
+                    <?php foreach($userList->result() as $r): ?>
+                        <tr>
+                            <td> : <?php echo $r->nama; ?> </td>
+                        </tr>
+                        <tr>
+                            <td> : <?php echo $r->nik; ?> </td>
+                        </tr>
+                        <tr>
+                            <?php if (!empty($r->no_hp)) { ?>
+                                <td> : <?php echo $r->no_hp ?> </td>
+                            <?php } else { ?>
+                                <td> : <?php echo "-"?> </td>
+                            <?php }?>
+                        </tr>
+                        <tr>
+                            <td> : <?php echo $r->email; ?> </td>
+                        </tr>
+                        <tr>
+                            <td> : <?php echo $persen; ?> </td>
+                        </tr>
+                        <tr>
+                            <td> : <?php echo number_format($rating, 1, '.', '')."/5.0"; ?> </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </table>
             
             </div>
 
-            <div class="col-sm-3" style="margin-top: 25px">
+            <div class="col-sm-3">
                 <table class="profile" style="margin-left: 25px">
                     <tr>
                         <td>Total RFM Assigned</td>
@@ -85,32 +143,28 @@
                     <tr>
                         <td>Melewati Target Date</td>
                     </tr>
-                    <tr>
-                        <td>Rating</td>
-                    </tr>
+                    
                 </table>
             </div>
 
-            <div class="col-sm-1" style="margin-top: 25px">
+            <div class="col-sm-1">
                 <table class="profile">
                     <tr>
-                        <td> : <?php echo "2"; ?> </td>
+                        <td> : <?php echo $rfm_assigned; ?> </td>
                     </tr>
                     <tr>
-                        <td> : <?php echo "2"; ?> </td>
+                        <td> : <?php echo $rfm_done; ?> </td>
                     </tr>
                     <tr>
-                        <td> : <?php echo "8"; ?> </td>
+                        <td> : <?php echo $task_assigned; ?> </td>
                     </tr>
                     <tr>
-                        <td> : <?php echo "6"; ?> </td>
+                        <td> : <?php echo $task_done; ?> </td>
                     </tr>
                     <tr>
-                        <td> : <?php echo "0"; ?> </td>
+                        <td> : <?php echo $lewat; ?> </td>
                     </tr>
-                    <tr>
-                        <td> : <?php echo "4.7"; ?> </td>
-                    </tr>
+                    
                 </table>
             
             </div>

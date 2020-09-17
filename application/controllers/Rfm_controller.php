@@ -1764,28 +1764,6 @@ class Rfm_controller extends CI_Controller {
         );
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
 
-
-        if ($problem_type == KODE_PERUBAHAN_APLIKASI || $problem_type == KODE_PENAMBAHAN_APLIKASI) {
-            $no_rfm = $this->db->where('id', $id_rfm)->get(TB_DETAIL)->row()->no_rfm;
-
-            $array_insert = array(
-                'task_name'         => $subject,
-                'description'       => $detail,
-                'create_date'       => $date_now,
-                'project_id'        => $project_id,
-                'create_by'         => $SESSION_USER_ID,
-                'no_rfm'            => $no_rfm,
-                'assign_to'         => $assign_pic,
-                'assign_date'       => $date_now,
-                'target_date'       => $target_date,
-                'status'            => STT_PENDING,
-                'update_by'         => $assign_pic,
-            );
-    
-            $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
-
-        }
-
         if(!$insert_data) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Gagal Menyetujui RFM</div>";

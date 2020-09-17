@@ -1,6 +1,11 @@
 <div class="card mb-3" id="table">
 	<?php if($SESSION_USER_JABATAN==="HEAD IT" || $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI') { ?>
-	
+		<div class="card-header">
+			<button class="btn btn-success btn-sm" id="btn_create" data-toggle="modal" data-target="#modal-create-task">
+				<i class="far fa-comments"></i> Tulis Activity
+			</button>
+		</div>
+
 		<div class="card-body">
 			<div class="pesan"></div>
 				<form class="mb-2" action="" method="post">
@@ -362,7 +367,7 @@
             		</tbody>		
 				</table>
 			</div>
-		</div>
+			</div>
     
 	<?php } else { ?>
 		<div class="card-header">
@@ -652,6 +657,7 @@
 				</div>
 			</div>
 		</div>
+
 		<script>
 
 			document.addEventListener("DOMContentLoaded", function (event) {
@@ -891,6 +897,7 @@
 			}
 			
 		</script>
+		
 	<?php } ?>
 </div>
 

@@ -1,13 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Profile_controller extends CI_Controller {
+class Alan_controller extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('daily_report_model');
         $this->load->model('auth_model');
-        $this->load->model('rfm_model');
-        $this->load->model('rfp_model');
     }
 
 	public function index()
@@ -19,24 +17,20 @@ class Profile_controller extends CI_Controller {
 
             $array_crud = array(
                 'select' => '*',
+                'table' => TB_USER,
+                'where' => array(
+                    'user_id' => '1464',
+                )
+            );
+
+            $data['userList'] = $this->daily_report_model->get_crud($array_crud);
+
+            $array_crud = array(
+                'select' => '*',
                 'table' => TB_DETAIL,
             );
 
             $data['rfmList'] = $this->daily_report_model->get_crud($array_crud);
-
-            $array_crud = array(
-                'select' => '*',
-                'table' => TB_RFP,
-            );
-
-            $data['rfpList'] = $this->daily_report_model->get_crud($array_crud);
-
-            $array_crud = array(
-                'select' => '*',
-                'table' => TB_DETAIL,
-            );
-
-            $data['statusList'] = $this->daily_report_model->get_crud($array_crud);
 			
 			$array_crud = array(
                 'select' => '*',
@@ -77,7 +71,7 @@ class Profile_controller extends CI_Controller {
 
             $data['DataTaskList'] = $this->daily_report_model->get_crud($array_crud);
 
-            $this->template->load('template','dashboard/profile',$data);
+            $this->template->load('template','dashboard/Alan_Gentina',$data);
         } else {
             $this->load->view('login/form_login');
         }
@@ -89,7 +83,7 @@ class Profile_controller extends CI_Controller {
         $array_crud = array(
             'table' => TB_DAILY_ACTIVITY,
             'where' => array(
-            'user_id' => $this->session->userdata('USER_ID')
+                'user_id' => '1464',
             ),
             'order_by' => "last_update DESC"
         );
