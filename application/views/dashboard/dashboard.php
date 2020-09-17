@@ -190,6 +190,30 @@
     </div>
 </div>
 
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>GRAFIK RFM KUMULATIF</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart9"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>GRAFIK RFP KUMULATIF</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart10"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
     $tb_detail = TB_DETAIL;
     $Q = "SELECT DISTINCT MONTH(`request_date`) AS bulan FROM `rfm_new_detail` WHERE YEAR(`request_date`) BETWEEN '2019' AND YEAR(CURDATE()) ORDER BY MONTH(`request_date`) ASC";
@@ -371,30 +395,6 @@
 ?>
 
 <script src="<?php echo base_url('assets/js/chart/Chart.bundle.js') ?>"></script>
-
-<div class="row mt-3">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>GRAFIK RFM KUMULATIF</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart9"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>GRAFIK RFP KUMULATIF</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart10"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="row mt-3">
     <div class="col-md-6">
