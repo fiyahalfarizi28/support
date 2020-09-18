@@ -119,7 +119,7 @@
 
         <div class="row" style="margin-top: 8px">
             <div class="col-md-6">
-                <button name="iya" id="iya" type="button" class="btn btn-success btn-block"><i class="far fa-times-circle"></i> SESUAI </button>
+                <button name="iya" id="iya" type="button" class="btn btn-success btn-block"><i class="far fa-check-circle"></i> SESUAI </button>
             </div>
 
             <div class="col-md-6">

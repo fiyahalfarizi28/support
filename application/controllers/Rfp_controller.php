@@ -1645,7 +1645,7 @@ class Rfp_controller extends CI_Controller {
         $detail = $this->input->post('detail');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
-        if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT')
+        if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI')
             {
                 $array_insert = array(
                     'request_status' => STT_APPROVED,

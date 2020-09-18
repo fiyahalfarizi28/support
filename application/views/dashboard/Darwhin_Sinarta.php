@@ -7,7 +7,7 @@
 <div class="card mb-3" style="margin-top: 15px">
     <div class="card-header" style="text-align:center">
         <b>
-            BIODATA
+            PROFILE
         </b>
     </div>
 
@@ -17,13 +17,11 @@
                  <div class="card">
                     <img class="card-img-top" src="assets/img/Darwhin.png" style="width:100%">
                 </div>
-                <?php foreach($userList->result() as $r): ?>
-                    <?php if ($r->user_id === $SESSION_USER_ID) { ?>
-                        <button class="btn btn-success btn-sm" id="btn_edit" style="margin-top: 15px">
-                            <i class="far fa-edit"></i> Change Photo
-                        </button>>
-                    <?php } ?>
-                <?php endforeach; ?>
+                <?php if ($user->user_id == $SESSION_USER_ID) { ?>
+                    <button class="btn btn-success btn-sm" id="btn_edit" style="margin-top: 15px">
+                        <i class="far fa-edit"></i> Change Photo
+                    </button>
+                <?php } ?>
             </div>
             
             <div class="col-sm-2">
@@ -45,24 +43,22 @@
 
             <div class="col-sm-5">
                 <table class="profile">
-                    <?php foreach($userList->result() as $r): ?>
-                        <tr>
-                            <td> : <?php echo $r->nama; ?> </td>
-                        </tr>
-                        <tr>
-                            <td> : <?php echo $r->nik; ?> </td>
-                        </tr>
-                        <tr>
-                            <?php if (!empty($r->no_hp)) { ?>
-                                <td> : <?php echo $r->no_hp ?> </td>
-                            <?php } else { ?>
-                                <td> : <?php echo "-"?> </td>
-                            <?php }?>
-                        </tr>
-                        <tr>
-                            <td> : <?php echo $r->email; ?> </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <tr>
+                        <td> : <?php echo $user->nama; ?> </td>
+                    </tr>
+                    <tr>
+                        <td> : <?php echo $user->nik; ?> </td>
+                    </tr>
+                    <tr>
+                        <?php if (!empty($user->no_hp)) { ?>
+                            <td> : <?php echo $user->no_hp ?> </td>
+                        <?php } else { ?>
+                            <td> : <?php echo "-"?> </td>
+                        <?php }?>
+                    </tr>
+                    <tr>
+                        <td> : <?php echo $user->email; ?> </td>
+                    </tr>
                 </table>
             
             </div>

@@ -180,7 +180,7 @@
     activities3.addEventListener("change", function() {
         var optionSelected = $("option:selected", this).text();
         var selectedProject = $("#project_id").val();
-        var flagMicroBPROrCentro = (selectedProject == '42' || selectedProject == '49');
+        var flagMicroBPROrCentro = (selectedProject == '6' || selectedProject == '13');
 
         if (optionSelected == "SUPPORT DATA HUMAN ERROR" && flagMicroBPROrCentro) {
             $("#collapseRisk").collapse('show');

@@ -16,13 +16,13 @@ class Darwhin_controller extends CI_Controller {
 
             $array_crud = array(
                 'select' => '*',
-                'table' => TB_USER,
+                'table' => 'dpm_online.'.TB_USER,
                 'where' => array(
-                    'user_id' => '68',
+                    'user_id' => '706',
                 )
             );
 
-            $data['userList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['user'] = $this->daily_report_model->get_crud($array_crud)->row();
 
             $this->template->load('template','dashboard/Darwhin_Sinarta',$data);
         } else {

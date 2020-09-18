@@ -133,7 +133,7 @@ class Rfm_controller extends CI_Controller {
                 else
                 {
                     $array_crud = array(
-                        'table' => 'dpm_online.'.TB_USER,
+                        'table' => ('dpm_online.'.TB_USER),
                         'where' => array('user_id' => $field->request_upline_by),
                     );
                     $app_by = $this->rfm_model->get_crud($array_crud)->row()->nama;
@@ -433,7 +433,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -443,7 +443,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -453,7 +453,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->request_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -561,7 +561,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -571,7 +571,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -579,7 +579,7 @@ class Rfm_controller extends CI_Controller {
         $data['notes_name_receive'] = $this->rfm_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $row->assign_to
             )
@@ -1495,7 +1495,7 @@ class Rfm_controller extends CI_Controller {
         $get_detail = $this->rfm_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array('user_id' => $get_detail->request_by),
         );
         $get_user = $this->rfm_model->get_crud($array_crud)->row();

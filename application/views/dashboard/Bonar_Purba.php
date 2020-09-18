@@ -7,7 +7,7 @@
 <div class="card mb-3" style="margin-top: 15px">
     <div class="card-header" style="text-align:center">
         <b>
-            BIODATA
+            PROFILE
         </b>
     </div>
 
@@ -31,19 +31,11 @@
             $this->db->where('status', STT_DONE); 
             $task_done = $this->db->get(TB_TASK)->row()->task_done;
         
-            $this->db->select("COUNT(*) AS rfm_lewat");
-            $this->db->where('assign_to', '663');
-            $this->db->where('done_date !=', NULL);
-            $this->db->where('request_status', STT_DONE);
-            $this->db->where('done_date >', date('Y-m-d ', strtotime('target_date')));
-            $rfm_lewat = $this->db->get(TB_DETAIL)->row()->rfm_lewat;
+            $query_lewat_rfm = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFM FROM rfm_new_detail WHERE assign_to='633' AND DATE(done_date) > DATE(target_date) AND request_status='DONE'")->row()->LEWAT_RFM;
+            $rfm_lewat = $query_lewat_rfm;
 
-            $this->db->select("COUNT(*) AS task_lewat");
-            $this->db->where('assign_to', '663');
-            $this->db->where('done_date !=', NULL);
-            $this->db->where('status', STT_DONE);
-            $this->db->where('done_date >', date('Y-m-d ', strtotime('target_date')));
-            $task_lewat = $this->db->get(TB_TASK)->row()->task_lewat;
+            $query_lewat_task = $this->db->query("SELECT COUNT(done_date) AS LEWAT_TASK FROM task WHERE assign_to='633' AND DATE(done_date) > DATE(target_date) AND status='DONE'")->row()->LEWAT_TASK;
+            $task_lewat = $query_lewat_task;
 
             $this->db->select("SUM(rates) AS totalrates");
             $this->db->where('assign_to', '663');
@@ -61,18 +53,23 @@
             }
 
             if ($totalrates == 0){
-                $rating = '0';
+                $rating = '5';
             } else {
                 $rating = $totalrates / $rfm_done;
             }
         ?>
         <div class="row">
-            <div class="col-sm-2">
+            <div class="col-sm-2 text-center">
                  <div class="card">
                     <img class="card-img-top" src="assets/img/Bonar.jpg" style="width:100%">
                 </div>
+                <?php if ($user->user_id == $SESSION_USER_ID) { ?>
+                    <button class="btn btn-success btn-sm" id="btn_edit" style="margin-top: 15px">
+                        <i class="far fa-edit"></i> Change Photo
+                    </button>
+                <?php } ?>
             </div>
-
+            
             <div class="col-sm-2">
                 <table class="profile">
                     <tr>
@@ -98,30 +95,28 @@
 
             <div class="col-sm-4">
                 <table class="profile">
-                    <?php foreach($userList->result() as $r): ?>
-                        <tr>
-                            <td> : <?php echo $r->nama; ?> </td>
-                        </tr>
-                        <tr>
-                            <td> : <?php echo $r->nik; ?> </td>
-                        </tr>
-                        <tr>
-                            <?php if (!empty($r->no_hp)) { ?>
-                                <td> : <?php echo $r->no_hp ?> </td>
-                            <?php } else { ?>
-                                <td> : <?php echo "-"?> </td>
-                            <?php }?>
-                        </tr>
-                        <tr>
-                            <td> : <?php echo $r->email; ?> </td>
-                        </tr>
-                        <tr>
-                            <td> : <?php echo $persen; ?> </td>
-                        </tr>
-                        <tr>
-                            <td> : <?php echo number_format($rating, 1, '.', '')."/5.0"; ?> </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <tr>
+                        <td> : <?php echo $user->nama; ?> </td>
+                    </tr>
+                    <tr>
+                        <td> : <?php echo $user->nik; ?> </td>
+                    </tr>
+                    <tr>
+                        <?php if (!empty($user->no_hp)) { ?>
+                            <td> : <?php echo $user->no_hp ?> </td>
+                        <?php } else { ?>
+                            <td> : <?php echo "-"?> </td>
+                        <?php }?>
+                    </tr>
+                    <tr>
+                        <td> : <?php echo $user->email; ?> </td>
+                    </tr>
+                    <tr>
+                        <td> : <?php echo $persen; ?> </td>
+                    </tr>
+                    <tr>
+                        <td> : <?php echo number_format($rating, 1, '.', '')."/5.0"; ?> </td>
+                    </tr>
                 </table>
             
             </div>
@@ -176,7 +171,7 @@
 <div class="card mb-3" style="margin-top: 15px">
     <div class="card-header" style="text-align:center">
         <b>
-            DAFTAR AKTIVITAS
+            ACTIVITY
         </b>
     </div>
 

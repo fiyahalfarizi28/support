@@ -14,6 +14,7 @@
                 <th style="text-align: center">#</th>
                 <th>PROJECT</th>
                 <th>STATUS</th>
+                <th>PROGRESS</th>
                 <th>LAST UPDATE</th>
             </tr>
             </thead>
@@ -23,19 +24,41 @@
                     <?php 
                         $this->db->where('project_id', $r->id);
                         $specificTask = $this->db->get(TB_TASK)->result();
+
+                        $this->db->where('project_id', $r->id);
+                        $this->db->where('status', STT_DONE);
+                        $this->db->order_by('last_update DESC');
+                        $taskList_done = $this->db->get(TB_TASK)->result();
+
+                        $progressValue = count($taskList_done)/count($specificTask) * 100;
                     ?>
 
                     <tr>
                         <td style="text-align: center"><i data-toggle="collapse" data-target=<?php echo "#".$r->id?> style=" color: #28a745; background-color: #f4fbff" class="fa fa-plus-circle" aria-hidden="true"></i></td>
                         <td><?php echo $r->project_name?></td>
                         <td>
-                            <?php echo STT_ON_PROGRESS?>
+                            <?php
+                                $progressStatus = null;
+                                if (count($taskList_done) == count($specificTask)) {
+                                    $progressStatus = STT_DONE;    
+                                } else {
+                                    $progressStatus = STT_ON_PROGRESS;
+                                }
+                                echo $progressStatus;
+                            ?>
+                        </td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $progressValue?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $progressValue?>%">
+                                    <?php echo (round($progressValue))?>%
+                                </div>
+                            </div>
                         </td>
                         <td><?php echo date("d-m-Y | H:i:s",strtotime( $r->last_update))?></td>
                     </tr>
 
                     <tr id=<?php echo $r->id?> class="collapse">                     
-                        <td colspan="4">
+                        <td colspan="5">
                             <p>
                                 <table style="width: 100%">
                                     <thead>

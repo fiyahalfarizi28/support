@@ -46,7 +46,7 @@ class Project_controller extends CI_Controller {
         $data['projectList'] = $this->rfp_model->get_crud($array_crud);
 
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
         );
         $data['userList'] = $this->rfp_model->get_crud($array_crud);
 
