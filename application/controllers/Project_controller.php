@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Project_controller extends CI_Controller {
     function __construct() {
         parent::__construct();
+        $this->load->model('daily_report_model');
         $this->load->model('rfp_model');
         $this->load->model('rfm_model');
         $this->load->model('auth_model');
@@ -13,7 +14,9 @@ class Project_controller extends CI_Controller {
 	{
         if($this->auth_model->logged_id()) {
             $data['SESSION_USER_ID'] = $this->session->userdata('USER_ID');
+            $data['SESSION_USER_JABATAN'] = $this->session->userdata('USER_JABATAN');
             $data['task_project'] = $this->getTask();
+            $data['project_activity'] = $this->projectActivity();
 
             $SESSION_USER_ID = $this->session->userdata('dpm_online.'.'USER_ID');
             $data['SESSION_USER_ID'] = $SESSION_USER_ID;
@@ -24,6 +27,14 @@ class Project_controller extends CI_Controller {
             ON ticket_support.task.project_id=ticket_support.project.id;
             ';
             $data['ProjectList'] = $this->db->query($Q)->result();
+            
+            $array_crud = array(
+                'select' => '*',
+                'table' => TB_TASK,
+            );
+
+            $data['DataTaskList'] = $this->daily_report_model->get_crud($array_crud);
+
 
             $this->template->load('template','project/table',$data);
         } else {
@@ -259,9 +270,21 @@ class Project_controller extends CI_Controller {
                 'flg_block' => 'N',
                 )
         );
-        $data['select_pic'] = $this->rfm_model->get_crud($array_crud);
+        $data['select_pic'] = $this->rfp_model->get_crud($array_crud);
 
         $this->load->view('project/field_task', $data);
+    }
+
+    public function projectActivity()
+    {
+        $array_crud = array(
+            'table' => TB_TASK,
+            'where' => array(
+            'assign_to' => $this->session->userdata('USER_ID')
+            ),
+            'order_by' => 'assign_date',
+        );
+        return $this->daily_report_model->get_crud($array_crud)->result();
     }
 
 }

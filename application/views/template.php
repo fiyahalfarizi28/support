@@ -116,7 +116,7 @@
                         <i class="far fa-bell fa-lg"></i><sup class="badge badge-danger rfm-bells"></sup>
                     </a>
                     <?php if($this->session->userdata('USER_JABATAN') === 'IT STAFF') { ?>
-                        <a href="<?php echo base_url('activity') ?>" title="Project">
+                        <a href="<?php echo base_url('project') ?>" title="Project">
                             <i class="far fa-envelope-open fa-lg"></i><sup class="badge badge-danger rfp-bells"></sup>
                         </a>
                     <?php } else { ?>   

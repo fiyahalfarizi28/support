@@ -299,6 +299,19 @@ $(document).ready(function(){
         });
     })
 
+    $('#modal-assign-rfp').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+        $.ajax({
+            type : 'post',
+            url : 'rfp_controller/btn_assign',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-assign-rfp').html(res);
+            }
+        });
+    })
+
 })
 
 //PROJECT =============================
@@ -771,6 +784,38 @@ function set_rating_request() {
                 $('.pesan').html(isPesan);
                 $('#modal-rating-rfm').modal('hide');
                 reload_table();
+            }
+        }
+    });
+}
+
+function post_assign_rfp() {
+    var form = $('#frm-create')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "post",
+        url: "rfp_controller/set_assign_task",
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        dataType: "json",
+        beforeSend: function() {
+            $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+        },
+        success: function (res) {
+            var isValid = res.isValid,
+                isPesan = res.isPesan;
+
+            console.log(isValid);
+            console.log(isPesan);
+            if(isValid == 0) {
+                $('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request()" class="btn btn-success"><i class="fa fa-check"></i> Assign</a>');
+                $('.pesan').html(isPesan);
+            }else {
+                $('.pesan').html(isPesan);
+                $('#modal-assign-rfp').modal('hide');
+                setTimeout (()=> window.location.reload(), 2000);
             }
         }
     });

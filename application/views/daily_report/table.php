@@ -455,7 +455,8 @@
 								?>
 							</td>
 							
-							<td><?php $tableTaskName = null;
+							<td>
+								<?php $tableTaskName = null;
 									if (!empty($r->task_id))
 									{
 										foreach($DataTaskList->result() as $row):
@@ -654,6 +655,7 @@
 			</div>
 		</div>
 	</div>
+	
 	<script>
 		
 		document.addEventListener("DOMContentLoaded", function (event) {
