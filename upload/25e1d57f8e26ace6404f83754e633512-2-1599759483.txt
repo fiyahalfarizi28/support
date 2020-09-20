@@ -1,0 +1,33 @@
+Senin
+Grafik persentase problem type RFP (x)
++ tambah "sampai bulan"(x)
++ grafik RFM berdasarkan area (x)
++ modal detail di grafik divisi 
++ atasan bisa perbaiki problem type (x)
++ human error -> risk type (micro bpr, centro)-> tanya pak ham untuk DB risk type 
++ submenu report (menampilkan semua RFM berdasarkan status: done, reject)
+Export to excel pindah ke report
+problem type RFP -> request type RFP (x)
++ multiple insert untuk task tiap RFP
++ submenu baru untuk create project dan input task 
++ progressbar di dashboard progress project
++ skor dari kehadiran, SLA (target date), dan rating dari user
++ profil team IT untuk % KPI beserta aktivitasnya di dashboard activity
+
+Selasa
++ modal detail di grafik divisi
++ human error -> risk type (micro bpr, centro)-> baru bisa di problem type (belum termasuk micro bpr dan centro) (x)
++ export to excel di halaman report 
++ multiple insert untuk task tiap RFP -> hardcode form minus bug attachment
++ submenu baru untuk create project dan input task (x)
++ progressbar di dashboard progress project 
++ skor dari kehadiran, SLA (target date), dan rating dari user di KPI
++ profil team IT untuk % KPI beserta aktivitasnya di dashboard activity
+
+Kamis
++ modal detail di grafik divisi
++ export to excel di halaman report
++ multiple insert untuk task tiap RFP
++ progressbar di dashboard progress project 
++ skor dari kehadiran, SLA (target date), dan rating dari user di KPI
++ profil team IT untuk % KPI beserta aktivitasnya di dashboard activity

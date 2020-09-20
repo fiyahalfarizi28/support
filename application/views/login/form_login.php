@@ -7,43 +7,54 @@
         <meta name="create-date" content="15/05/2019">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/bootstrap.min.css') ?>">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/style.css') ?>">
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/loginstyle.css') ?>">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/font/css/all.min.css') ?>">
         <link href="<?php echo base_url('favicon.ico') ?>" rel="shortcut icon">
     </head>
     <div class="preloader">
-    <div class="loading">
-        <img src="<?php echo base_url('assets/img/loading.gif') ?>" width="80">
-        <p>Please Wait</p>
+        <div class="loading" style="text-align:center">
+            <img src="<?php echo base_url('assets/img/loading.gif') ?>" width="80" style="background-color: transparent">
+            <p>Please wait</p>
+        </div>
     </div>
-    </div>
-    <body class="bg-dark">
+    <body>
 
-    <div class="container modal-sm">
-        <div class="card card-login mx-auto mt-5">
-            <div class="card-header">Login</div>
-            <div class="card-body">
-                <form name="form_login" id="form_login" method="POST">
-                    <div class="form-group">
-                        <div class="form-label-group">
-                            <input type="text" name="username" id="username" class="form-control" placeholder="Username" required="required" autofocus="autofocus">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="form-label-group">
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required="required" autofocus="autofocus">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <button class="btn btn-primary col" onclick="proses_login()" id="btn_login" type="button">Masuk</button>
-                    </div>
-                </form>
+    <div class="form-container">
+        <div class="form-form">
+            <div class="form-form-wrap">
+                <div class="form-container">
+                    <div class="form-content">
+    
+                    <img src="logo.png" alt="logo" style="width:200px;height:200px;" class="center">
 
-                <div id="pesan" class="text-center text-danger"></div>
-                <div style="text-align: center">
-                    <a target="_blank" href="upload/manual_books.pdf">Buku Panduan</a>
+                        <h2 style="text-align: center; margin-top: 15px; color: #c40202"class=""><b>SUPPORT</b></h2>
+                        
+                        <form  name="form_login" id="form_login" method="POST">
+                            <div class="form-group">
+                                <div id="username-field" class="field-wrapper input">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    <input  id="username" name="username" type="text" class="form-control" placeholder="Username" required="required" autofocus="autofocus">
+                                </div>
+
+                                <div id="password-field" class="field-wrapper input mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                    <input id="password" name="password" type="password" class="form-control" placeholder="Password" required="required" autofocus="autofocus">
+                                </div>
+                                <div class="d-sm-flex justify-content-between">
+                                    
+                                    <div class="field-wrapper">
+                                        <button type="submit" style="background-color: #c40202; margin-top: 8px" class="btn btn-primary" id="btn_login" value="" onclick="proses_login()">Log in</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>       
+                            
+                        <p class="terms-conditions" style="margin-top:50px !important;"><h6 style="text-align: center"><a target="_blank" href="upload/manual_books.pdf" >Buku Panduan</a></h6></p>             
+                        <p class="terms-conditions" >© 2020 PT. BPR Kredit Mandiri Indonesia </p>
+                        
+
+                    </div>                    
                 </div>
-
             </div>
         </div>
     </div>
@@ -64,7 +75,7 @@
             data : data,
             dataType : 'json',
             beforeSend : function(){
-                $('#btn_login').html("<img src='assets/img/loading.gif' width='20px'>");
+                $('#btn_login').html("<img src='assets/img/loading.gif' width='80' style='background-color: transparent>");
             },
             success : function(result){
                 localStorage.clear();

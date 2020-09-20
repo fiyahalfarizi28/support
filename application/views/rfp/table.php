@@ -15,7 +15,7 @@
                 <th>JABATAN</th>
                 <th>APPROVAL</th>
                 <th>NO.RFP</th>
-                <th>TIME</th>
+                <th>DATE</th>
                 <th>REQUEST STATUS</th>
                 <th>RESULT STATUS</th>
                 <th>PIC</th>
@@ -32,26 +32,32 @@
     </div>
 </div>
 
-<div class="modal fade" id="modal-edit-rfm">
+<div class="modal fade" id="modal-edit-rfp">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="view-modal-edit"></div>
     </div>
 </div>
 
-<div class="modal fade" id="modal-approve-rfm">
+<div class="modal fade" id="modal-approve-rfp">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" id="view-approve-rfm"></div>
+        <div class="modal-content" id="view-approve-rfp"></div>
     </div>
 </div>
 
-<div class="modal fade" id="modal-reject-rfm">
+<div class="modal fade" id="modal-reject-rfp">
     <div class="modal-dialog modal-sm">
-        <div class="modal-content" id="view-reject-rfm"></div>
+        <div class="modal-content" id="view-reject-rfp"></div>
     </div>
 </div>
 
-<div class="modal fade" id="modal-rating-rfm">
+<div class="modal fade" id="modal-rating-rfp">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" id="view-rating-rfm"></div>
+        <div class="modal-content" id="view-rating-rfp"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-assign-rfp">
+    <div class="modal-dialog modal-lg" style="margin-left: 200px">
+        <div class="modal-content" style="width:980px;"id="view-assign-rfp"></div>
     </div>
 </div>

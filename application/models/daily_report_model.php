@@ -3,9 +3,7 @@ class daily_report_model extends ci_model{
     
     function __construct() {
         parent::__construct();
-	    // the TRUE paramater tells CI that you'd like to return the database object.
     }
-	
 	
 	public function get_crud($data)
     {

@@ -1,0 +1,87 @@
+<script>
+<div class="form-group collapse" id="collapseRfmDetail">
+							<label for="RequestBy">Request By : </label></br>
+							<label for="RfmDetail">Detail RFM :</label>
+							<textarea class="form-control" id="RfmDetail" rows="3" style="resize: none"></textarea>
+                        </div>
+                        
+$('#projectFlag').on('change', function (e) {
+			// TODO: Get project list
+            var optionSelected = $("option:selected", this);
+			var valueSelected = this.value;
+
+            if (valueSelected === "Project") {
+				$('#RfmDetail').val("");
+				$("#collapseRfmDetail").collapse('hide');
+				
+				$('#collapseProject').collapse('show');
+				$('#collapseRFM').collapse('hide');
+				
+				// $('#rfm_id').prop('disabled', 'disabled');
+				// $('#project_id').prop('disabled', false);
+				// $('#task_id').prop('disabled', false);
+            } else if (valueSelected === "RFM") {
+				
+                $('#collapseProject').collapse('hide');
+				$('#collapseRFM').collapse('show');
+
+				// $('#rfm_id').prop('disabled', false);
+				// $('#project_id').prop('disabled', 'disabled');
+				// $('#task_id').prop('disabled', 'disabled');
+            } else {
+				$('#collapseProject').collapse('hide');
+				$('#collapseRFM').collapse('hide');
+
+				// $('#rfm_id').prop('disabled', 'disabled');
+				// $('#project_id').prop('disabled', 'disabled');
+				// $('#task_id').prop('disabled', 'disabled');
+			}
+        });
+
+		$('#project_id').on('change', function (e) {
+			// TODO: Get specific project available task
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+			$('#task_id').empty();
+
+            if (valueSelected !== null) {
+				var arrayTask = <?php echo json_encode($taskList->result()) ?>;
+				$('#task_id').append('<option selected="selected" value="">-Pilih task-</option>')
+				arrayTask.forEach( (task) => {
+					if (task.project_id == valueSelected) {
+						$('#task_id').append(`<option value="${task.id}">${task.task_name}</option>`);
+					}
+				})
+				
+                $('#collapseTask').collapse('show');
+            } else {
+                $('#collapseTask').collapse('hide');
+            }
+		});
+
+		$('#rfm_id').on('change', function (e){
+			
+			$('#RfmDetail').val("");
+			$("#RfmDetail").prop('disabled', 'disabled');
+
+			var optionSelected = $("option:selected", this);
+			var valueSelected = this.value;	
+
+			if (valueSelected !== null) {
+				var rfmList = <?php echo json_encode($rfmList->result()) ?>;
+				
+				for (var i=0; i<rfmList.length; i++) {
+					if (rfmList[i].id == valueSelected) {
+						// $('#RfmDetail').val(rfmList[i].get_user);
+						$('#RfmDetail').val(rfmList[i].rfm_detail)
+					}
+				}
+
+				$("#collapseRfmDetail").collapse('show');
+				
+            } else {
+				$("#collapseRfmDetail").collapse('hide');
+            }	
+
+        });
+    </script>

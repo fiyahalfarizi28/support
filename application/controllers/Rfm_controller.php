@@ -22,7 +22,7 @@ class Rfm_controller extends CI_Controller {
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $SESSION_USER_GROUP_MENU = $this->session->userdata('USER_GROUP_MENU');
-
+        
         $array_crud = array(
             'table' => TB_PARAMETER,
             'where' => array('id' => 'RFM_AKSES_OP_APP_BDG')
@@ -78,14 +78,16 @@ class Rfm_controller extends CI_Controller {
             // request status
             $array_crud = array(
                 'table' => TB_REQUEST_TYPE,
-                'where' => array('id' => $field->request_type),
+                'where' => array(
+                    'id' => $field->request_type,
+                ),
             );
             $row_request_type = $this->rfm_model->get_crud($array_crud)->row()->request_type;
 
             // nama pic
             if($field->assign_to === NULL) {
                 $row_assign_to = '-';
-            }else {
+            } else {
                 $array_crud = array(
                     'table' => TB_USER,
                     'where' => array('user_id' => $field->assign_to),
@@ -93,7 +95,7 @@ class Rfm_controller extends CI_Controller {
                 $row_assign_to = $this->rfm_model->get_crud($array_crud);
                 if(!empty($row_assign_to->num_rows())) {
                     $row_assign_to = $row_assign_to->row()->nama;
-                }else{
+                } else{
                     $row_assign_to = '-';
                 }
             }
@@ -104,14 +106,16 @@ class Rfm_controller extends CI_Controller {
             $explode_request_upline_by = explode(':', $field->request_upline_by);
             $explode_receive_by = explode(':', $field->receive_by);
             
-            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND $field->request_status === STT_ON_QUEUE) {
+            $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+            if(in_array($SESSION_USER_ID, $explode_request_upline_by) AND ($field->request_status === STT_ON_QUEUE) AND ($SESSION_USER_ID)) {
                 $btn_option = $btn_option;
-            }elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
+            } elseif(in_array($SESSION_USER_ID, $explode_receive_by) AND $field->request_status === STT_APPROVED) {
                 $btn_option = $btn_option;
-            }elseif($field->assign_to === $SESSION_USER_ID AND $field->request_status === STT_ASSIGNED) {
-                $btn_option = $btn_option;
-            }else {
+            } elseif($SESSION_USER_JABATAN === 'HEAD IT' ||$SESSION_USER_JABATAN === 'SUPERVISOR IT' ||  $SESSION_USER_JABATAN === 'DIREKSI' AND $field->request_status === STT_APPROVED) {
+                    $btn_option = $btn_option;
+            } else {
                 $btn_option = "";
+               
             }
 
             // nama yg harus approve
@@ -124,12 +128,12 @@ class Rfm_controller extends CI_Controller {
             if($field->request_upline_by != NULL AND $field->request_status === STT_ON_QUEUE) {
                 if($field->request_upline_by === $team_it)
                 {
-                    $app_by = "IT";
+                    $app_by = 'IT';
                 }
                 else
                 {
                     $array_crud = array(
-                        'table' => 'dpm_online.'.TB_USER,
+                        'table' => ('dpm_online.'.TB_USER),
                         'where' => array('user_id' => $field->request_upline_by),
                     );
                     $app_by = $this->rfm_model->get_crud($array_crud)->row()->nama;
@@ -138,16 +142,24 @@ class Rfm_controller extends CI_Controller {
                 $app_by = 'IT';
             }
             
-            // btn edit di status on queue
+            // btn rating
             $btn_rating = "<a class='btn btn-success text-warning btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-rating-rfm' data-id='$field->id' title='Give Rating'><i class='fa fa-star'></i></a>";
-            if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_DONE AND $field->result_status === STT_DONE) {
+            if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_CONFIRMED AND $field->result_status === STT_DONE) {
                 $btn_option = $btn_rating;
             }
 
             // btn edit di status on queue
             $btn_edit = "<a class='btn btn-warning text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-edit-rfm' data-id='$field->id' title='Edit RFM'><i class='fa fa-edit'></i></a>";
+
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
-                $btn_option = $btn_edit;
+                $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT')
+                {
+                    $btn_option = $btn_edit.$btn_option;
+                }
+                else {
+                    $btn_option = $btn_edit;
+                }
             }
 
             //txt color
@@ -164,6 +176,10 @@ class Rfm_controller extends CI_Controller {
                 $txtApprove = "<b class='text-primary'>$field->request_status</b>";
             }
             elseif($field->request_status === STT_ASSIGNED)
+            {
+                $txtApprove = "<b class='text-dark'>$field->request_status</b>";
+            }
+            elseif($field->request_status === STT_CONFIRMED)
             {
                 $txtApprove = "<b class='text-dark'>$field->request_status</b>";
             }
@@ -203,7 +219,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $rates = "";
+                $rates = "-";
             }
 
             if($field->approve_notes != NULL)
@@ -212,7 +228,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $notes_approve = "";
+                $notes_approve = "-";
             }
 
             if($field->receive_notes != NULL)
@@ -221,7 +237,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $notes_receive = "";
+                $notes_receive = "-";
             }
 
             if($field->done_notes != NULL)
@@ -230,7 +246,7 @@ class Rfm_controller extends CI_Controller {
             }
             else
             {
-                $notes_done = "";
+                $notes_done = "-";
             }
 
             if($field->reject_notes != NULL OR $field->confirm_notes)
@@ -251,7 +267,7 @@ class Rfm_controller extends CI_Controller {
                 }else {
                     $btn_case = NULL;
                 }
-            }else {
+            } else {
                 $btn_case = NULL;
             }
 
@@ -267,7 +283,6 @@ class Rfm_controller extends CI_Controller {
             } else {
                 $projectName = "-";
             }
-
 
             $no++;
             $row = array();
@@ -312,18 +327,18 @@ class Rfm_controller extends CI_Controller {
             'table' => TB_DETAIL,
             'where' => array(
                 'request_by' => $id,
-                'request_status' => STT_DONE,
-                'result_status' => STT_PENDING
+                'request_status' => STT_CONFIRMED,
+                'result_status' => STT_DONE
             )
         );
+        
         $check = $this->rfm_model->get_crud($array_crud)->num_rows();
         if($check >= 1) {
-            $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa memberi kami penilaian. Terima kasih';
+            $data['isPesan'] = 'Kami telah menyelesaikan tiket support kamu, jangan lupa konfirmasi dan beri penilaian. Terima kasih';
             $this->load->view('modal/notify', $data);
-        }else {
+        } else {
             $array_crud = array(
                 'table' => TB_PROBLEM_TYPE,
-                'where' => array('system_type' => NULL),
             );
             $data['problem_type'] = $this->rfm_model->get_crud($array_crud);
             
@@ -377,6 +392,7 @@ class Rfm_controller extends CI_Controller {
     {
         $id = $this->input->post('idx');
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
         $array_crud = array(
             'table' => TB_DETAIL,
@@ -384,6 +400,7 @@ class Rfm_controller extends CI_Controller {
                 'id' => $id
             )
         );
+
         $row = $this->rfm_model->get_crud($array_crud)->row();
         $data['rows'] = $row;
         
@@ -416,7 +433,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -426,12 +443,22 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
         );
         $data['notes_name_receive'] = $this->rfm_model->get_crud($array_crud)->row();
+
+        $explode_notes_name = explode(":", $row->request_by);
+        $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
+        $array_crud = array(
+            'table' => ('dpm_online.'.TB_USER),
+            'where' => array(
+                'user_id' => $explode_notes_name[$notes_name]
+            )
+        );
+        $data['notes_name_confirm'] = $this->rfm_model->get_crud($array_crud)->row();
         //=======================================================
 
         $explode_disabled = explode(":", $row->receive_by);
@@ -439,13 +466,14 @@ class Rfm_controller extends CI_Controller {
             $rows = $r;
             $data_explode_disabled[] = $rows;
         }
-        if(in_array($SESSION_USER_ID, $data_explode_disabled))
+
+        if( $SESSION_USER_JABATAN === 'HEAD IT' || $SESSION_USER_JABATAN === 'SUPERVISOR IT' AND $row->receive_date != NULL)
         {
             $data['disabled'] = "";
             $data['readonly'] = "readonly";
             $data['onclick'] = "set_assign_request()";
             $data['btnText'] = "Assign";
-            $data['btn_update'] = '<a href="javascript:void(0)" onclick="set_update_it()" class="btn btn-success"><i class="far fa-check-circle"></i> Update</a>';
+            
         }
         else
         {
@@ -453,7 +481,6 @@ class Rfm_controller extends CI_Controller {
             $data['readonly'] = "readonly";
             $data['onclick'] = "set_app_request()";
             $data['btnText'] = "Approve";
-            $data['btn_update'] = null;
         }
         
         if($SESSION_USER_ID === $row->assign_to)
@@ -525,11 +552,16 @@ class Rfm_controller extends CI_Controller {
         );
         $data['request_type'] = $this->rfm_model->get_crud($array_crud);
         
+        $array_crud = array(
+            'table' => TB_PROJECT,
+        );
+        $data['projectList'] = $this->rfm_model->get_crud($array_crud);
+        
         // nama yang tulis notes
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -539,7 +571,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -547,7 +579,7 @@ class Rfm_controller extends CI_Controller {
         $data['notes_name_receive'] = $this->rfm_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $row->assign_to
             )
@@ -566,23 +598,22 @@ class Rfm_controller extends CI_Controller {
             echo json_encode($data);
             die();
         }
+
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
         $SESSION_USER_INDUK = $this->session->userdata('USER_INDUK');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = null;
         $project_id = $this->input->post('project_id');
+        $risk_type = $this->input->post('risk_type');
 
         if ($request_type == 2) {
-            $problem_type = $this->input->post('problem_type1');
+            $problem_type = $this->input->post('problem_type');
         } else if ($request_type == 3) {
-            $problem_type = $this->input->post('problem_type2');
-            if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
-                $project_id = $this->input->post('project_id2');
-            }
+            $problem_type = $this->input->post('problem_type');
         }
 
         $subject = $this->input->post('subject');
@@ -618,9 +649,7 @@ class Rfm_controller extends CI_Controller {
         $total = $resMax->maxID;
         $total++;
         $char = "IT/RFM/".$kode_cabang.".";
-        if ($request_type == 3) {
-            $char = "IT/RFP/".$kode_cabang.".";
-        }
+    
         $no_rfm = $char . sprintf("%06s", $total);
 
         if(empty($request_type)) {
@@ -850,20 +879,7 @@ class Rfm_controller extends CI_Controller {
             if($SESSION_USER_ID==='674') { // UPLINE DIMAS PURWITA
                 $head_id = '207';
             }
-
-            if ($problem_type == KODE_PERUBAHAN_APLIKASI) {
-                $array_insert = array(
-                    'task_name'         => $subject,
-                    'description'       => $detail,
-                    'status'            => STT_ON_QUEUE,
-                    'create_date'       => $date_now,
-                    'project_id'        => $project_id,
-                    'create_by'         => $user_id
-                );
-    
-                $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
-            }
-
+            
             $array_insert = array(
                 'no_rfm'            => $no_rfm,
                 'problem_type'      => $problem_type,
@@ -877,8 +893,31 @@ class Rfm_controller extends CI_Controller {
                 'request_status'    => $req_stt,
                 'assign_to'         => $assign_to,
                 'assign_date'       => $assign_date,
-                'project_id'        => $project_id
+                'project_id'        => $project_id,
+                'risk_type'         => $risk_type,
             );
+
+            if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV)) {
+                $array_insert = array(
+                'no_rfm'            => $no_rfm,
+                'problem_type'      => $problem_type,
+                'request_type'      => $request_type,
+                'request_by'        => $user_id,
+                'request_date'      => $date_now,
+                'request_upline_by' => $head_id,
+                'approve_date'      => $date_now,
+                'approve_by'        => $head_id,
+                'kode_kantor'       => $kode_cabang,
+                'subject'           => $subject,
+                'rfm_detail'        => $detail,
+                'request_status'    => $req_stt,
+                'assign_to'         => $assign_to,
+                'assign_date'       => $assign_date,
+                'project_id'        => $project_id,
+                'risk_type'         => $risk_type,
+                 );
+
+            }
 
             if(empty($_FILES['attachment']['name'])) {
                 $insert_data = $this->db->insert($table_destination, $array_insert);
@@ -920,7 +959,7 @@ class Rfm_controller extends CI_Controller {
                                 'full_filename' => $new_name,
                                 'data_file'     => "upload/$new_name"
                             );
-                            $insert_attachment = $this->db->insert(TB_ATTACHMENT, $array_insert);
+                            $insert_attachment = $this->db->insert(TB_ATTACHMENT_RFM, $array_insert);
 
                             if($insert_attachment) {
                                 move_uploaded_file($tmp, $path.null.$new_name);
@@ -962,7 +1001,7 @@ class Rfm_controller extends CI_Controller {
             
         }
 
-        $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+        $data = array('isValid' => $isValid, 'isPesan' => $isPesan, 'insert_data' => $insert_data, 'array_insert' => $array_insert);
         echo json_encode($data);
     }
 
@@ -970,7 +1009,7 @@ class Rfm_controller extends CI_Controller {
     {
         $id = $this->input->post('idx');
         $array_crud = array(
-            'table' => TB_COMMENT,
+            'table' => TB_COMMENT_RFM,
             'where' => array(
                 'id' => $id
             )
@@ -992,7 +1031,7 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
         $SESSION_USER_INDUK = $this->session->userdata('USER_INDUK');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = $this->input->post('problem_type');
@@ -1379,7 +1418,7 @@ class Rfm_controller extends CI_Controller {
                                 'full_filename' => $new_name,
                                 'data_file'     => "upload/$new_name"
                             );
-                            $insert_attachment = $this->db->insert(TB_ATTACHMENT, $array_insert);
+                            $insert_attachment = $this->db->insert(TB_ATTACHMENT_RFM, $array_insert);
 
                             if($insert_attachment) {
                                 move_uploaded_file($tmp, $path.null.$new_name);
@@ -1401,11 +1440,11 @@ class Rfm_controller extends CI_Controller {
                 foreach($removeAtt as $keyRmv => $valRmv){
                     $idremove = $removeAtt[$keyRmv];
                     $this->db->where('id', $idremove);
-                    $remove_name = $this->db->get(TB_ATTACHMENT)->row();
+                    $remove_name = $this->db->get(TB_ATTACHMENT_RFM)->row();
                     $dir = $remove_name->data_file;
                     
                     $this->db->where('id', $idremove);
-                    $this->db->delete(TB_ATTACHMENT);
+                    $this->db->delete(TB_ATTACHMENT_RFM);
                     unlink($dir);
                 }
             }
@@ -1457,7 +1496,7 @@ class Rfm_controller extends CI_Controller {
         $get_detail = $this->rfm_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array('user_id' => $get_detail->request_by),
         );
         $get_user = $this->rfm_model->get_crud($array_crud)->row();
@@ -1635,19 +1674,36 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_FULLNAME = $this->session->userdata('USER_FULLNAME');
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         $app_it = $this->db->where('id', 'RFM_AKSES_IT_APP')->get(TB_PARAMETER)->row();
-        
-        $array_insert = array(
-            'request_status' => STT_APPROVED,
-            'approve_by'     => $SESSION_USER_ID,
-            'approve_date'   => $date_now,
-            'approve_notes'  => $notes,
-            'receive_by'     => $app_it->value,
-        );
-        
-        $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
+        $problem_type = $this->input->post('problem_type');
+        $project_id = $this->input->post('project_id_hidden');
+        $subject = $this->input->post('subject');
+        $detail = $this->input->post('detail');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
+        if ($SESSION_USER_JABATAN == 'HEAD IT' ||$SESSION_USER_JABATAN == 'SUPERVISOR IT'){
+            $array_insert = array(
+                'request_status' => STT_APPROVED,
+                'receive_by'     => $SESSION_USER_ID,
+                'receive_date'   => $date_now,
+                'receive_notes'  => $notes,
+                'problem_type'   => $problem_type
+            );
+            $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
+    
+        } else {
+            $array_insert = array(
+                'request_status' => STT_APPROVED,
+                'approve_by'     => $SESSION_USER_ID,
+                'approve_date'   => $date_now,
+                'approve_notes'  => $notes,
+                'receive_by'     => $app_it->value,
+                'problem_type'   => $problem_type
+            );
+            $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);    
+        }
+        
         if(!$insert_data) {
             $isValid = 0;
             $isPesan = "<div class='alert alert-danger'>Gagal Menyetujui RFM</div>";
@@ -1660,7 +1716,7 @@ class Rfm_controller extends CI_Controller {
             foreach($exp as $uid) {
                 $arr = array(
                     'user_id'     => $uid,
-                    'waktu'       => $date_now,
+                    'receive_date'  => $date_now,
                     'subject'     => 'RFM Approval(Waiting Assign To PIC)',
                     'pesan'       => $SESSION_USER_FULLNAME.' menyetujui dan mengatakan '.$notes,
                     'via_android' => 1
@@ -1680,12 +1736,14 @@ class Rfm_controller extends CI_Controller {
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $id_rfm = $this->input->post('id_rfm');
-        $problem_type = $this->input->post('problem_type');
-        $request_type = $this->input->post('request_type');
         $notes = $this->input->post('notes');
         $assign_pic = $this->input->post('assign_pic');
         $target_date = $this->input->post('target_date');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
+        $problem_type = $this->input->post('problem_type');
+        $project_id = $this->input->post('project_id');
+        $subject = $this->input->post('subject');
+        $detail = $this->input->post('detail');
 
         if(empty($assign_pic) || empty($target_date))
         {
@@ -1698,15 +1756,12 @@ class Rfm_controller extends CI_Controller {
         }
         
         $array_insert = array(
-            'problem_type'   => $problem_type,
-            'request_type'   => $request_type,
             'request_status' => STT_ASSIGNED,
-            'receive_by'     => $SESSION_USER_ID,
-            'receive_date'   => $date_now,
-            'receive_notes'  => $notes,
             'assign_to'      => $assign_pic,
             'assign_date'    => $date_now,
             'target_date'    => $target_date,
+            'problem_type'   => $problem_type,
+            'project_id'     => $project_id
         );
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
 
@@ -1717,7 +1772,7 @@ class Rfm_controller extends CI_Controller {
             $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
             echo json_encode($data);
             die(); 
-        }else {
+        } else {
             $target_date = date('d-m-Y', strtotime($target_date));
             $arr = array(
                 'user_id'     => $assign_pic,
@@ -1739,10 +1794,10 @@ class Rfm_controller extends CI_Controller {
     public function set_done_request()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
-        $id_rfm = $this->input->post('id_rfm');
+        $id_rfp = $this->input->post('id_rfp');
         $notes = $this->input->post('notes');
         $penyelesaian = $this->input->post('penyelesaian');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
 
         if(empty($penyelesaian)) {
             $isValid = 0;
@@ -1754,30 +1809,32 @@ class Rfm_controller extends CI_Controller {
         }
         
         $array_insert = array(
-            'request_status' => STT_DONE,
+            'request_status' => STT_CONFIRMED,
+            'result_status' => STT_DONE,
             'done_date'   => $date_now,
             'done_notes'  => $notes,
+            
         );
-        $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
+        $insert_data = $this->db->where('id', $id_rfp)->update(TB_RFP, $array_insert);
         
         $array_insert = array(
-            'id' => $id_rfm,
+            'id' => $id_rfp,
             'user' => $SESSION_USER_ID,
-            'date' => $date_now,
+            'date_comment' => $date_now,
             'comment' => $penyelesaian
         );
-        $this->db->insert(TB_COMMENT, $array_insert);
+        $this->db->insert(TB_COMMENT_RFP, $array_insert);
 
         if(!$insert_data) {
             $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Gagal Menyelesaikan RFM</div>";
+            $isPesan = "<div class='alert alert-danger'>Gagal Menyelesaikan RFP</div>";
             
             $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
             echo json_encode($data);
             die(); 
         }else {
             $isValid = 1;
-            $isPesan = "<div class='alert alert-success'>Berhasil Menyelesaikan RFM</div>";
+            $isPesan = "<div class='alert alert-success'>Berhasil Menyelesaikan RFP</div>";
         }
 
         $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
@@ -1789,7 +1846,7 @@ class Rfm_controller extends CI_Controller {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
         
         $array_insert = array(
             'request_status' => STT_REJECT,
@@ -1822,24 +1879,48 @@ class Rfm_controller extends CI_Controller {
         $id_rfm = $this->input->post('id_rfm');
         $notes = $this->input->post('notes');
         $rates = $this->input->post('rates');
-        $date_now = date('Y-m-d h:i:s');
+        $date_now = date('Y-m-d H:i:s');
+        $isOk = $this->input->post('isOk');
 
-        if(empty($rates) || empty($notes)) {
-            $isValid = 0;
-            $isPesan = "<div class='alert alert-danger'>Notes Atau Bintang Harus Diisi</div>";
-            
-            $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
-            echo json_encode($data);
-            die(); 
+        if ($isOk == 'iya') {
+            if(empty($rates) || empty($notes)) {
+                $isValid = 0;
+                $isPesan = "<div class='alert alert-danger'>Notes Atau Bintang Harus Diisi</div>";
+                
+                $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                echo json_encode($data);
+                die(); 
+            }
+        } else {
+            if(empty($notes)) {
+                $isValid = 0;
+                $isPesan = "<div class='alert alert-danger'>Notes Atau Bintang Harus Diisi</div>";
+                
+                $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                echo json_encode($data);
+                die(); 
+            }
         }
-        
+
         $array_insert = array(
-            'result_status' => STT_SOLVED,
+            'request_status' => STT_DONE,
             'confirm_by' => $SESSION_USER_ID,
             'confirm_date'   => $date_now,
             'confirm_notes'  => $notes,
             'rates'   => $rates,
+            'result_status' => STT_SOLVED,
         );
+
+        if ($isOk == 'tidak') {
+            $array_insert = array(
+                'request_status' => STT_ASSIGNED,
+                'result_status' => STT_PENDING,
+                'confirm_by' => $SESSION_USER_ID,
+                'confirm_notes'  => $notes,
+                'done_date'  => NULL,
+            );  
+        }
+
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
 
         if(!$insert_data) {
@@ -1861,6 +1942,8 @@ class Rfm_controller extends CI_Controller {
     public function bell()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+        
         $this->db->where('id', 'RFM_RFP_ID');
         $row_rfp = $this->db->get(TB_PARAMETER)->row()->value;
         $rfp_id = explode(":", $row_rfp);
@@ -1912,10 +1995,8 @@ class Rfm_controller extends CI_Controller {
             'where' => array(
                     'request_upline_by' => $SESSION_UPLINE,
                     'request_status' => STT_ON_QUEUE,
-                    'approve_by' => NULL,
                     'receive_by' => NULL,
                     'assign_to' => NULL,
-                    "problem_type NOT IN($rfp_id)" => NULL,
                 )
         );
         $upline = $this->rfm_model->get_crud($array_crud)->row()->total;
@@ -1927,81 +2008,127 @@ class Rfm_controller extends CI_Controller {
                     'request_upline_by !=' => NULL,
                     'request_status' => STT_APPROVED,
                     'approve_by !=' => NULL,
-                    'receive_by' => $SESSION_UPLINE,
+                    'receive_by' =>  $SESSION_UPLINE,
                     'assign_to' => NULL,
-                    "problem_type NOT IN($rfp_id)" => NULL,
+                    
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;
 
-        $array_crud = array(
+
+        if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') {
+            $array_crud = array(
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
                     'request_upline_by !=' => NULL,
-                    'request_status' => STT_ASSIGNED,
-                    'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
-                    'assign_to' => $SESSION_USER_ID,
-                    "problem_type NOT IN($rfp_id)" => NULL,
+                    'request_status' => STT_APPROVED,
+                    'receive_date !=' => NULL,
+                    'assign_to' => NULL,
                 )
-        );
+            );
+        }   
         $assign = $this->rfm_model->get_crud($array_crud)->row()->total;
 
         $array_crud = array(
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
-                    'request_upline_by' => NULL,
                     'request_status' => STT_ASSIGNED,
-                    'approve_by' => NULL,
-                    'receive_by' => NULL,
+                    'approve_by !=' => NULL,
+                    'receive_by !=' => NULL,
                     'assign_to' => $SESSION_USER_ID,
-                    "problem_type NOT IN($rfp_id)" => NULL,
                 )
         );
-        $auto_assign = $this->rfm_model->get_crud($array_crud)->row()->total;
-
-        echo $upline + $approve + $assign + $auto_assign;
+        $assigned = $this->rfm_model->get_crud($array_crud)->row()->total;
+        
+        $array_crud = array(
+            'select' => 'count(*) as total',
+            'table' => TB_DETAIL,
+            'where' => array(
+                    'request_by' => $SESSION_USER_ID,
+                    'request_status' => STT_CONFIRMED,
+                    'result_status' => STT_DONE,
+                    'approve_by !=' => NULL,
+                    'receive_by !=' => NULL,
+                    'assign_to !=' => NULL,
+                )
+        );
+        $done = $this->rfm_model->get_crud($array_crud)->row()->total;
+        
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            echo $assigned;
+        } else {
+        echo $upline + $approve + $assign + $assigned + $done;
+        }
     }
 
-    public function export_to_excel($month='', $year='')
+    public function export_to_excel($first_date='', $second_date='', $request_status='')
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $startDate = date('Y-m-d', strtotime($first_date));
+        $endDate = date('Y-m-d', strtotime($second_date));
+
+        if ($request_status != "SEMUANYA") {
+            $customStatus = "(RFM.request_date BETWEEN '$startDate' AND '$endDate') AND (RFM.request_status = '$request_status')";
+        } else {
+            $customStatus = "RFM.request_date BETWEEN '$startDate' AND '$endDate'";
+        }
+
         if(!$SESSION_USER_ID)
         {
             redirect(base_url());
         }
-        if(empty($month)) $month = "MONTH(CURDATE())";
+
+        if (empty($first_date) || empty($second_date)) {
+            die();
+        }
 
         $Q = "SELECT 
-                no_rfm AS `no_rfm`,
-                e.nama AS `pic`,
-                d.nama AS `request_by`,
-                b.`problem_type` AS `problem_type`,
-                c.`request_type` AS `request_type`,
-                `subject` AS `subject`,
-                rfm_detail AS `detail`,
-                request_status AS `status`,
-                request_date  AS `date`
+                RFM.no_rfm AS `no_rfm`,
+                USER.nama AS `request_by`,
+                RFM.request_date  AS `date`,
+                PROJECT.project_name AS `project_name`,
+                PROBLEM_TYPE.`problem_type` AS `problem_type`,
+                RFM.`subject` AS `subject`,
+                RFM.rfm_detail AS `detail`,
+                RFM.request_status AS `status`,
+                PIC.nama AS `pic`
             FROM
-                rfm_new_detail a 
-                LEFT JOIN rfm_new_problem_type b 
-                ON a.problem_type = b.id
-                LEFT JOIN rfm_new_request_type c
-                ON a.request_type = c.id
-                LEFT JOIN `user` d
-                ON a.request_by = d.user_id
-                LEFT JOIN `user` e
-                ON a.assign_to = e.user_id
+                ticket_support.rfm_new_detail RFM
+                LEFT JOIN ticket_support.rfm_new_problem_type PROBLEM_TYPE
+                ON RFM.problem_type = PROBLEM_TYPE.id
+                LEFT JOIN ticket_support.project PROJECT
+                ON RFM.project_id = PROJECT.id
+                LEFT JOIN dpm_online.user USER
+                ON RFM.request_by = USER.user_id
+                LEFT JOIN dpm_online.user PIC
+                ON RFM.assign_to = PIC.user_id
             WHERE
-                MONTH(a.request_date)='$month' AND
-                YEAR(a.request_date)='$year'
-                -- AND b.system_type IS NULL
-            -- GROUP BY a.problem_type
+                $customStatus
+            ORDER BY
+                RFM.request_date ASC
         ";
+    
         $data['row'] = $this->db->query($Q)->result();
+        $data['startDate'] = $startDate;
+        $data['endDate'] = $endDate;
+        $data['first_date'] = $first_date;
+        $data['second_date'] = $second_date;
         $this->load->view('export_to_excel', $data);
+    }
+
+    public function getattachment() {
+        $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $id_rfm = $this->input->post('id_rfm');
+        $task_id = $this->input->post('task_id');
+        $data = array();
+
+        $data['cekController'] = true;
+        $data['id_rfm'] = $id_rfm;
+        $data['task_id'] = $task_id;
+        $this->load->view('daily_report/attachment', $data);
+
     }
 
 }

@@ -2,6 +2,7 @@
     <div class="card-header">
         <h4>KPI IT</h4>
     </div>
+    
     <div class="card-body">
         <div class="table-responsive">
             <form class="mb-2" action="" method="post">
@@ -10,7 +11,7 @@
                     <!-- <span class="text-danger"><i>(belum ada aksi pencariannya)</i></span> -->
                 </label>
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <select name="m" class="form-control">
                             <?php
                             $m = $this->input->post('m');
@@ -71,7 +72,6 @@
                                     echo "<option value='$y'>$y</option>";
                                 endif;
                             ?>
-                            <option value="2019">2019</option>
                         </select>
                     </div>
                     <div class="col-md-1">
@@ -79,13 +79,17 @@
                     </div>
                 </div>
             </form>
+
             <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                 <thead class="text-center">
                 <tr>
                     <th width="3%">#</th>
-                    <th width="10%">NAMA</th>
+                    <th width="15%">NAMA</th>
+                    <th width="10%">JUMLAH KEHADIRAN</th>
+                    <th width="10%">ASSIGNED</th>
                     <th width="10%">ON PROGRESS</th>
                     <th width="10%">DONE</th>
+                    <th width="10%">MELEWATI TARGET DATE</th>
                     <th width="10%">TOTAL</th>
                     <th width="10%">%</th>
                 </tr>
@@ -95,24 +99,46 @@
                         $no=1;
                         foreach($result as $r):
 
-                            $query_progress = $this->db->query("SELECT COUNT(assign_date) AS ASSIGN FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_kehadiran = $this->db->query("SELECT COUNT(DISTINCT date_activity) AS KEHADIRAN FROM daily_activity WHERE user_id='$r->user_id' AND MONTH(date_activity) = $m AND YEAR(date_activity) = $y")->row();
+                           
+                            $query_assigned_rfm = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status != 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_assigned_task = $this->db->query("SELECT COUNT(assign_date) AS ASSIGNED_TASK FROM task WHERE assign_to='$r->user_id' AND (status != 'ON PROGRESS') AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_assigned =  $query_assigned_rfm->ASSIGNED_RFM + $query_assigned_task->ASSIGNED_TASK;
 
-                            $query_done = $this->db->query("SELECT COUNT(done_date) AS DONE FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_progress_rfm = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND result_status = 'ON PROGRESS' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_progress_task = $this->db->query("SELECT COUNT(assign_date) AS ON_PROGRESS_TASK FROM task WHERE assign_to='$r->user_id' AND (status = 'ON PROGRESS') AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_progress = $query_progress_rfm->ON_PROGRESS_RFM + $query_progress_task->ON_PROGRESS_TASK;
 
-                            $sisa = $query_progress->ASSIGN - $query_done->DONE;
-                            if($query_done->DONE == 0){
+                            $query_done_rfm = $this->db->query("SELECT COUNT(done_date) AS DONE_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_done_task = $this->db->query("SELECT COUNT(done_date) AS DONE_TASK FROM task WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_done = $query_done_rfm->DONE_RFM + $query_done_task->DONE_TASK;
+
+                            $query_total_rfm = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_total_task = $this->db->query("SELECT COUNT(assign_date) AS TOTAL_TASK FROM task WHERE assign_to='$r->user_id' AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y")->row();
+                            $query_total = $query_total_rfm->TOTAL_RFM + $query_total_task->TOTAL_TASK;
+
+                            $query_lewat_rfm = $this->db->query("SELECT COUNT(done_date) AS LEWAT_RFM FROM rfm_new_detail WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_lewat_task = $this->db->query("SELECT COUNT(done_date) AS LEWAT_TASK FROM task WHERE assign_to='$r->user_id' AND DATE(done_date) > DATE(target_date) AND MONTH(assign_date) = $m AND YEAR(assign_date) = $y AND MONTH(done_date) = $m AND YEAR(done_date) = $y")->row();
+                            $query_lewat = $query_lewat_rfm->LEWAT_RFM + $query_lewat_task->LEWAT_TASK;
+
+                            $assigned = $query_assigned - $query_done;
+
+                            if($query_done == 0){
                                 $persen = '0 %';
-                            }else{
-                                $persen = ($query_done->DONE * 100) / $query_progress->ASSIGN;
+                            } else {
+                                $persen = ($query_done * 100) / $query_total;
                                 $persen = ROUND(ROUND($persen))." %";
                             }
                     ?>
                         <tr>
-                            <td><?php echo $no++ ?></td>
+                            <td style ="text-align: center"><?php echo $no++ ?></td>
                             <td><?php echo $r->nama ?></td>
-                            <td class="text-right"><?php echo $sisa ?></td>
-                            <td class="text-right"><?php echo $query_done->DONE ?></td>
-                            <td class="text-right"><?php echo $query_progress->ASSIGN ?></td>
+                            <td class="text-right"><?php echo !empty($query_kehadiran->KEHADIRAN) ? $query_kehadiran->KEHADIRAN : 0?></td>
+                            <td class="text-right"><?php echo $assigned ?></td>
+                            <td class="text-right"><?php echo $query_progress?></td>
+                            <td class="text-right"><?php echo $query_done?></td>
+                            <td class="text-right"><?php echo $query_lewat?></td>
+                            <td class="text-right"><?php echo $query_total?></td>
                             <td class="text-right"><?php echo $persen ?></td>
                         </tr>
                     <?php endforeach ?>

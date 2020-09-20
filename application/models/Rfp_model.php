@@ -1,13 +1,15 @@
 <?php
 class Rfp_model extends ci_model{
-    var $table = TB_DETAIL;
+    var $table = TB_RFP;
     var $column_order = array(null, 'id');
-    var $column_search = array('id','no_rfm', 'request_status', 'result_status');
+    var $column_search = array('id','no_rfp', 'request_status', 'result_status');
     var $order = array('jumlah' => 'asc');
 
     private function _get_datatables_query($SESSION_UPLINE)
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
 
         $this->db->where('id', 'RFM_RFP_ID');
         $row_rfp = $this->db->get(TB_PARAMETER)->row()->value;
@@ -49,8 +51,22 @@ class Rfp_model extends ci_model{
         ";
         $this->db->select($qry);
         $this->db->from($this->table);
-        $this->db->join(TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
-        $this->db->where("problem_type IN($rfp_id)", NULL, FALSE);
+        $this->db->join('dpm_online.'.TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
+        
+        if(empty($_POST['search']['value'])) {
+            $this->db->where('request_status !=', STT_DONE);
+            $this->db->where('request_status !=', STT_REJECT);
+        }
+
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
+        } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT'){ 
+            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");        
+        }   else {
+            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
+        }
+        $this->db->order_by("request_status");
+        $this->db->order_by("request_date");
  
         $i = 0;
      
@@ -104,8 +120,9 @@ class Rfp_model extends ci_model{
         $rfp_id = explode(":", $row_rfp);
         array_pop($rfp_id);
         $rfp_id = implode(",",$rfp_id);
+
         $this->_get_datatables_query($SESSION_UPLINE);
-        $this->db->where("problem_type IN($rfp_id)", NULL, FALSE);
+        // $this->db->where("problem_type IN($rfm_id)", NULL, FALSE);
         $query = $this->db->get();
         return $query->num_rows();
     }
@@ -118,9 +135,44 @@ class Rfp_model extends ci_model{
         $rfp_id = explode(":", $row_rfp);
         array_pop($rfp_id);
         $rfp_id = implode(",",$rfp_id);
-        $this->db->where("problem_type IN($rfp_id)", NULL, FALSE);
+        // $this->db->where("problem_type IN($rfm_id)", NULL, FALSE);
         $this->db->from($this->table);
         return $this->db->count_all_results();
+    }
+
+    public function get_crud($data)
+    {
+        if (is_array($data)) {
+            if(array_key_exists('select', $data)) {
+                $this->db->select($data['select']);
+            }
+
+            if(array_key_exists('table', $data)) {
+                $this->db->from($data['table']);
+            }
+
+            if(array_key_exists('where', $data)) {
+                $this->db->where($data['where']);
+            }
+
+            if(array_key_exists('or_where', $data)) {
+                $this->db->or_where($data['or_where']);
+            }
+
+            if(array_key_exists('like', $data)) {
+                $this->db->like($data['like']);
+            }
+
+            if(array_key_exists('or_like', $data)) {
+                $this->db->or_like($data['or_like']);
+            }
+
+            if(array_key_exists('order_by', $data)) {
+                $this->db->order_by($data['order_by']);
+            }
+
+            return $this->db->get();
+        }
     }
 
 }

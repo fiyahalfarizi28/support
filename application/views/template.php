@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -14,7 +15,7 @@
 
     <div class="preloader">
         <div class="loading">
-            <img src="<?php echo base_url('assets/img/loading.gif') ?>" width="80">
+            <img src="<?php echo base_url('assets/img/loading.gif') ?>" width="80" style="background-color: transparent">
             <p>MEMUAT</p>
         </div>
     </div>
@@ -47,19 +48,52 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="<?php echo base_url() ?>">DASHBOARD</a></li>
-                        <li class="list-group-item"><a href="<?php echo base_url('rfm') ?>">RFM</a></li>
+                        <li class="list-group-item"><a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-window-maximize"></i> HOME</a></li>
+                            <ul class="collapse list-unstyled" id="homeSubmenu">
+                                <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
+                                    <a href="<?php echo base_url() ?>"><i class="far fa-calendar-minus"></i> DASHBOARD</a>
+                                </li>
+                                <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
+                                    <a href="<?php echo base_url('activity') ?>"><i class="far fa-list-alt"></i> ACTIVITY</a>
+                                </li>
+                            </ul>
+                        <?php $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN'); ?>
+                        <?php if ( $SESSION_USER_JABATAN != 'IT STAFF') { ?>
+                            <li class="list-group-item"><a href="#rfmSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-clipboard"></i> RFM</a></li>
+                                <ul class="collapse list-unstyled" id="rfmSubmenu">
+                                    <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
+                                        <a href="<?php echo base_url('rfm') ?>"><i class="far fa-calendar-check"></i> INPUT RFM</a>
+                                    </li>
+                                    <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
+                                        <a href="<?php echo base_url('track_rfm') ?>"><i class="far fa-eye"></i> TRACK RFM</a>
+                                    </li>
+                                </ul>
+                            <li class="list-group-item"><a href="#rfpSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-clipboard"></i> RFP</a></li>
+                                <ul class="collapse list-unstyled" id="rfpSubmenu">
+                                    <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
+                                        <a href="<?php echo base_url('rfp') ?>"><i class="far fa-calendar-check"></i> INPUT RFP</a>
+                                    </li>
+                                    <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
+                                        <a href="<?php echo base_url('track_rfp') ?>"><i class="far fa-eye"></i> TRACK RFP</a>
+                                    </li>
+                                </ul>
+                        <?php }?>
                         <?php
 
-                            // echo "<script>console.log('Debug Objects: " . $this->session->userdata('USER_DIVISI') . "' );</script>";
+                            if($this->session->userdata('USER_JABATAN') === 'HEAD IT' || $this->session->userdata('USER_JABATAN') === 'SUPERVISOR IT' || $this->session->userdata('USER_JABATAN') === 'DIREKSI') {
+                                echo "<li class='list-group-item'><a href='".base_url('project')."'><i class='far fa-calendar-plus'></i> PROJECT</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('report')."'><i class='far fa-file-alt'></i> REPORT</a></li>";
+                            }
                             
                             if(in_array($this->session->userdata('USER_ID'), $menu)) {
-                                echo "<li class='list-group-item'><a href='".base_url('user_management')."'>USER MANAGEMENT</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('user_management')."'><i class='far fa-address-book'></i> USER MANAGEMENT</a></li>";
                             }
 
                             if($this->session->userdata('USER_DIVISI') === 'IT') {
-                                echo "<li class='list-group-item'><a href='".base_url('daily_report')."'>DAILY ACTIVITY</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('daily_report')."'><i class='far fa-bookmark'></i> DAILY ACTIVITY</a></li>";
                             }
+
+                            
 
                             echo $menu_kpi;
                         ?>
@@ -75,15 +109,21 @@
                 </div>
 
                 <div class="col text-right">
-                    <!-- <a href="<?php echo base_url('export_to_excel') ?>" title="Export To Excel" class="btn btn-primary btn-sm mr-3" target="_blank">
+                    <!-- <a href="javascript:void(0)" title="Export To Excel" class="btn btn-primary btn-sm mr-3" onclick="export_to_excel()">
                         <i class="fa fa-print"></i> Export To Excel
                     </a> -->
-                    <a href="javascript:void(0)" title="Export To Excel" class="btn btn-primary btn-sm mr-3" onclick="export_to_excel()">
-                        <i class="fa fa-print"></i> Export To Excel
-                    </a>
                     <a href="<?php echo base_url('rfm#table') ?>" title="RFM">
                         <i class="far fa-bell fa-lg"></i><sup class="badge badge-danger rfm-bells"></sup>
                     </a>
+                    <?php if($this->session->userdata('USER_JABATAN') === 'IT STAFF') { ?>
+                        <a href="<?php echo base_url('project') ?>" title="Project">
+                            <i class="far fa-envelope-open fa-lg"></i><sup class="badge badge-danger rfp-bells"></sup>
+                        </a>
+                    <?php } else { ?>   
+                        <a href="<?php echo base_url('rfp#table') ?>" title="RFP">
+                            <i class="far fa-envelope-open fa-lg"></i><sup class="badge badge-danger rfp-bells"></sup>
+                        </a>
+                    <?php } ?>
                 </div>
             </div>
             <?php echo $contents ?>
