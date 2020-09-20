@@ -996,6 +996,7 @@ class Rfm_controller extends CI_Controller {
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = $this->input->post('problem_type');
+        $project_id = $this->input->post('project_id');
 
         $project_id = $this->input->post('project_id');
         $subject = $this->input->post('subject');
