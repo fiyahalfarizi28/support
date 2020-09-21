@@ -17,7 +17,7 @@
         }
     ?>
 
-    <form id="frm-app" method="post" enctype="multipart/form-data">
+    <form id="frm-daily" method="post" enctype="multipart/form-data">
         <div class="pesan"></div>
         <div class="row">
                 <div class="col-md-12">
@@ -48,48 +48,18 @@
                 <div class="col-md-6">           
                 <label style="margin-top: 8px">PROBLEM TYPE :</label> 
                     <?php echo $selectProblemType?>
-                        <option value="<?php echo $rows->problem_type ?>" selected="selected"><?php echo $pt_id->problem_type ?></option>
-                        <?php foreach($problem_type->result() as $r): ?>
-                            <?php if ($rows->problem_type != $r->id) {?>
-                                <?php if ($rows->request_type == 2) {?>
-                                    <?php if ($rows->project_id > 2) { ?>
-                                        <?php if ($r->id < 6 ) {?>
-                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
-                                        <?php } ?>
-                                    <?php } else if ($rows->project_id == 2 ) { ?>
-                                        <?php if ($r->id > 5 && $r->id < 9 ) {?>
-                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
-                                        <?php } ?>
-                                    <?php } ?>
-                                <?php } else  { ?>
-                                    <?php if ($rows->project_id > 2) { ?>
-                                        <?php if ($r->id > 8 && $r->id < 11) {?>
-                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
-                                        <?php } ?>
-                                    <?php } else if ($rows->project_id == 1) { ?>
-                                        <?php if ($r->id > 10) {?>
-                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
-                                        <?php } ?>
-                                    <?php } ?>
-                                <?php } ?>
-                            <?php } ?>
-                        <?php endforeach ?>
+                        <option value="<?php echo $rows->problem_type ?>"><?php echo $pt_id->problem_type ?></option>
                     </select>
                 </div>
 
                 <?php if ($rows->risk_type != NULL ) { ?>
-                <div class="col-md-12">
-                    <label style="margin-top: 8px">MEMPENGARUHI FINANCIAL :</label>
-                    <select id="risk_type"name="risk_type" class="form-control" required>
-                        <option value="<?php echo $rows->risk_type ?>" selected="selected"><?php echo $rows->risk_type ?></option>
-                        <?php foreach(RISK_TYPE as $type_risk): ?>
-                            <?php if ($rows->risk_type != $type_risk) { ?>
-                                <option value="<?php echo $type_risk ?>"><?php echo $type_risk ?></option>
-                            <?php } ?>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            <?php } ?>
+                    <div class="col-md-12">
+                        <label style="margin-top: 8px">MEMPENGARUHI FINANCIAL :</label>
+                        <select disabled id="risk_type"name="risk_type" class="form-control" required>
+                            <option value="<?php echo $rows->risk_type ?>"><?php echo $rows->risk_type ?></option>
+                        </select>
+                    </div>
+                <?php } ?>
         </div>
 
         <div class="form-group">
@@ -163,50 +133,5 @@
             <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->confirm_notes ?></textarea>
         </div>
         <?php endif ?>
-        
-        <div class="form-group">
-            <label>Tulis Notes :</label>
-            <textarea name="notes" placeholder="Notes..." rows="2"  style="resize: none" class="form-control"></textarea>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <?php if($rows->receive_date != NULL): ?>
-                <div class="row">
-                    <div class="col-md-6">
-                        <label>PIC :</label>
-                        <select name="assign_pic" class="form-control">
-                            <option value="">PILIH P.I.C</option>
-                            <?php foreach($select_pic->result() as $r): ?>
-                                <option value="<?php echo $r->user_id ?>"><?php echo $r->nama ?></option>
-                            <?php endforeach ?>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>TARGET DATE :</label>
-                        <input type="date" name="target_date" class="form-control" ></input>
-                    </div>
-                </div>
-                <?php endif ?>
-            </div>
-
-            <div class="col-md-6 text-right pt-4">
-                <input type="hidden" name="id_rfm" value="<?php echo $rows->id ?>">
-                <input type="hidden" name="problem_type_hidden" value="<?php echo $rows->problem_type ?>">
-                <input type="hidden" name="project_id_hidden" value="<?php echo $rows->project_id ?>">
-                <input type="hidden" name="subject" value="<?php echo $rows->subject ?>">
-                <input type="hidden" name="detail" value="<?php echo $rows->rfm_detail ?>">
-
-                <!-- btn_kirim -->
-                <div class="btn_post_request">
-                    <a href="javascript:void(0)" onclick="<?php echo $onclick ?>" class="btn btn-primary"><i class="far fa-check-circle"></i> <?php echo $btnText ?></a>
-
-                    <a href="javascript:void(0)" onclick="confirm_reject()" class="btn btn-danger" <?php echo $reject_aa ?>><i class="far fa-times-circle"></i> Reject</a>
-
-                    <a href="javascript:void(0)" onclick="<?php echo $onclickReject ?>" class="btn btn-danger" <?php echo $closeModal ?>><i class="far fa-times-circle"></i> <?php echo $btnTextReject ?></a>
-                </div>
-            </div>
-        </div>
-
     </form>
 </div>

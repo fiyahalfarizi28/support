@@ -142,6 +142,12 @@ class Rfm_controller extends CI_Controller {
                 $app_by = 'IT';
             }
             
+            $btn_daily = "<a class='btn btn-primary text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-daily-rfm' data-id='$field->id' title='Add Daily'><i class='fa fa-user-edit'></i></a>";
+            if($field->request_status == STT_ASSIGNED && $field->assign_to == $this->session->userdata('USER_ID') )
+            {
+                $btn_option = $btn_daily;
+            }
+
             // btn rating
             $btn_rating = "<a class='btn btn-success text-warning btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-rating-rfm' data-id='$field->id' title='Give Rating'><i class='fa fa-star'></i></a>";
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_CONFIRMED AND $field->result_status === STT_DONE) {
@@ -528,6 +534,96 @@ class Rfm_controller extends CI_Controller {
         $this->load->view('rfm/form_reject', $data);
     }
 
+    public function btn_daily()
+    {
+        $id = $this->input->post('idx');
+        $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
+
+        $array_crud = array(
+            'table' => TB_DETAIL,
+            'where' => array(
+                'id' => $id
+            )
+        );
+
+        $row = $this->rfm_model->get_crud($array_crud)->row();
+        $data['rows'] = $row;
+        
+        $array_crud = array(
+            'table' => TB_PROBLEM_TYPE,
+            'where' => array('system_type' => NULL),
+        );
+        $data['problem_type'] = $this->rfm_model->get_crud($array_crud);
+        
+        $array_crud = array(
+            'table' => TB_REQUEST_TYPE,
+        );
+        $data['request_type'] = $this->rfm_model->get_crud($array_crud);
+
+        $array_crud = array(
+            'table' => TB_PROJECT,
+        );
+        $data['project_list'] = $this->rfm_model->get_crud($array_crud);
+        
+        $array_crud = array(
+            'table' => TB_USER,
+            'where' => array(
+                'group_menu' => 'IT',
+                'flg_block' => 'N',
+                )
+        );
+        $data['select_pic'] = $this->rfm_model->get_crud($array_crud);
+        
+        // nama yang tulis notes
+        $explode_notes_name = explode(":", $row->approve_by);
+        $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
+        $array_crud = array(
+            'table' => (TB_USER),
+            'where' => array(
+                'user_id' => $explode_notes_name[$notes_name]
+            )
+        );
+        $data['notes_name_approve'] = $this->rfm_model->get_crud($array_crud)->row();
+        
+        $explode_notes_name = explode(":", $row->receive_by);
+        $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
+        $array_crud = array(
+            'table' => (TB_USER),
+            'where' => array(
+                'user_id' => $explode_notes_name[$notes_name]
+            )
+        );
+        $data['notes_name_receive'] = $this->rfm_model->get_crud($array_crud)->row();
+
+        $explode_notes_name = explode(":", $row->request_by);
+        $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
+        $array_crud = array(
+            'table' => (TB_USER),
+            'where' => array(
+                'user_id' => $explode_notes_name[$notes_name]
+            )
+        );
+        $data['notes_name_confirm'] = $this->rfm_model->get_crud($array_crud)->row();
+        //=======================================================
+
+        $explode_disabled = explode(":", $row->receive_by);
+        foreach($explode_disabled as $r){
+            $rows = $r;
+            $data_explode_disabled[] = $rows;
+        }
+
+        if($SESSION_USER_ID === $row->assign_to && $field->request_status == STT_ASSIGNED)
+        {
+            $data['disabled'] = "";
+            $data['readonly'] = "readonly";
+            $data['onclick'] = "add_daily_rfm()";
+            $data['btnText'] = "Add";
+        }
+
+        $this->load->view('rfm/form_rfmdaily', $data);
+    }
+
     public function btn_rating()
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
@@ -880,8 +976,10 @@ class Rfm_controller extends CI_Controller {
                 $head_id = '207';
             }
 
-            if ($field->project_id = '13') { //micro
+            if ($project_id == '13') { //micro
                 $head_id = '353';            //MUFTI
+            } else {
+                $head_id = $head_id;
             }
             
             $array_insert = array(
@@ -1992,7 +2090,7 @@ class Rfm_controller extends CI_Controller {
         {
             $SESSION_UPLINE = $area_it->value;
         }
-
+        
         $array_crud = array(
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,

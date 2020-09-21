@@ -73,28 +73,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -125,28 +132,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
-
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -177,28 +191,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -229,30 +250,39 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating == '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
                             }elseif($rating == '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
                             } elseif($rating == '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
                             } elseif($rating == '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
                             } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
-                            } 
+                            } else {
+                                $rating = "-";
+                            }
                         ?>
                         <h10 class="card-title"><b>IRVAN MUHAMMAD SINDY</b></h10>
                         <p class="card-text">IT STAFF</p>
@@ -279,28 +309,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -331,28 +368,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -386,28 +430,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -438,28 +489,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";
@@ -490,28 +548,35 @@
                             $totalrates = $this->db->get(TB_DETAIL)->row()->totalrates;
 
                             if ($totalrates == 0){
-                                $rating = '5';
+                                $rating = '5';         
                             } else {
-                                $rating = $totalrates / $rfm_done;
+                                if ($rfm_done != '0') {
+                                    $rating = $totalrates / $rfm_done;
+                                } else {
+                                    $rating = '0';
+                                }
                             }
 
-                            if($rating === '1') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                            if ($rating > '0' && $rating < '1' )
+                            { 
+                                $rating = "<i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '1') {
+                                $rating = "<i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '1' && $rating < '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            }elseif($rating === '2') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            }elseif($rating == '2') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '2' && $rating < '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '3') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '3') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif ($rating > '3' && $rating < '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i> <i class='fas fa-star text-warning'></i>";
-                            } elseif($rating === '4') {
-                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star text-warning'></i>";
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
+                            } elseif($rating == '4') {
+                                $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } elseif($rating > '4' && $rating < '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fas fa-star-half-alt text-warning'></i>";
-                            } elseif($rating === '5') {
+                            } elseif($rating == '5') {
                                 $rating = "<i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i> <i class='fa fa-star text-warning'></i>";
                             } else {
                                 $rating = "-";

@@ -110,7 +110,7 @@
             $('#project_id').append('<option disabled selected="selected" value="">- SELECT APPLICATION -</option>');
 
             arrayProject.forEach( (Project) => {
-                if (Project.id > 1) {
+                if (Project.id > 0) {
                     $('#project_id').append(`<option value="${Project.id}">${Project.project_name}</option>`);
                 }   
             });

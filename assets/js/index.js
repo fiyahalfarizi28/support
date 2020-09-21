@@ -202,6 +202,19 @@ $(document).ready(function(){
         });
     })
 
+    $('#modal-daily-rfm').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+        $.ajax({
+            type : 'post',
+            url : 'rfm_controller/btn_daily',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-daily-rfm').html(res);
+            }
+        });
+    })
+
     $('#modal-track-rfm').on('show.bs.modal', function (e) {
         var data = $(e.relatedTarget).data('id');
         console.log(data);
@@ -584,6 +597,36 @@ function set_post_request() {
     });
 }
 //-------------------------------------
+
+function add_daily_rfm() {
+    // var data = $('#frm-create').serialize();
+    var form = $('#frm-daily')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "post",
+        url: "rfm_controller/add_daily_rfm",
+        data: data,
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        cache: false,
+        beforeSend: function() {
+            $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+        },
+        success: function (res) {
+            var isValid = res.isValid,
+                isPesan = res.isPesan;
+            if(isValid == 0) {
+                $('.btn_post_request').html('<a href="javascript:void(0)" onclick="add_daily_rfm()" class="btn btn-success"><i class="fa fa-check"></i> Add</a>');
+                $('.pesan').html(isPesan);
+            }else {
+                $('.pesan').html(isPesan);
+                $('#modal-daily-rfm').modal('hide');
+                reload_table();
+            }
+        }
+    });
+}
 
 //-----update it rfm post request-------
 function set_update_it() {

@@ -569,7 +569,7 @@
 											<select id="rfm_id" class="form-control" name="rfm_id" style="margin-bottom: 15px">
 												<option disabled selected="selected" value="">- Pilih No. RFM -</option>
 												<?php foreach($rfmList->result() as $r): ?>
-													<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && ($r->request_type == 2) && !($r->result_status == STT_DONE || $r->result_status == STT_SOLVED )) {?>
+													<?php if (($this->session->userdata('USER_ID') == $r->assign_to) && $r->request_status == STT_ASSIGNED && $r->result_status != STT_SOLVED ) {?>
 														<option id="no_rfm" value=<?php echo $r->id ?> >
 															<?php echo $r->no_rfm ?> - <?php echo $r->subject?>
 														</option>
@@ -585,7 +585,7 @@
 						<div class="form-group collapse" id="collapseRfmDetail">
 							<label for="RequestBy">Request By : <span id="requestBy">-</span></label></br>
 							<label for="DetailRfm">Detail :</label>
-							<textarea class="form-control" id="DetailRfm" rows="3" style="resize: none"></textarea></br>
+							<textarea class="form-control" id="DetailRfm" rows="5" style="resize: none"></textarea></br>
 							<label for="TargetDate">Target Date : <span id="targetDate">-</span></label></br>
 							<label for="Revisi">Notes Revisi:</label>
 							<textarea rows="2" class="form-control" id="Revisi" style="resize: none" readonly></textarea>

@@ -65,3 +65,9 @@
         <div class="modal-content" id="view-case"></div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-daily-rfm">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="view-daily-rfm"></div>
+    </div>
+</div>
