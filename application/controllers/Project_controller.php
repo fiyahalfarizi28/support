@@ -147,7 +147,7 @@ class Project_controller extends CI_Controller {
                 }
                 
                 $array_insert = array(
-                    'no_rfp'            => $no_rfp,
+                    'rfp_id'            => $rfp_id,
                     'project_id'        => $project_id,
                     'task_name'         => $specificTask[$i],
                     'detail'            => $deskripsi[$i],
@@ -280,7 +280,8 @@ class Project_controller extends CI_Controller {
         $array_crud = array(
             'table' => TB_TASK,
             'where' => array(
-            'assign_to' => $this->session->userdata('USER_ID')
+            'assign_to' => $this->session->userdata('USER_ID'),
+            'status !=' => STT_DONE, 
             ),
             'order_by' => 'assign_date',
         );

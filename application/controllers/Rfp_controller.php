@@ -546,25 +546,8 @@ class Rfp_controller extends CI_Controller {
         $deskripsi = $this->input->post('deskripsi');
         $assign_pic = $this->input->post('assign_pic');
         $target_date = $this->input->post('target_date');
-        
-        $rfp_id = null;
-        $no_rfp = null;
-        $project_id = null;
-        $new_project = null;
-        $description = null;
-
-        if ($this->input->post('rfp_id') != "" || $this->input->post('rfp_id') != null) {
-            $rfp_id = $this->input->post('rfp_id');
-            $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
-            $no_rfp = $thisRfp->no_rfp;
-
-            $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
-            $project_id = $thisRfp->project_id;
-        } 
-        
-        if ($this->input->post('project_id') != "" || $this->input->post('project_id') != null) {
-            $project_id = $this->input->post('project_id');
-        } 
+        $project_id = $this->input->post('project_id_hidden');
+        $rfp_id = $this->input->post('id_rfp');
 
         if(empty($specificTask))
         {
@@ -593,7 +576,7 @@ class Rfp_controller extends CI_Controller {
                 }
                 
                 $array_insert = array(
-                    'no_rfp'            => $no_rfp,
+                    'rfp_id'            => $id_rfp,
                     'project_id'        => $project_id,
                     'task_name'         => $specificTask[$i],
                     'detail'            => $deskripsi[$i],

@@ -64,6 +64,7 @@
                                     <table style="width: 100%">
                                         <thead>
                                             <tr>
+                                                <th>NO. RFP</th>
                                                 <th>TASK</th>
                                                 <th>DETAIL</th>
                                                 <th>TARGET DATE</th>
@@ -76,6 +77,18 @@
                                         <tbody>
                                             <?php foreach($specificTask as $row): ?>
                                                 <tr>
+                                                    <td>
+                                                        <?php 
+                                                        if (!empty($row->rfp_id)) {
+                                                            $rfp_id = $row->rfp_id;
+                                                            $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
+                                                            $no_rfp = $thisRfp->no_rfp;
+                                                            echo $no_rfp;
+                                                        } else {
+                                                            echo "-";
+                                                        }
+                                                        ?>
+                                                    </td>
                                                     <td><?php echo $row->task_name?></td>
                                                     <td><?php echo $row->detail ?></td>
                                                     <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>
@@ -119,6 +132,7 @@
         <table class="colapse-table res3" id="tb_detail_project" width="100%" cellspacing="0">
             <thead>
             <tr>
+                <th>NO. RFP</th>
                 <th>PROJECT</th>
                 <th>TASK</th>
                 <th>DETAIL</th>
@@ -130,6 +144,18 @@
             <tbody>
             <?php foreach($project_activity as $r): ?>
                  <tr>
+                        <td>
+                            <?php
+                                if (!empty($r->rfp_id)) {
+                                    $rfp_id = $r->rfp_id;
+                                    $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
+                                    $no_rfp = $thisRfp->no_rfp;
+                                    echo $no_rfp;
+                                } else {
+                                    echo "-";
+                                }
+                                ?>
+                        </td>
                         <td>
                             <?php 
                                 foreach($ProjectList as $row):
@@ -168,6 +194,7 @@
         </table>
         
     </div>
+
     <div class="modal fade" id="modal-create-task" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<!-- Modal content-->
@@ -223,6 +250,8 @@
             $('#tb_detail_project').DataTable({
                 "bSort" : false
             });
+
+            
         });
     </script>
 <?php } ?>

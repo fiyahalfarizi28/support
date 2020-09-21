@@ -867,6 +867,7 @@
                                 <table style="width: 100%">
                                     <thead>
                                         <tr>
+                                            <th>No. RFP</th>
                                             <th>NAMA TASK</th>
                                             <th>TARGET DATE</th>
                                             <th>STATUS</th>
@@ -878,6 +879,18 @@
                                     <tbody>
                                         <?php foreach($specificTask as $row): ?>
                                             <tr>
+                                                <td>
+                                                    <?php 
+                                                        if (!empty($row->rfp_id)) {
+                                                            $rfp_id = $row->rfp_id;
+                                                            $thisRfp = $this->db->where('id', $rfp_id)->get(TB_RFP)->row();
+                                                            $no_rfp = $thisRfp->no_rfp;
+                                                            echo $no_rfp;
+                                                        } else {
+                                                            echo "-";
+                                                        }
+                                                        ?>
+                                                </td>
                                                 <td><?php echo $row->task_name?></td>
                                                 <td><?php echo date("d-m-Y",strtotime( $row->target_date))?></td>
                                                 <td><?php echo $row->status?></td>
