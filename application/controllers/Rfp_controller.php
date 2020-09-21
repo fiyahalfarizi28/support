@@ -105,7 +105,7 @@ class Rfp_controller extends CI_Controller {
                 else
                 {
                     $this->db->where('user_id', $field->request_upline_by);
-                    $app_by = $this->db->get('dpm_online.'.TB_USER)->row()->nama;
+                    $app_by = $this->db->get(TB_USER)->row()->nama;
                 }
             } else {
                 $app_by = 'IT';
@@ -408,7 +408,7 @@ class Rfp_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -418,7 +418,7 @@ class Rfp_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -428,7 +428,7 @@ class Rfp_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->request_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -490,10 +490,31 @@ class Rfp_controller extends CI_Controller {
     public function btn_assign()
     {
         $id = $this->input->post('idx');
+        $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        
         $array_crud = array(
             'table' => TB_RFP,
+            'where' => array(
+                'id' => $id
+            )
         );
-        $data['rfpList'] = $this->rfp_model->get_crud($array_crud);
+
+        $row = $this->rfp_model->get_crud($array_crud)->row();
+        $data['rows'] = $row;
+        
+        $array_crud = array(
+            'table' => TB_PROBLEM_TYPE,
+        );
+        $data['problem_type'] = $this->rfp_model->get_crud($array_crud);
+        
+        $array_crud = array(
+            'table' => TB_REQUEST_TYPE,
+        );
+        $data['request_type'] = $this->rfp_model->get_crud($array_crud);
+
+        $array_crud = array(
+            'table' => TB_PROJECT,
+        );
         
         $array_crud = array(
             'table' => TB_PROJECT,
@@ -505,6 +526,11 @@ class Rfp_controller extends CI_Controller {
             'table' => TB_USER,
         );
         $data['userList'] = $this->rfp_model->get_crud($array_crud);
+
+        $data['disabled'] = "";
+        $data['readonly'] = "readonly";
+        $data['onclick'] = "set_assign_task()";
+        $data['btnText'] = "Assign";
 
         $this->load->view('rfp/form_assign', $data);
     }
@@ -539,22 +565,6 @@ class Rfp_controller extends CI_Controller {
         if ($this->input->post('project_id') != "" || $this->input->post('project_id') != null) {
             $project_id = $this->input->post('project_id');
         } 
-        
-        if ($this->input->post('new_project') != "" || $this->input->post('new_project') != null) {
-            $new_project = $this->input->post('new_project');
-            $description = $this->input->post('description');
-
-            $array_insert = array(
-                'project_name'      => $new_project,
-                'description'        => $description,
-                'create_by'         => $SESSION_USER_ID,
-                'create_date'       => $date_now,
-                'last_update'       => $date_now,
-            );
-
-            $insert_data_project = $this->db->insert(TB_PROJECT, $array_insert);
-            $project_id = $this->db->insert_id();
-        }
 
         if(empty($specificTask))
         {
@@ -756,7 +766,7 @@ class Rfp_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -766,7 +776,7 @@ class Rfp_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -774,7 +784,7 @@ class Rfp_controller extends CI_Controller {
         $data['notes_name_receive'] = $this->rfp_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $row->assign_to
             )
@@ -1685,7 +1695,7 @@ class Rfp_controller extends CI_Controller {
         $get_detail = $this->rfp_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array('user_id' => $get_detail->request_by),
         );
         $get_user = $this->rfp_model->get_crud($array_crud)->row();

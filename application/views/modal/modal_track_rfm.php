@@ -135,7 +135,7 @@
 
     if ($r->done_date != NULL ){
       $class_confirmed = "active";
-      $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
+      $nama_requestor = $this->db->where('user_id', $r->request_by)->get(TB_USER)->row()->nama;
       $title_confirmed= "Menunggu konfirmasi penyelesaian dari $nama_requestor";
     } else {
       $class_confirmed = "";      

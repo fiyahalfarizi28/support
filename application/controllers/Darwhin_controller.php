@@ -16,7 +16,7 @@ class Darwhin_controller extends CI_Controller {
 
             $array_crud = array(
                 'select' => '*',
-                'table' => 'dpm_online.'.TB_USER,
+                'table' => TB_USER,
                 'where' => array(
                     'user_id' => '706',
                 )

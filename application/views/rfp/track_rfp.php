@@ -24,7 +24,7 @@
                         <td>
                             <?php 
                                 $this->db->where('user_id', $r->request_by);
-                                echo $this->db->get('dpm_online.'.TB_USER)->row()->nama;
+                                echo $this->db->get(TB_USER)->row()->nama;
                             ?>
                         </td>
                         <td>

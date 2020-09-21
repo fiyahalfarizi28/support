@@ -47,7 +47,7 @@ class Um_controller extends ci_controller{
         $model_akses = $this->auth_model->my_akses();
 
         $this->db->where('user_id', $idx);
-        $data['user_fullname'] = $this->db->get('dpm_online.'.TB_USER)->row()->nama;
+        $data['user_fullname'] = $this->db->get(TB_USER)->row()->nama;
         
         
         $data['idx'] = $idx;
@@ -108,7 +108,7 @@ class Um_controller extends ci_controller{
     {
         $this->load->model('rfm_model');
         $arr = array(
-            'table' => ('dpm_online.'.TB_USER),
+            'table' => (TB_USER),
             'where' => array(
                 'divisi_id' => 'IT',
                 'flg_block' => 'N',

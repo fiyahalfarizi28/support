@@ -116,10 +116,6 @@
     <div class="card-body">
         <div class="pesan"></div>
 
-        <script>
-            console.log(<?php echo json_encode($project_activity) ?>, '<--- Project activity')
-        </script>
-
         <table class="colapse-table res3" id="tb_detail_project" width="100%" cellspacing="0">
             <thead>
             <tr>

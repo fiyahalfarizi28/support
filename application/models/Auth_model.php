@@ -1,7 +1,7 @@
 <?php
 class Auth_model extends ci_model {
 
-    var $table = 'dpm_online.'.TB_USER;
+    var $table = TB_USER;
     var $column_order = array(null, 'nama', 'user', 'divisi_id', 'jabatan');
     var $column_search = array('nama', 'user', 'divisi_id', 'jabatan');
     var $order = array('nama' => 'asc');
@@ -11,7 +11,7 @@ class Auth_model extends ci_model {
 	}
 
 	function check_login($field1, $field2) {
-		$this->db->from('dpm_online.'.TB_USER);
+		$this->db->from(TB_USER);
 		$this->db->where($field1);
 		//$this->db->where($field2);
 		$this->db->limit(1);

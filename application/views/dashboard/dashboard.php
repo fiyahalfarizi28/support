@@ -496,7 +496,7 @@
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
-        $userList = $this->db->get('dpm_online.'.TB_USER)->result();
+        $userList = $this->db->get(TB_USER)->result();
     
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -929,7 +929,7 @@
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
-        $userList = $this->db->get('dpm_online.'.TB_USER)->result();
+        $userList = $this->db->get(TB_USER)->result();
 
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -1761,7 +1761,7 @@
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
 
-        $rfmList = $this->db->join('dpm_online.'.TB_USER, 'dpm_online.'.TB_USER.".user_id=".TB_DETAIL.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+        $rfmList = $this->db->join(TB_USER, TB_USER.".user_id=".TB_DETAIL.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
 
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
         $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfm_new_detail.request_by');
@@ -1971,7 +1971,7 @@
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
         
-        $rfpList = $this->db->join('dpm_online.'.TB_USER, 'dpm_online.'.TB_USER.".user_id=".TB_RFP.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_RFP)->result();
+        $rfpList = $this->db->join(TB_USER, TB_USER.".user_id=".TB_RFP.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_RFP)->result();
 
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
         $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfp_new_detail.request_by');
