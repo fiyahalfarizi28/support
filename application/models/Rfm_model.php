@@ -26,9 +26,9 @@ class Rfm_model extends ci_model{
                         AND request_status = 'ON QUEUE'
                     )
                     OR (
-                        approve_by = '$SESSION_UPLINE' 
+                        receive_by = '$SESSION_UPLINE' 
                         AND request_status = 'APPROVED'
-                    )
+                    ) 
                     OR (
                         assign_to = '$SESSION_USER_ID' 
                         AND request_status = 'ASSIGNED'
@@ -36,7 +36,8 @@ class Rfm_model extends ci_model{
                 THEN 1
                 WHEN
                     request_by = '$SESSION_USER_ID'
-                    AND request_status = 'CONFIRMED'
+                    AND request_status = 'DONE'
+                    AND result_status = 'PENDING'
                 THEN 2
                 WHEN
                     request_by = '$SESSION_USER_ID'
@@ -60,24 +61,18 @@ class Rfm_model extends ci_model{
             $this->db->where('request_status !=', STT_DONE);
             $this->db->where('request_status !=', STT_REJECT);
         }
-		
-		if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR'){ 
-			$this->db->where('request_upline_by', '3:855:');
-        }
         
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
-            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) ASC");
-			$this->db->order_by("request_status");
-        } else if ($SESSION_USER_ID == '353'){ 
-            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) ASC");
-			$this->db->order_by("request_status");
-		} else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR'){ 
-			$this->db->order_by("FIELD(request_status, 'APPROVED') ASC");
+            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
+        }  else if ($SESSION_USER_ID == '353'){ 
+            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) DESC");     
+        } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') { 
+            
+            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) DESC");     
         } else {
             $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
-			$this->db->order_by("request_status");
         }
-        
+        $this->db->order_by("request_status");
         $this->db->order_by("request_date");
         
         $i = 0;

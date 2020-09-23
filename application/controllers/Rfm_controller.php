@@ -1111,7 +1111,6 @@ class Rfm_controller extends CI_Controller {
                 'project_id'        => $project_id,
                 'risk_type'         => $risk_type,
                  );
-
             } else {
                 $array_insert = array(
                     'no_rfm'            => $no_rfm,
