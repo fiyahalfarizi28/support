@@ -991,6 +991,7 @@ class Rfm_controller extends CI_Controller {
                             $head_id = $head_id;
                         }
                     }
+                    
                     elseif(in_array($problem_type, $row_problem_type_produk_kami))
                     {
                         if(in_array($kode_cabang, $row_cabang_produk_kami))
@@ -1090,23 +1091,6 @@ class Rfm_controller extends CI_Controller {
                 $head_id = $head_id;
             }
             
-            $array_insert = array(
-                'no_rfm'            => $no_rfm,
-                'problem_type'      => $problem_type,
-                'request_type'      => $request_type,
-                'request_by'        => $user_id,
-                'request_date'      => $date_now,
-                'request_upline_by' => $head_id,
-                'kode_kantor'       => $kode_cabang,
-                'subject'           => $subject,
-                'rfm_detail'        => $detail,
-                'request_status'    => $req_stt,
-                'assign_to'         => $assign_to,
-                'assign_date'       => $assign_date,
-                'project_id'        => $project_id,
-                'risk_type'         => $risk_type,
-            );
-
             if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV)) {
                 $array_insert = array(
                 'no_rfm'            => $no_rfm,
@@ -1117,6 +1101,7 @@ class Rfm_controller extends CI_Controller {
                 'request_upline_by' => $head_id,
                 'approve_date'      => $date_now,
                 'approve_by'        => $head_id,
+                'receive_by'        => $app_it->value,
                 'kode_kantor'       => $kode_cabang,
                 'subject'           => $subject,
                 'rfm_detail'        => $detail,
@@ -1127,6 +1112,24 @@ class Rfm_controller extends CI_Controller {
                 'risk_type'         => $risk_type,
                  );
 
+            } else {
+                $array_insert = array(
+                    'no_rfm'            => $no_rfm,
+                    'problem_type'      => $problem_type,
+                    'request_type'      => $request_type,
+                    'request_by'        => $user_id,
+                    'request_date'      => $date_now,
+                    'request_upline_by' => $head_id,
+                    'kode_kantor'       => $kode_cabang,
+                    'subject'           => $subject,
+                    'rfm_detail'        => $detail,
+                    'request_status'    => $req_stt,
+                    'assign_to'         => $assign_to,
+                    'assign_date'       => $assign_date,
+                    'project_id'        => $project_id,
+                    'risk_type'         => $risk_type,
+                );
+    
             }
 
             if(empty($_FILES['attachment']['name'])) {
@@ -1898,7 +1901,7 @@ class Rfm_controller extends CI_Controller {
                 'receive_by'     => $SESSION_USER_ID,
                 'receive_date'   => $date_now,
                 'receive_notes'  => $notes,
-                'problem_type'   => $problem_type
+                'problem_type'   => $problem_type,
             );
             $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
     
@@ -1909,7 +1912,7 @@ class Rfm_controller extends CI_Controller {
                 'approve_date'   => $date_now,
                 'approve_notes'  => $notes,
                 'receive_by'     => $app_it->value,
-                'problem_type'   => $problem_type
+                'problem_type'   => $problem_type,
             );
             $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);    
         }

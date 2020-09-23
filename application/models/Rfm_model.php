@@ -30,18 +30,13 @@ class Rfm_model extends ci_model{
                         AND request_status = 'APPROVED'
                     )
                     OR (
-                        receive_by = '3:855:' 
-                        AND request_status = 'APPROVED'
-                    ) 
-                    OR (
                         assign_to = '$SESSION_USER_ID' 
                         AND request_status = 'ASSIGNED'
                     )
                 THEN 1
                 WHEN
                     request_by = '$SESSION_USER_ID'
-                    AND request_status = 'DONE'
-                    AND result_status = 'PENDING'
+                    AND request_status = 'CONFIRMED'
                 THEN 2
                 WHEN
                     request_by = '$SESSION_USER_ID'
@@ -68,13 +63,10 @@ class Rfm_model extends ci_model{
         
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) ASC");
+        } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT'){ 
+            $this->db->order_by("FIELD(receive_by, '3:855:')");
         } else if ($SESSION_USER_ID == '353'){ 
             $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) ASC");
-<<<<<<< HEAD
-=======
-        }  else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR'){ 
-            $this->db->order_by("FIELD(request_upline_by, '3:855:') ASC";
->>>>>>> 68c087312c1f07f6c81102154a7d1a56bc126007
         } else {
             $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
         }
