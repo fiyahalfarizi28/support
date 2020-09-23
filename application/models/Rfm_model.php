@@ -60,6 +60,10 @@ class Rfm_model extends ci_model{
             $this->db->where('request_status !=', STT_DONE);
             $this->db->where('request_status !=', STT_REJECT);
         }
+		
+		if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR'){ 
+			$this->db->where('request_upline_by', '3:855:');
+        }
         
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) ASC");
@@ -67,6 +71,8 @@ class Rfm_model extends ci_model{
             $this->db->order_by("FIELD(receive_by, '3:855:')");
         } else if ($SESSION_USER_ID == '353'){ 
             $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) ASC");
+		} else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR'){ 
+			$this->db->order_by("FIELD(request_status, 'APPROVED') ASC");
         } else {
             $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
         }
