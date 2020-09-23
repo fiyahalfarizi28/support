@@ -41,7 +41,6 @@ class Auth_model extends ci_model {
 
 	private function _get_datatables_query()
     {
-        $this->db->from('dpm_online.'.$this->table);
  
         $i = 0;
      

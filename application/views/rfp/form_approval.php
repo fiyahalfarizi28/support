@@ -52,12 +52,8 @@
                         <?php foreach($problem_type->result() as $r): ?>
                             <?php if ($rows->problem_type != $r->id) {?>
                                 <?php if ($rows->request_type == 3  ) {?>
-                                    <?php if ($rows->project_id > 2) { ?>
+                                    <?php if ($rows->project_id > 1) { ?>
                                         <?php if ($r->id > 8 && $r->id < 11) {?>
-                                            <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
-                                        <?php } ?>
-                                    <?php } else if ($rows->project_id == 1) { ?>
-                                        <?php if ($r->id > 10) {?>
                                             <option value="<?php echo $r->id ?>"><?php echo $r->problem_type ?></option>
                                         <?php } ?>
                                     <?php } ?>

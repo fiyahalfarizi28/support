@@ -12,7 +12,7 @@ class Report_controller extends CI_Controller {
 	{
         $tb_detail = TB_DETAIL;
         if($this->auth_model->logged_id()) {
-            $data['SESSION_USER_ID'] = $this->session->userdata('dpm_online.'.'USER_ID');
+            $data['SESSION_USER_ID'] = $this->session->userdata('USER_ID');
 
             $query = "  SELECT 
             TGL,

@@ -4,9 +4,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Project_controller extends CI_Controller {
     function __construct() {
         parent::__construct();
-        $this->load->model('daily_report_model');
-        $this->load->model('rfp_model');
         $this->load->model('rfm_model');
+        $this->load->model('rfp_model');
         $this->load->model('auth_model');
     }
 
@@ -18,7 +17,7 @@ class Project_controller extends CI_Controller {
             $data['task_project'] = $this->getTask();
             $data['project_activity'] = $this->projectActivity();
 
-            $SESSION_USER_ID = $this->session->userdata('dpm_online.'.'USER_ID');
+            $SESSION_USER_ID = $this->session->userdata('USER_ID');
             $data['SESSION_USER_ID'] = $SESSION_USER_ID;
 
             $Q = 'SELECT DISTINCT ticket_support.task.project_id AS id, ticket_support.project.project_name AS project_name, ticket_support.project.last_update AS last_update
@@ -33,8 +32,7 @@ class Project_controller extends CI_Controller {
                 'table' => TB_TASK,
             );
 
-            $data['DataTaskList'] = $this->daily_report_model->get_crud($array_crud);
-
+            $data['DataTaskList'] = $this->rfm_model->get_crud($array_crud);
 
             $this->template->load('template','project/table',$data);
         } else {
@@ -285,7 +283,7 @@ class Project_controller extends CI_Controller {
             ),
             'order_by' => 'assign_date',
         );
-        return $this->daily_report_model->get_crud($array_crud)->result();
+        return $this->rfm_model->get_crud($array_crud)->result();
     }
 
 }

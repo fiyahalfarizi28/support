@@ -92,9 +92,9 @@ $db['default']['striction'] = FALSE;
 $db['default']['fallover'] = array();
 $db['default']['save_queries'] = TRUE;
 
-$db['dpm_online']['hostname'] = HOST_ONLINE;
-$db['dpm_online']['username'] = USER_ONLINE;
-$db['dpm_online']['password'] = PASS_ONLINE;
+$db['dpm_online']['hostname'] = HOST_ONLINE_2;
+$db['dpm_online']['username'] = USER_ONLINE_2;
+$db['dpm_online']['password'] = PASS_ONLINE_2;
 $db['dpm_online']['database'] = DB_DPM;
 $db['dpm_online']['dbdriver'] = "mysqli";
 $db['dpm_online']['dbprefix'] = "";

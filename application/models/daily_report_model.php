@@ -1,5 +1,5 @@
 <?php
-class daily_report_model extends ci_model{
+class Daily_report_model extends ci_model{
     
     function __construct() {
         parent::__construct();

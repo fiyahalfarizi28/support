@@ -81,8 +81,8 @@ defined('EXIT_UNKNOWN_CLASS')  OR define('EXIT_UNKNOWN_CLASS', 5); // unknown cl
 defined('EXIT_UNKNOWN_METHOD') OR define('EXIT_UNKNOWN_METHOD', 6); // unknown class member
 defined('EXIT_USER_INPUT')     OR define('EXIT_USER_INPUT', 7); // invalid user input
 defined('EXIT_DATABASE')       OR define('EXIT_DATABASE', 8); // database error
-defined('EXIT__AUTO_MIN')      OR define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
-defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+defined('EXIT_AUTO_MIN')      OR define('EXIT_AUTO_MIN', 9); // lowest automatically-assigned error code
+defined('EXIT_AUTO_MAX')      OR define('EXIT_AUTO_MAX', 125); // highest automatically-assigned error code
 
 define('NAMA_PERUSAHAAN','PT. BPR KREDIT MANDIRI INDONESIA');
 define('ALAMAT_PERUSAHAAN','');
@@ -92,16 +92,16 @@ define('NAMA_APLIKASI','SUPPORT');
 define('DB_DPM','dpm_online');
 define('DB_TICKET_SUPPORT', 'ticket_support');
 
-define('HOST_ONLINE','103.234.254.186:3308');
-define('USER_ONLINE','test');
-define('PASS_ONLINE','test123!');
+define('HOST_ONLINE','103.31.232.148:3307');
+define('USER_ONLINE','WqkODPq5Rw6');
+define('PASS_ONLINE','ODBBb6JX1cfj');
 
-// define('HOST_ONLINE','103.31.232.148:3307');
-// define('USER_ONLINE','u2Qi7Jfui');
-// define('PASS_ONLINE','qJ7ysIkg8ce!');
+define('HOST_ONLINE_2','103.31.232.148:3307');
+define('USER_ONLINE_2','u2Qi7Jfui');
+define('PASS_ONLINE_2','qJ7ysIkg8ce!');
 
-define('TB_USER','dpm_online.user');
-define('TB_PARAMETER','dpm_online.parameter');
+define('TB_USER','view_user');
+define('TB_PARAMETER','parameter');
 define('TB_DETAIL','rfm_new_detail');
 define('TB_RFP','rfp_new_detail');
 define('TB_ATTACHMENT_RFM','rfm_new_attachment');
@@ -111,7 +111,7 @@ define('TB_COMMENT_RFM','rfm_new_comment');
 define('TB_COMMENT_RFP','rfp_new_comment');
 define('TB_PROBLEM_TYPE','rfm_new_problem_type');
 define('TB_REQUEST_TYPE','rfm_new_request_type');
-define('TB_SYS_PESAN','dpm_online.sys_pesan');
+define('TB_SYS_PESAN','sys_pesan');
 define('TB_DAILY_ACTIVITY', 'daily_activity');
 define('TB_PROJECT', 'project');
 define('TB_TASK', 'task');

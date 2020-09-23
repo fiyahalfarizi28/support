@@ -502,7 +502,6 @@
 
 	<div class="modal fade" id="modal-create-task" role="dialog">
 		<div class="modal-dialog modal-lg">
-			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 class="modal-title">New Activity</h3>
@@ -590,7 +589,6 @@
 							<label for="Revisi">Notes Revisi:</label>
 							<textarea rows="2" class="form-control" id="Revisi" style="resize: none" readonly></textarea>
 							
-							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
 							<div id="attachmentElementRFM" style="margin-top: 8px">
 								
 							</div>
@@ -601,7 +599,6 @@
 							<textarea class="form-control" id="DetailProject" rows="3" style="resize: none"></textarea></br>
 							<label for="TargetDate">Target Date : <span id="targetDateProject">-</span></label></br>
 							
-							<!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
 							<div id="attachmentElementProject" style="margin-top: 8px">
 								
 							</div>
@@ -659,8 +656,7 @@
 	<script>
 		
 		document.addEventListener("DOMContentLoaded", function (event) {
-
-			var userList = <?php echo json_encode($this->db->query("SELECT * FROM dpm_online.user;")->result()) ?>;
+			var userList = <?php echo json_encode($this->db->query("SELECT * FROM view_user;")->result()) ?>;
 
 			<?php if( !($SESSION_USER_JABATAN==="HEAD IT" || $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI')) { ?>
 				$('#tb_detail_dr').DataTable({

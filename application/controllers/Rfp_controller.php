@@ -20,7 +20,6 @@ class Rfp_controller extends CI_Controller {
     
     function get_tb_detail()
     {
-        
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $SESSION_USER_GROUP_MENU = $this->session->userdata('USER_GROUP_MENU');
 
@@ -132,7 +131,7 @@ class Rfp_controller extends CI_Controller {
             }
 
             $btn_assign = "<a class='btn btn-primary text-light btn-sm btn-block' href='javascript:void(0)' data-toggle='modal' data-target='#modal-assign-rfp' data-id='$field->id' title='Assign Task RFP'><i class='fa fa-user-edit'></i></a>";
-            if(($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT') && $field->request_status == STT_APPROVED)
+            if(($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT') && $field->request_status == STT_APPROVED && $field->receive_date != NULL)
             {
                 $btn_option = $btn_assign.$btn_option;
             }

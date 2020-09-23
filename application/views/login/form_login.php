@@ -43,7 +43,7 @@
                                 <div class="d-sm-flex justify-content-between">
                                     
                                     <div class="field-wrapper">
-                                        <button type="submit" style="background-color: #c40202; margin-top: 8px" class="btn btn-primary" id="btn_login" value="" onclick="proses_login()">Log in</button>
+                                    <a href="javascript:void(0)" onclick="proses_login()"><button  style="background-color: #c40202; margin-top: 8px" class="btn btn-primary" id="btn_login" value="">Log in</button></a>
                                     </div>
                                 </div>
                             </div>

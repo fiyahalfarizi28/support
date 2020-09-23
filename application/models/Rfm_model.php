@@ -7,6 +7,7 @@ class Rfm_model extends ci_model{
 
     private function _get_datatables_query($SESSION_UPLINE)
     {
+        $db2 = $this->load->database('dpm_online', TRUE);
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
         $SESSION_USER_DIVISI = $this->session->userdata('USER_DIVISI');
         $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
@@ -25,7 +26,11 @@ class Rfm_model extends ci_model{
                         AND request_status = 'ON QUEUE'
                     )
                     OR (
-                        receive_by = '$SESSION_UPLINE' 
+                        approve_by = '$SESSION_UPLINE' 
+                        AND request_status = 'APPROVED'
+                    )
+                    OR (
+                        receive_by = '3:855:' 
                         AND request_status = 'APPROVED'
                     ) 
                     OR (
@@ -54,22 +59,21 @@ class Rfm_model extends ci_model{
             END AS jumlah
         ";
         $this->db->select($qry);
-        $this->db->from($this->table);
-        $this->db->join(TB_USER, 'user.user_id =' .$this->table. '.request_by', 'left');
+        $this->db->from('view_rfm_new_detail');
 
         if(empty($_POST['search']['value'])) {
             $this->db->where('request_status !=', STT_DONE);
             $this->db->where('request_status !=', STT_REJECT);
         }
         
-        if ($SESSION_USER_DIVISI == 'IT') {
-            $this->db->order_by('assign_to', $SESSION_USER_ID) ;  
-        } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT'){ 
-            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID)");   
-        } else if ($SESSION_UPLINE == $SESSION_USER_ID){ 
-            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID)");
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) ASC");
+        } else if ($SESSION_USER_ID == '353'){ 
+            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) ASC");
+        }  else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR'){ 
+            $this->db->where('request_status !=', STT_ON_QUEUE);
         } else {
-            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID)");
+            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
         }
         $this->db->order_by("request_status");
         $this->db->order_by("request_date");
@@ -127,7 +131,6 @@ class Rfm_model extends ci_model{
         $rfp_id = implode(",",$rfp_id);
 
         $this->_get_datatables_query($SESSION_UPLINE);
-        // $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
         $query = $this->db->get();
         return $query->num_rows();
     }
@@ -139,7 +142,6 @@ class Rfm_model extends ci_model{
         $rfp_id = explode(":", $row_rfp);
         array_pop($rfp_id);
         $rfp_id = implode(",",$rfp_id);
-        // $this->db->where("problem_type NOT IN($rfp_id)", NULL, FALSE);
         $this->db->from($this->table);
         return $this->db->count_all_results();
     }

@@ -88,16 +88,7 @@ class Rfm_controller extends CI_Controller {
             if($field->assign_to === NULL) {
                 $row_assign_to = '-';
             } else {
-                $array_crud = array(
-                    'table' => TB_USER,
-                    'where' => array('user_id' => $field->assign_to),
-                );
-                $row_assign_to = $this->rfm_model->get_crud($array_crud);
-                if(!empty($row_assign_to->num_rows())) {
-                    $row_assign_to = $row_assign_to->row()->nama;
-                } else{
-                    $row_assign_to = '-';
-                }
+                $row_assign_to = $field->nama_assign_to;
             }
 
             // btn approve sesuai status
@@ -132,11 +123,7 @@ class Rfm_controller extends CI_Controller {
                 }
                 else
                 {
-                    $array_crud = array(
-                        'table' => (TB_USER),
-                        'where' => array('user_id' => $field->request_upline_by),
-                    );
-                    $app_by = $this->rfm_model->get_crud($array_crud)->row()->nama;
+                    $app_by = $field->nama_request_upline_by;
                 }
             }else {
                 $app_by = 'IT';
@@ -292,7 +279,7 @@ class Rfm_controller extends CI_Controller {
 
             $no++;
             $row = array();
-            $row[] = $field->nama;
+            $row[] = $field->nama_request_by;
             $row[] = $app_by;
             $row[] = $field->no_rfm;
             $row[] = date('d-m-Y', strtotime($field->request_date));
@@ -311,7 +298,7 @@ class Rfm_controller extends CI_Controller {
             $row[] = $notes_reject;
             $row[] = $confirm_notes;
             $row[] = $field->id;
-            $row[] = $field->jabatan;
+            $row[] = $field->jabatan_request_by;
             $row[] = $projectName;
             $data[] = $row;
         }
@@ -550,31 +537,6 @@ class Rfm_controller extends CI_Controller {
         $row = $this->rfm_model->get_crud($array_crud)->row();
         $data['rows'] = $row;
         
-        $array_crud = array(
-            'table' => TB_PROBLEM_TYPE,
-            'where' => array('system_type' => NULL),
-        );
-        $data['problem_type'] = $this->rfm_model->get_crud($array_crud);
-        
-        $array_crud = array(
-            'table' => TB_REQUEST_TYPE,
-        );
-        $data['request_type'] = $this->rfm_model->get_crud($array_crud);
-
-        $array_crud = array(
-            'table' => TB_PROJECT,
-        );
-        $data['project_list'] = $this->rfm_model->get_crud($array_crud);
-        
-        $array_crud = array(
-            'table' => TB_USER,
-            'where' => array(
-                'group_menu' => 'IT',
-                'flg_block' => 'N',
-                )
-        );
-        $data['select_pic'] = $this->rfm_model->get_crud($array_crud);
-        
         // nama yang tulis notes
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
@@ -613,7 +575,7 @@ class Rfm_controller extends CI_Controller {
             $data_explode_disabled[] = $rows;
         }
 
-        if($SESSION_USER_ID === $row->assign_to && $field->request_status == STT_ASSIGNED)
+        if($SESSION_USER_ID === $row->assign_to && $row->request_status == STT_ASSIGNED)
         {
             $data['disabled'] = "";
             $data['readonly'] = "readonly";
@@ -622,6 +584,152 @@ class Rfm_controller extends CI_Controller {
         }
 
         $this->load->view('rfm/form_rfmdaily', $data);
+    }
+
+    public function add_daily_rfm()
+    {
+        if(!$this->auth_model->logged_id())
+        {
+            $data = array('isValid' => 0, 'isPesan' => '<div class="alert alert-danger">Sesi telah berakhir, silahkan segarkan halaman ini terlebih dahulu. <a href="./">Segarkan</a></div>');
+            echo json_encode($data);
+            die();
+        }
+		
+        $date_now = date('Y-m-d H:i:s');
+        $user_id = $this->session->userdata('USER_ID');
+        $status = $this->input->post('status');
+        $keterangan = $this->input->post('keterangan');
+        $project_id = $this->input->post('project_id_hidden');
+        $rfm_id = $this->input->post('rfm_id');
+        
+        if ($this->input->post('notes') !== "") {
+            $done_notes = $this->input->post('notes');
+        }
+        
+        if(empty($status)) {
+            $isValid = 0;
+            $isPesan = "<div class='alert alert-danger'>Status Pekerjaan Harus Diisi !!!</div>";
+        } else {
+
+            $array_crud = array(
+                'table' => TB_DAILY_ACTIVITY,
+                'where' => array(
+                    'user_id' => $this->session->userdata('USER_ID'),
+                    'date_activity' => $date_now,
+                )
+            );
+
+            $sql = $this->rfm_model->get_crud($array_crud);
+
+            $array_insert = array(
+                'user_id'       => $user_id,
+                'date_activity' => $date_now,
+                'rfm_id'        => $rfm_id,
+                'status'        => $status,
+                'keterangan' 	=> $keterangan,
+                'update_by'     => $user_id,
+            );
+        
+            $insert_data = $this->db->insert(TB_DAILY_ACTIVITY, $array_insert);
+
+            $array_update_rfm = array(
+                'result_status' => $status,
+                'onprogress_date' => $date_now,
+            );
+
+            $this->db->where('id', $rfm_id);
+            $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
+
+            if ($status == STT_DONE) {
+                
+                $array_update_rfm = array(
+                    'result_status' => $status,
+                    'done_notes'    => $done_notes,
+                    'done_date'     => $date_now,
+                    'request_status' => STT_CONFIRMED,
+                );
+    
+                $this->db->where('id', $rfm_id);
+                $update_rfm = $this->db->update(TB_DETAIL, $array_update_rfm);
+
+            }
+
+            if ($this->input->post('penyelesaian') !== "") {
+                $comment = $this->input->post('penyelesaian');
+            }
+
+            if (!empty($comment) && $status == STT_DONE) {
+                if (!empty($rfm_id)) {
+                    // TODO: Check row in tb comment, if null then insert, if not null then update comment
+                    $array_crud = array(
+                        'table' => TB_COMMENT_RFM,
+                        'where' => array(
+                            'id' => $rfm_id,
+                        )
+                    );
+                    
+                    $check = $this->rfm_model->get_crud($array_crud)->num_rows();
+    
+                    if ($check != 0) {
+                        $array_update_comment = array(
+                            'date_comment' => $date_now,
+                            'user'          => $user_id,
+                            'comment'       => $comment
+                        );
+
+                        $this->db->where('id', $rfm_id);
+
+                        $update_comment = $this->db->update( TB_COMMENT_RFM, $array_update_comment);
+
+                    } else {
+                        $array_insert_comment = array(
+                            'id'            => $rfm_id,
+                            'date_comment'  => $date_now,
+                            'user'          => $user_id,
+                            'comment'       => $comment
+                        );
+
+                        $insert_comment = $this->db->insert(TB_COMMENT_RFM, $array_insert_comment);
+                    }
+
+                }
+            
+            } else if(empty($comment) && $status == STT_DONE) {
+                $isValid = 0;
+                $isPesan = "<div class='alert alert-danger'>Case Penyelesaian Harus Diisi !!!</div>";
+            }
+
+            if(!$insert_data) {
+                $isValid = 0;
+                $isPesan = "<div class='alert alert-danger'>Gagal menambahkan daily activity</div>";
+                        
+                $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
+                echo json_encode($data);
+                die(); 
+            } else {
+                $isValid = 1;
+                $isPesan = "<div class='alert alert-success'>Berhasil menambahkan daily activity</div>";
+                
+            }
+            
+        }
+
+        $date_now = date('Y-m-d H:i:s');
+        $user_id = $this->session->userdata('USER_ID');
+        $status = $this->input->post('status');
+        $keterangan = $this->input->post('keterangan');
+        $project_id = $this->input->post('project_id');
+        $rfm_id = $this->input->post('rfm_id');
+
+        $data = array(
+            'isValid' => $isValid, 
+            'isPesan' => $isPesan, 
+            'rfm_id' => $rfm_id,
+            'status' => $status,
+            'user_id' => $user_id,
+            'keterangan' => $keterangan
+        );
+        echo json_encode($data);
     }
 
     public function btn_rating()
@@ -2095,7 +2203,7 @@ class Rfm_controller extends CI_Controller {
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
-                    'request_upline_by' => $SESSION_UPLINE,
+                    'request_upline_by' => $SESSION_USER_ID,
                     'request_status' => STT_ON_QUEUE,
                     'receive_by' => NULL,
                     'assign_to' => NULL,
@@ -2202,9 +2310,9 @@ class Rfm_controller extends CI_Controller {
                 ON RFM.problem_type = PROBLEM_TYPE.id
                 LEFT JOIN ticket_support.project PROJECT
                 ON RFM.project_id = PROJECT.id
-                LEFT JOIN dpm_online.user USER
+                LEFT JOIN view_user USER
                 ON RFM.request_by = USER.user_id
-                LEFT JOIN dpm_online.user PIC
+                LEFT JOIN view_user PIC
                 ON RFM.assign_to = PIC.user_id
             WHERE
                 $customStatus

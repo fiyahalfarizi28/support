@@ -28,6 +28,7 @@ class Auth_controller extends CI_Controller {
 				$data = array('isValid'=>1, 'isPesan'=>'Akun di blok');
 				echo json_encode($data);
 			}else {
+				// print_r($r);die();
 				$session_data = array(
 					'USER_ID' => $r->user_id,
 					'USER_INDUK' => $r->user_id_induk,

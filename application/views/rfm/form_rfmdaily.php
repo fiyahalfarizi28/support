@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">APPROVE RFM</h4>
+    <h4 class="modal-title">ADD DAILY ACTIVITY</h4>
     <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
 
@@ -11,9 +11,9 @@
             $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
             $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
         } else {
-            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" required>';
-            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" required>';
-            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" required>';
+            $selectProjectType = '<select id="project_id" name="project_id" class="form-control" disabled required>';
+            $selectRequestType = '<select id="request_type" name="request_type" class="form-control" disabled required>';
+            $selectProblemType = '<select id="problem_type" name="problem_type" class="form-control" disabled required>';
         }
     ?>
 
@@ -70,6 +70,7 @@
         <div class="form-group">
             <textarea name="detail" class="form-control" style="resize: none" placeholder="Detail. . ." rows="5" required <?php echo $readonly ?>><?php echo $rows->rfm_detail ?></textarea>
         </div>
+        
         <div class="form-group text-primary">
             <i class="far fa-clock"></i> <?php echo date('d-m-Y') ?>
         </div>
@@ -133,5 +134,77 @@
             <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->confirm_notes ?></textarea>
         </div>
         <?php endif ?>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" id="status" name="status">
+                <option disabled selected="selected">- Pilih Status -</option>
+                <option value="ON PROGRESS">ON PROGRESS</option>
+                <option value="DONE">DONE</option>
+            </select>
+        </div>
+
+        <div class="panel-group" id="accordion" style="margin-top: 8px">
+            <div class="panel panel-default">
+                
+                <div id="collapseStatus" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Tulis Notes :</label>
+                            <input type="textarea" name="notes" id="notes" placeholder="Notes..." style="resize: none" class="form-control"></input>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for ="penyelesaian">Cara penyelesaian :</label>
+                            <input type="textarea" name="penyelesaian"class="form-control" id="penyelesaian" style="resize: none" name="penyelesaian" placeholder="Cara penyelesaian case tersebut..."></input>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="keterangan">Keterangan:</label>
+            <input type="textarea" class="form-control" id="keterangan" style="resize: none" placeholder="Keterangan... " name="keterangan"></input>
+        </div>
+
+        <div class="form-group">
+            <label for="PIC">PIC : </label>
+            <?php echo strtoupper($this->session->userdata('USER_FULLNAME')) ?>
+        </div>
+
+        <div class="form-group">
+            <input type="hidden" name="rfm_id" id="rfm_id" value="<?php echo $rows->id ?>">
+            <input type="hidden" name="problem_type_hidden" value="<?php echo $rows->problem_type ?>">
+            <input type="hidden" name="project_id_hidden" value="<?php echo $rows->project_id ?>">
+            <input type="hidden" name="subject" value="<?php echo $rows->subject ?>">
+            <input type="hidden" name="detail" value="<?php echo $rows->rfm_detail ?>">
+        </div>
+
     </form>
+    
+
+    <div class="modal-footer"> 
+        <div class="btn_post_request">
+            <a href="javascript:void(0)" onclick="add_daily_rfm()" class="btn btn-success"><i class="fa fa-check"></i> Add</a>
+        </div>
+    </div>
 </div>
+
+<script>
+    var statusChange = document.getElementById("status");
+
+    statusChange.addEventListener("change", function() {
+        var optionSelected = $("option:selected", this);
+        var valueSelected = this.value;
+
+        if (valueSelected == "DONE") {
+            $("#collapseStatus").collapse('show');
+            $('#penyelesaian').prop('disabled', false);
+        } else {
+            $("#collapseStatus").collapse('hide');
+            $('#penyelesaian').prop('disabled', 'disabled');
+        }
+    });
+</script>

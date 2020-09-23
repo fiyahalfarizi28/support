@@ -3,10 +3,8 @@ class Dailyreport_controller extends ci_controller{
     
     function __construct() {
         parent::__construct();
-		$this->load->model('daily_report_model');
         $this->load->model('auth_model');
         $this->load->model('rfm_model');
-        $this->load->model('rfp_model');
     }
     
     function index()
@@ -23,21 +21,21 @@ class Dailyreport_controller extends ci_controller{
                 'table' => TB_DETAIL,
             );
 
-            $data['rfmList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
 
             $array_crud = array(
                 'select' => '*',
                 'table' => TB_RFP,
             );
 
-            $data['rfpList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['rfpList'] = $this->rfm_model->get_crud($array_crud);
 
             $array_crud = array(
                 'select' => '*',
                 'table' => TB_DETAIL,
             );
 
-            $data['statusList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['statusList'] = $this->rfm_model->get_crud($array_crud);
 			
 			$array_crud = array(
                 'select' => '*',
@@ -51,7 +49,7 @@ class Dailyreport_controller extends ci_controller{
             WHERE ticket_support.task.assign_to=".$this->session->userdata('USER_ID').";
             ";
 
-            $data['projectList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['projectList'] = $this->rfm_model->get_crud($array_crud);
             $data['filteredProjectList'] = $this->db->query($Q)->result();
 
             $array_crud = array(
@@ -76,7 +74,7 @@ class Dailyreport_controller extends ci_controller{
                 'table' => TB_TASK,
             );
 
-            $data['DataTaskList'] = $this->daily_report_model->get_crud($array_crud);
+            $data['DataTaskList'] = $this->rfm_model->get_crud($array_crud);
 
 			
             $this->template->load('template','daily_report/table', $data);
@@ -91,7 +89,7 @@ class Dailyreport_controller extends ci_controller{
             'table' => TB_DAILY_ACTIVITY,
             'order_by' => "last_update DESC"
         );
-        return $this->daily_report_model->get_crud($array_crud);
+        return $this->rfm_model->get_crud($array_crud);
     }
     
 	public function getDailyActivity()
@@ -104,7 +102,7 @@ class Dailyreport_controller extends ci_controller{
             ),
             'order_by' => "last_update DESC"
         );
-        return $this->daily_report_model->get_crud($array_crud);
+        return $this->rfm_model->get_crud($array_crud);
     }
 	
 	public function post_request_dr()
@@ -161,7 +159,7 @@ class Dailyreport_controller extends ci_controller{
                 )
             );
 
-            $sql = $this->daily_report_model->get_crud($array_crud);
+            $sql = $this->rfm_model->get_crud($array_crud);
             
             if (!empty($task_id)) {
                 $array_update_task = array(

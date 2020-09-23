@@ -51,7 +51,7 @@
                         <li class="list-group-item"><a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="far fa-window-maximize"></i> HOME</a></li>
                             <ul class="collapse list-unstyled" id="homeSubmenu">
                                 <li style ="margin-left: 25px; margin-top: 8px"class="list-group-item">
-                                    <a href="<?php echo base_url() ?>"><i class="far fa-calendar-minus"></i> DASHBOARD</a>
+                                    <a href="<?php echo base_url('dashboard') ?>"><i class="far fa-calendar-minus"></i> DASHBOARD</a>
                                 </li>
                                 <li style ="margin-left: 25px; margin-bottom: 8px" class="list-group-item">
                                     <a href="<?php echo base_url('activity') ?>"><i class="far fa-list-alt"></i> ACTIVITY</a>

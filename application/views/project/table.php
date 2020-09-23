@@ -195,9 +195,8 @@
         
     </div>
 
-    <div class="modal fade" id="modal-create-task" role="dialog">
+    <!-- <div class="modal fade" id="modal-create-task" role="dialog">
 		<div class="modal-dialog modal-lg">
-			<!-- Modal content-->
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 class="modal-title">New Activity</h3>
@@ -212,7 +211,6 @@
                         <textarea class="form-control" id="DetailProject" rows="3" style="resize: none"></textarea></br>
                         <label for="TargetDate">Target Date : <span id="targetDateProject">-</span></label></br>
                         
-                        <!-- <script> HARUSNYA NANTI ADA ATTACHMENT DISINI</script> -->
                         <div id="attachmentElementProject" style="margin-top: 8px">
                             
                         </div>
@@ -244,7 +242,8 @@
 				</div>
 			</div>
 		</div>
-	</div>
+    </div> -->
+    
     <script>
 		document.addEventListener("DOMContentLoaded", function (event) {
             $('#tb_detail_project').DataTable({

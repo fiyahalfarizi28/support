@@ -5,12 +5,13 @@ class Dashboard_controller extends CI_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('auth_model');
+        $this->load->model('rfm_model');
     }
 
 	public function index()
 	{
         if($this->auth_model->logged_id()) {
-            $SESSION_USER_ID = $this->session->userdata('dpm_online.'.'USER_ID');
+            $SESSION_USER_ID = $this->session->userdata('USER_ID');
             $data['SESSION_USER_ID'] = $SESSION_USER_ID;
 
             $this->db->where('id', 'RFM_RFP_ID');
@@ -68,7 +69,7 @@ class Dashboard_controller extends CI_Controller {
             $data['jumlah_reject_rfp'] = $this->db->get(TB_RFP)->row()->jml_reject;
 
             //===================================================
-
+                
             $this->template->load('template','dashboard/dashboard',$data);
         }else {
             $this->load->view('login/form_login');
