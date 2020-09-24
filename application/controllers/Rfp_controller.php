@@ -70,9 +70,8 @@ class Rfp_controller extends CI_Controller {
             // nama pic
             if($field->assign_to == NULL) {
                 $row_assign_to = '-';
-            }else {
-                $this->db->where('user_id', $field->assign_to);
-                $row_assign_to = $this->db->get(TB_USER)->row()->nama;
+            } else {
+                $row_assign_to = '-';
             }
 
             // btn approve sesuai status
@@ -265,7 +264,7 @@ class Rfp_controller extends CI_Controller {
 
             $no++;
             $row = array();
-            $row[] = $field->nama;
+            $row[] = $field->nama_request_by;
             $row[] = $app_by;
             $row[] = $field->no_rfp;
             $row[] = date('d-m-Y', strtotime($field->request_date));
@@ -283,7 +282,7 @@ class Rfp_controller extends CI_Controller {
             $row[] = $notes_done;
             $row[] = $notes_reject;
             $row[] = $confirm_notes;
-            $row[] = $field->jabatan;
+            $row[] = $field->jabatan_request_by;
             $row[] = $projectName;
             $data[] = $row;
         }
@@ -525,6 +524,14 @@ class Rfp_controller extends CI_Controller {
             'table' => TB_USER,
         );
         $data['userList'] = $this->rfp_model->get_crud($array_crud);
+
+        $array_crud = array(
+            'table' => TB_TASK,
+            'where' => array (
+                'rfp_id' => $id,
+            )
+        );
+        $data['taskList'] = $this->rfp_model->get_crud($array_crud);
 
         $data['disabled'] = "";
         $data['readonly'] = "readonly";
@@ -1065,14 +1072,14 @@ class Rfp_controller extends CI_Controller {
                 $head_id = '207';
             }
 
-            if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV)) {
+            if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD) || in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV) || in_array($SESSION_USER_JABATAN, JABATAN_HC))  {
                 $array_insert = array(
                 'no_rfp'            => $no_rfp,
                 'problem_type'      => $problem_type,
                 'request_type'      => $request_type,
                 'request_by'        => $user_id,
                 'request_date'      => $date_now,
-                'request_upline_by' => $head_id,
+                'request_upline_by' => $app_it->value,
                 'approve_date'      => $date_now,
                 'approve_by'        => $head_id,
                 'receive_by'        => $app_it->value,
@@ -2255,55 +2262,48 @@ class Rfp_controller extends CI_Controller {
         );
         $upline = $this->rfp_model->get_crud($array_crud)->row()->total;
 
-        if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT'){
-            $array_crud = array(
-                'select' => 'count(*) as total',
-                'table' => TB_RFP,
-                'where' => array(
-                        'request_upline_by !=' => NULL,
-                        'request_status' => STT_APPROVED,
-                        'approve_by !=' => NULL,
-                        'receive_by' => '3:855:',
-                        'receive_date' => NULL,
-                        'assign_to' => NULL,
-                    )
-            );
-            $approve = $this->rfp_model->get_crud($array_crud)->row()->total;
+        $array_crud = array(
+            'select' => 'count(*) as total',
+            'table' => TB_RFP,
+            'where' => array(
+                    'request_upline_by !=' => NULL,
+                    'request_status' => STT_APPROVED,
+                    'approve_by !=' => NULL,
+                    'receive_by' => '3:855:',
+                    'receive_date' => NULL,
+                )
+        );
+        $approve = $this->rfp_model->get_crud($array_crud)->row()->total;
 
-            $array_crud = array(
-                'select' => 'count(*) as total',
-                'table' => TB_RFP,
-                'where' => array(
-                        'request_upline_by !=' => $SESSION_USER_ID,
-                        'request_status' => STT_ON_QUEUE,
-                        'approve_by !=' => NULL,
-                        'receive_by' => '3:855:',
-                        'receive_date' => NULL,
-                        'assign_to' => NULL,
-                        
-                    )
-            );
-            $auto_approve = $this->rfp_model->get_crud($array_crud)->row()->total;
-        
-            $array_crud = array(
-                'select' => 'count(*) as total',
-                'table' => TB_RFP,
-                'where' => array(
-                        'request_status' => STT_APPROVED,
-                        'approve_by !=' => NULL,
-                        'receive_date !=' => NULL,
-                    )
-            );
-
-            $case = $this->rfp_model->get_crud($array_crud)->row()->total;
-        }
-        
+        $array_crud = array(
+            'select' => 'count(*) as total',
+            'table' => TB_RFP,
+            'where' => array(
+                    'request_upline_by !=' => NULL,
+                    'request_status' => STT_ON_QUEUE,
+                    'receive_by' => '3:855:',
+                    'receive_date' => NULL,
+                )
+        );
+        $auto_approve = $this->rfp_model->get_crud($array_crud)->row()->total;
         
         $array_crud = array(
             'select' => 'count(*) as total',
             'table' => TB_RFP,
             'where' => array(
-                    'request_upline_by !=' => $SESSION_USER_ID,
+                    'receive_by'      => $SESSION_USER_ID,
+                    'request_status' => STT_APPROVED,
+                    'receive_date !=' => NULL,
+                )
+        );
+
+        $case = $this->rfp_model->get_crud($array_crud)->row()->total;        
+        
+        $array_crud = array(
+            'select' => 'count(*) as total',
+            'table' => TB_RFP,
+            'where' => array(
+                    'request_upline_by !=' => NULL,
                     'request_by' => $SESSION_USER_ID,
                     'request_status' => STT_CONFIRMED,
                     'result_status' => STT_DONE,
@@ -2325,7 +2325,7 @@ class Rfp_controller extends CI_Controller {
 
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             echo $project;
-        } if ($SESSION_USER_JABATAN == 'HEAD IT'  || $SESSION_USER_JABATAN == 'SUPERVISOR IT') {
+        } else if ($SESSION_USER_JABATAN == 'HEAD IT'  || $SESSION_USER_JABATAN == 'SUPERVISOR IT') {
             echo $upline + $approve + $auto_approve + $case + $done;
         } else {
             echo $upline + $done;

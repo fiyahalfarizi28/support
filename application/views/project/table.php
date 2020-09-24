@@ -125,6 +125,7 @@
             <div class="modal-content" style="width:980px;"id="view-modal-task"></div>
         </div>
     </div>
+    
 <?php } else  { ?>
     <div class="card-body">
         <div class="pesan"></div>

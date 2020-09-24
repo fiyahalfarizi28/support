@@ -1085,13 +1085,17 @@ class Rfm_controller extends CI_Controller {
                 $head_id = '207';
             }
 
-            if ($project_id == '13') { //micro
-                $head_id = '353';            //MUFTI
+            if ($project_id == '13' && $problem_type == '3') { //micro + human error
+                if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD)){
+                    $head_id = $app_it;
+                } else {
+                    $head_id = '353';            //MUFTI
+                }
             } else {
                 $head_id = $head_id;
             }
             
-            if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV)) {
+            if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD) || in_array($SESSION_USER_JABATAN, JABATAN_HEAD_SPV) ) {
                 $array_insert = array(
                 'no_rfm'            => $no_rfm,
                 'problem_type'      => $problem_type,
@@ -1102,6 +1106,23 @@ class Rfm_controller extends CI_Controller {
                 'approve_date'      => $date_now,
                 'approve_by'        => $head_id,
                 'receive_by'        => $app_it->value,
+                'kode_kantor'       => $kode_cabang,
+                'subject'           => $subject,
+                'rfm_detail'        => $detail,
+                'request_status'    => $req_stt,
+                'assign_to'         => $assign_to,
+                'assign_date'       => $assign_date,
+                'project_id'        => $project_id,
+                'risk_type'         => $risk_type,
+                 );
+            } else if (in_array($SESSION_USER_JABATAN, JABATAN_HC) ) {
+                $array_insert = array(
+                'no_rfm'            => $no_rfm,
+                'problem_type'      => $problem_type,
+                'request_type'      => $request_type,
+                'request_by'        => $user_id,
+                'request_date'      => $date_now,
+                'request_upline_by' => $head_id,
                 'kode_kantor'       => $kode_cabang,
                 'subject'           => $subject,
                 'rfm_detail'        => $detail,
@@ -2218,7 +2239,7 @@ class Rfm_controller extends CI_Controller {
                     'request_upline_by !=' => NULL,
                     'request_status' => STT_APPROVED,
                     'approve_by !=' => NULL,
-                    'receive_by' =>  $SESSION_UPLINE,
+                    'receive_by' =>  '3:855:',
                     'assign_to' => NULL,
                     
                 )
@@ -2229,17 +2250,12 @@ class Rfm_controller extends CI_Controller {
             'select' => 'count(*) as total',
             'table' => TB_DETAIL,
             'where' => array(
-                    'request_upline_by !=' => NULL,
+                    'request_upline_by' => '3:855:',
                     'request_status' => STT_ON_QUEUE,
-                    'approve_by !=' => NULL,
-                    'receive_by' => '3:855:',
                     'receive_date' => NULL,
-                    'assign_to' => NULL,
-                    
                 )
         );
-        $auto_approve = $this->rfm_model->get_crud($array_crud)->row()->total;
-
+        $auto_approve = $this->rfm_model->get_crud($array_crud)->row()->total;  
 
         if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') {
             $array_crud = array(
@@ -2274,8 +2290,6 @@ class Rfm_controller extends CI_Controller {
                     'request_by' => $SESSION_USER_ID,
                     'request_status' => STT_CONFIRMED,
                     'result_status' => STT_DONE,
-                    'approve_by !=' => NULL,
-                    'receive_by !=' => NULL,
                     'assign_to !=' => NULL,
                 )
         );

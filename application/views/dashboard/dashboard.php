@@ -425,57 +425,32 @@
     </div>
 </div>  
 
-<div class="row mt-3">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>PERSENTASE RFM BERDASARKAN KANTOR</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart5"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>PERSENTASE RFM BERDASARKAN AREA</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart6"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-3">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>PERSENTASE RFM BERDASARKAN DIVISI</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart7"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>PERSENTASE RFP BERDASARKAN DIVISI</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart8"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     <?php
+        $applicationList = $this->db->get(TB_PROJECT)->result();
+        $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+        $userList = $this->db->get(TB_USER)->result();
+    
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+        $this->db->join(TB_PROJECT." as Project", "Project.id = rfm_new_detail.project_id");
+
+        $rfmList = $this->db->get(TB_DETAIL)->result();
         
+        
+        $this->db->select("COUNT(*) AS jmlh_rfm");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
     ?>
 
     var ctx_ = document.getElementById("myChart1").getContext("2d");
@@ -674,9 +649,9 @@
 <script>
 
     <?php 
-    $this->db->select("COUNT(*) AS jmlh_rfm");
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
+        $this->db->select("COUNT(*) AS jmlh_rfm");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
     if(!empty($post_monthAwal && $post_monthAkhir)) {
         $this->db->where("MONTH(request_date) >=", $post_monthAwal);
         $this->db->where("MONTH(request_date) <=", $post_monthAkhir);

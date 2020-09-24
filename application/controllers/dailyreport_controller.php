@@ -178,7 +178,6 @@ class Dailyreport_controller extends ci_controller{
                 $this->db->where('id', $project_id);
                 $update_project = $this->db->update(TB_PROJECT, $array_update_project);
 
-                $no_rfp = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfp;
             }
 
             if ($status == STT_DONE)

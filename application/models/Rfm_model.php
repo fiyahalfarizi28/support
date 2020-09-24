@@ -22,6 +22,11 @@ class Rfm_model extends ci_model{
             CASE
                 WHEN
                     (
+                        request_upline_by = '$SESSION_USER_ID'
+                        AND request_status = 'ON QUEUE'
+                    )
+                    OR
+                    (
                         request_upline_by = '$SESSION_UPLINE'
                         AND request_status = 'ON QUEUE'
                     )
@@ -33,24 +38,24 @@ class Rfm_model extends ci_model{
                         assign_to = '$SESSION_USER_ID' 
                         AND request_status = 'ASSIGNED'
                     )
-                THEN 1
-                WHEN
-                    request_by = '$SESSION_USER_ID'
-                    AND request_status = 'DONE'
-                    AND result_status = 'PENDING'
-                THEN 2
-                WHEN
-                    request_by = '$SESSION_USER_ID'
-                    AND request_status = 'ON QUEUE'
-                THEN 3
-                WHEN
-                    request_by = '$SESSION_USER_ID'
-                    AND request_status NOT IN('REJECT', 'DONE')
-                THEN 4
-                WHEN
-                    request_by != '$SESSION_USER_ID'
-                    AND request_status IN ('ASSIGNED')
-                THEN 4
+                    THEN 1
+                    WHEN
+                        receive_by = '$SESSION_USER_ID'
+                        AND request_status = 'APPROVED'
+                    THEN 2
+                    WHEN
+                        request_by = '$SESSION_USER_ID'
+                        AND request_status = 'CONFIRMED'
+                        AND result_status = 'DONE'
+                    THEN 3
+                    WHEN
+                        request_by = '$SESSION_USER_ID'
+                        AND request_status NOT IN('REJECT', 'DONE')
+                    THEN 4
+                    WHEN
+                        request_by != '$SESSION_USER_ID'
+                        AND request_status IN ('ASSIGNED')
+                    THEN 5
             ELSE 99 
             END AS jumlah
         ";
@@ -61,25 +66,6 @@ class Rfm_model extends ci_model{
             $this->db->where('request_status !=', STT_DONE);
             $this->db->where('request_status !=', STT_REJECT);
         }
-        $array_it = explode(":", "3:855:");
-        if (($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT')) { 
-            $this->db->order_by("FIELD(receive_by, '3:855:') DESC");
-            $this->db->order_by("FIELD(receive_by, $SESSION_USER_ID) DESC");
-            $this->db->order_by("request_date DESC");
-        } else if ($SESSION_USER_JABATAN == 'IT STAFF') {
-            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
-			$this->db->order_by("request_status");
-        } else if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_TANPA_IT)) {
-            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) DESC");
-        } else if ($SESSION_USER_ID == '353'){ 
-            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) DESC");     
-			$this->db->order_by("request_status");
-		} else {
-            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
-			$this->db->order_by("request_status");
-        }
-        $this->db->order_by("request_status");
-        $this->db->order_by("request_date");
         
         $i = 0;
      

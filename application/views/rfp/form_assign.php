@@ -120,25 +120,60 @@
             }
         ?>
         </div>
+        
+        <?php if (!empty($taskList->result())) { ?>
+            <table>
+                <thead class ="table">
+                    <tr>
+                        <th>TASK</th>
+                        <th>DETAIL</th>
+                        <th>PIC</th>
+                        <th>TARGET DATE</th>
+                    </tr>
+                </thead>
+                
+                <tbody class ="table">
+                    <?php foreach($taskList->result() as $row): ?>
+                        <tr>
+                            <td>
+                                <?php echo $row->task_name; ?>
+                            </td>
+                            <td>
+                                <?php echo $row->detail; ?>
+                            </td>
+                            <td>
+                            <?php 
+                                $this->db->where('user_id', $row->assign_to);
+                                 echo $this->db->get(TB_USER)->row()->nama;
+                            ?>
+                            </td>
+                            <td>
+                                <?php echo date("d-m-Y",strtotime( $row->target_date))?>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+        <?php } ?>
 
-            <div class="panel-body">
-                <div class="form-group" id="formTask">
-                    <button type="button" class="btn btn-info" id="tambahTask" onclick="addTask()">Tambah Task</button>
-                    <div id="task" style="margin: 8px 15px !important;">
-                    </div>
+        <div class="panel-body">
+            <div class="form-group" id="formTask">
+                <button type="button" class="btn btn-info" id="tambahTask" onclick="addTask()">Tambah Task</button>
+                <div id="task" style="margin: 8px 15px !important;">
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-12">
-                <input type="hidden" name="id_rfp" value="<?php echo $rows->id ?>">
-                <input type="hidden" name="project_id_hidden" value="<?php echo $rows->project_id ?>">
+        <div class="col-md-12">
+            <input type="hidden" name="id_rfp" value="<?php echo $rows->id ?>">
+            <input type="hidden" name="project_id_hidden" value="<?php echo $rows->project_id ?>">
+        </div>
+        
+        <div class="col-md-12 text-right">
+            <div class="btn_post_request">
+                <a href="javascript:void(0)" onclick="post_assign_rfp()" class="btn btn-success"><i class="fa fa-check"></i> Assign</a>
             </div>
-            
-            <div class="col-md-12 text-right">
-                <div class="btn_post_request">
-                    <a href="javascript:void(0)" onclick="post_assign_rfp()" class="btn btn-success"><i class="fa fa-check"></i> Assign</a>
-                </div>
-            </div>
+        </div>
 
     </form>
 </div>

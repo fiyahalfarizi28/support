@@ -21,6 +21,11 @@ class Rfp_model extends ci_model{
             CASE
                 WHEN
                     (
+                        request_upline_by = '$SESSION_USER_ID'
+                        AND request_status = 'ON QUEUE'
+                    )
+                    OR
+                    (
                         request_upline_by = '$SESSION_UPLINE'
                         AND request_status = 'ON QUEUE'
                     )
@@ -30,49 +35,37 @@ class Rfp_model extends ci_model{
                     ) 
                     OR (
                         assign_to = '$SESSION_USER_ID' 
-                        AND request_status = 'ON PROGRESS'
+                        AND request_status = 'ASSIGNED'
                     )
                 THEN 1
                 WHEN
-                    request_by = '$SESSION_USER_ID'
-                    AND request_status = 'DONE'
-                    AND result_status = 'PENDING'
+                    receive_by = '$SESSION_USER_ID'
+                    AND request_status = 'APPROVED'
                 THEN 2
+                WHEN
+                    request_by = '$SESSION_USER_ID'
+                    AND request_status = 'CONFIRMED'
+                    AND result_status = 'DONE'
+                THEN 3
                 WHEN
                     request_by = '$SESSION_USER_ID'
                     AND request_status NOT IN('REJECT', 'DONE')
                 THEN 4
                 WHEN
                     request_by != '$SESSION_USER_ID'
-                    AND request_status IN ('ON PROGRESS')
+                    AND request_status IN ('ASSIGNED')
                 THEN 5
             ELSE 99 
             END AS jumlah
         ";
         $this->db->select($qry);
-        $this->db->from($this->table);
-        $this->db->join(TB_USER, 'view_user.user_id =' .$this->table. '.request_by', 'left');
-        
+        $this->db->from('view_rfp_new_detail');
+
         if(empty($_POST['search']['value'])) {
             $this->db->where('request_status !=', STT_DONE);
             $this->db->where('request_status !=', STT_REJECT);
         }
-
-        $array_it = explode(":", "3:855:");
-        if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') { 
-            $this->db->order_by("FIELD(receive_by, '3:855:') DESC");
-            $this->db->order_by("FIELD(receive_by, $SESSION_USER_ID) DESC");
-            $this->db->order_by("request_date DESC");
-        } else if ($SESSION_USER_JABATAN == 'IT STAFF') {
-            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");     
-        } else if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_TANPA_IT)) {
-            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) DESC");
-        } else {
-            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
-        }
-        $this->db->order_by("request_status");
-        $this->db->order_by("request_date");
- 
+        
         $i = 0;
      
         foreach ($this->column_search as $item)
