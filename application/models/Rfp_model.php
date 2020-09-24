@@ -58,11 +58,16 @@ class Rfp_model extends ci_model{
             $this->db->where('request_status !=', STT_REJECT);
         }
 
-        if ($SESSION_USER_JABATAN == 'IT STAFF') {
-            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");
-        } else if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT'){ 
-            $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");        
-        }   else {
+        $array_it = explode(":", "3:855:");
+        if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') { 
+            $this->db->order_by("FIELD(receive_by, '3:855:') DESC");
+            $this->db->order_by("FIELD(receive_by, $SESSION_USER_ID) DESC");
+            $this->db->order_by("request_date DESC");
+        } else if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            $this->db->order_by("FIELD(assign_to, $SESSION_USER_ID) DESC");     
+        } else if (in_array($SESSION_USER_JABATAN, JABATAN_HEAD_TANPA_IT)) {
+            $this->db->order_by("FIELD(request_upline_by, $SESSION_USER_ID) DESC");
+        } else {
             $this->db->order_by("FIELD(request_by, $SESSION_USER_ID) DESC");
         }
         $this->db->order_by("request_status");

@@ -460,7 +460,7 @@ class Rfm_controller extends CI_Controller {
             $data_explode_disabled[] = $rows;
         }
 
-        if( $SESSION_USER_JABATAN === 'HEAD IT' || $SESSION_USER_JABATAN === 'SUPERVISOR IT' AND $row->receive_date != NULL)
+        if( $SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT' AND $row->receive_date != NULL)
         {
             $data['disabled'] = "";
             $data['readonly'] = "readonly";
@@ -2207,8 +2207,6 @@ class Rfm_controller extends CI_Controller {
             'where' => array(
                     'request_upline_by' => $SESSION_USER_ID,
                     'request_status' => STT_ON_QUEUE,
-                    'receive_by' => NULL,
-                    'assign_to' => NULL,
                 )
         );
         $upline = $this->rfm_model->get_crud($array_crud)->row()->total;
@@ -2226,6 +2224,21 @@ class Rfm_controller extends CI_Controller {
                 )
         );
         $approve = $this->rfm_model->get_crud($array_crud)->row()->total;
+
+        $array_crud = array(
+            'select' => 'count(*) as total',
+            'table' => TB_DETAIL,
+            'where' => array(
+                    'request_upline_by !=' => NULL,
+                    'request_status' => STT_ON_QUEUE,
+                    'approve_by !=' => NULL,
+                    'receive_by' => '3:855:',
+                    'receive_date' => NULL,
+                    'assign_to' => NULL,
+                    
+                )
+        );
+        $auto_approve = $this->rfm_model->get_crud($array_crud)->row()->total;
 
 
         if ($SESSION_USER_JABATAN == 'HEAD IT' || $SESSION_USER_JABATAN == 'SUPERVISOR IT') {
@@ -2270,8 +2283,10 @@ class Rfm_controller extends CI_Controller {
         
         if ($SESSION_USER_JABATAN == 'IT STAFF') {
             echo $assigned;
+        } else if ($SESSION_USER_JABATAN == 'HEAD IT'||$SESSION_USER_JABATAN == 'SUPERVISOR IT'  ) {
+            echo $upline + $auto_approve + $approve + $assign + $assigned + $done;
         } else {
-        echo $upline + $approve + $assign + $assigned + $done;
+            echo $upline + $done;
         }
     }
 
