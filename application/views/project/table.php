@@ -181,7 +181,7 @@
                             ?>
                         </td>
                         <td>
-                            <button class="btn btn-success btn-sm" id="btn_activity" data-toggle="modal" data-target="#modal-task-activity">
+                            <button class="btn btn-success btn-sm" id="btn_activity" data-toggle="modal" data-id='<?php echo $r->id ?>' data-target="#modal-task-activity">
                                 <i class="far fa-comments"></i> Activity
                             </button>
                         </td>
