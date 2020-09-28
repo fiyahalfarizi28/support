@@ -1,5 +1,5 @@
 <?php
-class ReportRfm_controller extends ci_controller{
+class Report_rfm_controller extends ci_controller{
     
     function __construct() {
         parent::__construct();
@@ -22,7 +22,7 @@ class ReportRfm_controller extends ci_controller{
             $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
 
            
-            $this->template->load('template','report/table', $data);
+            $this->template->load('template','report_rfm/table', $data);
         } else {
             $this->load->view('login/form_login');
         }

@@ -11,7 +11,7 @@ class Auth_model extends ci_model {
 	}
 
 	function check_login($field1, $field2) {
-		$this->db->from(TB_USER);
+		$this->db->from($this->table);
 		$this->db->where($field1);
 		//$this->db->where($field2);
 		$this->db->limit(1);
@@ -41,6 +41,7 @@ class Auth_model extends ci_model {
 
 	private function _get_datatables_query()
     {
+        $this->db->from($this->table);
  
         $i = 0;
      

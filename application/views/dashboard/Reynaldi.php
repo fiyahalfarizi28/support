@@ -93,8 +93,6 @@
             </div>
 
             <script>
-                console.log(<?php echo json_encode($rfm_lewat)?>);
-                console.log(<?php echo json_encode($task_lewat)?>);
             </script>
             <div class="col-sm-4">
                 <table class="profile">

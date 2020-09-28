@@ -69,7 +69,7 @@ class Dashboard_controller extends CI_Controller {
             $data['jumlah_reject_rfp'] = $this->db->get(TB_RFP)->row()->jml_reject;
 
             //===================================================
-                
+            
             $this->template->load('template','dashboard/dashboard',$data);
         }else {
             $this->load->view('login/form_login');

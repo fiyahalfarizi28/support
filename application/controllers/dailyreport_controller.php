@@ -12,10 +12,8 @@ class Dailyreport_controller extends ci_controller{
         if($this->auth_model->logged_id()) {
             $data['SESSION_USER_JABATAN'] = $this->session->userdata('USER_JABATAN');
             $data['SESSION_USER_ID'] = $this->session->userdata('USER_ID');
-            $data['daily_activities'] = $this->getDailyActivity();
-            $data['alldaily'] = $this->getAllDaily();
+            
 
-            // Validasi daftar rfm, bisa dimasukkan ke $array_crud
             $array_crud = array(
                 'select' => '*',
                 'table' => TB_DETAIL,
@@ -23,12 +21,7 @@ class Dailyreport_controller extends ci_controller{
 
             $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
 
-            $array_crud = array(
-                'select' => '*',
-                'table' => TB_RFP,
-            );
-
-            $data['rfpList'] = $this->rfm_model->get_crud($array_crud);
+            $data['ITList'] = $this->db->where('divisi_id', 'IT')->get(TB_USER)->result();
 
             $array_crud = array(
                 'select' => '*',
@@ -60,14 +53,7 @@ class Dailyreport_controller extends ci_controller{
                 )
             );
 
-            $QTask = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING') AND assign_to = ". $this->session->userdata('USER_ID') ."";
-            $QTaskAll = "SELECT * FROM ticket_support.task WHERE (status = 'ON PROGRESS' || status = 'PENDING')";
-
-             if ($this->session->userdata('USER_JABATAN')==="HEAD IT" || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT' || $this->session->userdata('USER_JABATAN')==='DIREKSI') {
-                 $data['taskList'] = $this->db->query($QTaskAll)->result();
-             } else {
-                $data['taskList'] = $this->db->query($QTask);
-             }
+            $data['taskList'] = $this->rfm_model->get_crud($array_crud);
 
             $array_crud = array(
                 'select' => '*',
@@ -76,20 +62,70 @@ class Dailyreport_controller extends ci_controller{
 
             $data['DataTaskList'] = $this->rfm_model->get_crud($array_crud);
 
-			
-            $this->template->load('template','daily_report/table', $data);
+			if ($this->session->userdata('USER_JABATAN')==='HEAD IT' || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT' || $this->session->userdata('USER_JABATAN')==='DIREKSI') {
+                $this->template->load('template','daily_report/table', $data);
+            } else {
+                $data['daily_activities'] = $this->getDailyActivity();
+                $this->template->load('template','daily_report/daily', $data);
+            }
         } else {
             $this->load->view('login/form_login');
+            
         }
     }
-    
-    public function getAllDaily()
+
+    public function btn_create()
     {
+        $id = $this->input->post('idx');
         $array_crud = array(
-            'table' => TB_DAILY_ACTIVITY,
-            'order_by' => "last_update DESC"
+            'select' => '*',
+            'table' => TB_DETAIL,
         );
-        return $this->rfm_model->get_crud($array_crud);
+
+        $data['rfmList'] = $this->rfm_model->get_crud($array_crud);
+
+        $data['ITList'] = $this->db->where('divisi_id', 'IT')->get(TB_USER)->result();
+
+        $array_crud = array(
+            'select' => '*',
+            'table' => TB_DETAIL,
+        );
+
+        $data['statusList'] = $this->rfm_model->get_crud($array_crud);
+        
+        $array_crud = array(
+            'select' => '*',
+            'table' => TB_PROJECT
+        );
+
+        $Q = "SELECT DISTINCT ticket_support.task.project_id AS id, ticket_support.project.project_name AS project_name
+        FROM ticket_support.task
+        INNER JOIN ticket_support.project
+        ON ticket_support.task.project_id=ticket_support.project.id
+        WHERE ticket_support.task.assign_to=".$this->session->userdata('USER_ID').";
+        ";
+
+        $data['projectList'] = $this->rfm_model->get_crud($array_crud);
+        $data['filteredProjectList'] = $this->db->query($Q)->result();
+
+        $array_crud = array(
+            'select' => '*',
+            'table' => TB_TASK,
+            'where' => array(
+                'assign_to' => $this->session->userdata('USER_ID'),
+            )
+        );
+
+        $data['taskList'] = $this->rfm_model->get_crud($array_crud);
+
+        $array_crud = array(
+            'select' => '*',
+            'table' => TB_TASK,
+        );
+
+        $data['DataTaskList'] = $this->rfm_model->get_crud($array_crud);
+
+        $this->load->view('daily_report/form_create', $data);
     }
     
 	public function getDailyActivity()
@@ -301,4 +337,6 @@ class Dailyreport_controller extends ci_controller{
         $data = array('isValid' => $isValid, 'isPesan' => $isPesan);
         echo json_encode($data);
     }
+
+
 }

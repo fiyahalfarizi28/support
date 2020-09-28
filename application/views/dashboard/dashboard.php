@@ -425,12 +425,37 @@
     </div>
 </div>  
 
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE RFM BERDASARKAN KANTOR</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart5"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>PERSENTASE RFM BERDASARKAN AREA</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart6"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     <?php
+
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
         $userList = $this->db->get(TB_USER)->result();
-    
+
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
         if(!empty($post_monthAwal && $post_monthAkhir)) {
@@ -439,9 +464,7 @@
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
         $this->db->join(TB_PROJECT." as Project", "Project.id = rfm_new_detail.project_id");
-
         $rfmList = $this->db->get(TB_DETAIL)->result();
-        
         
         $this->db->select("COUNT(*) AS jmlh_rfm");
         $this->db->where('request_status !=', STT_ON_QUEUE);
@@ -616,7 +639,6 @@
 
 <div class="modal fade" id="modal-Chart1" role="dialog">
     <div class="modal-dialog modal-lg" style="margin-left: 180px">
-        <!-- Modal content-->
         <div class="modal-content" style="width:1000px;">
             <div class="modal-header">
                 <h3 class="modal-title">Detail RFM</h3>
@@ -647,7 +669,6 @@
 </div>
 
 <script>
-
     <?php 
         $this->db->select("COUNT(*) AS jmlh_rfm");
         $this->db->where('request_status !=', STT_ON_QUEUE);
@@ -827,7 +848,6 @@
 
 <div class="modal fade" id="modal-Chart2" role="dialog">
     <div class="modal-dialog modal-lg" style="margin-left: 180px">
-        <!-- Modal content-->
         <div class="modal-content" style="width:1000px;">
             <div class="modal-header">
                 <h3 class="modal-title">Detail Problem Type</h3>
@@ -858,7 +878,6 @@
 </div>
 
 <script>
-
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
@@ -1035,7 +1054,6 @@
 
 <div class="modal fade" id="modal-Chart3" role="dialog">
     <div class="modal-dialog modal-lg" style="margin-left: 225px">
-        <!-- Modal content-->
         <div class="modal-content" style="width: 900px;">
             <div class="modal-header">
                 <h3 class="modal-title">Detail RFP</h3>
@@ -1239,7 +1257,6 @@
 
 <div class="modal fade" id="modal-Chart4" role="dialog">
     <div class="modal-dialog modal-lg" style="margin-left: 180px">
-        <!-- Modal content-->
         <div class="modal-content" style="width:1000px;">
             <div class="modal-header">
                 <h3 class="modal-title">Detail Problem Type</h3>
@@ -1267,4 +1284,422 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    <?php
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+        $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+
+        $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
+        $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+        
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $this->db->group_by('rfm_new_detail.kode_kantor');
+        $this->db->order_by('rfm_new_detail.kode_kantor', 'asc');
+
+        $rfmGrouped = $this->db->get(TB_DETAIL)->result();
+    ?>
+
+    var ctx_ = document.getElementById("myChart5").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php 
+                foreach($rfmGrouped as $r):
+                    $data = array();
+                    $data = $r->nama_kantor;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($rfmGrouped as $r):
+                        $data = array();
+                        $data = $r->total_by_kk;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#table_kode_kantor').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfmList.forEach( (rfm) => {
+                    if (rfm.nama_kantor == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+                        $('#table_kode_kantor').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart5').modal('show');
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'RFM Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+
+</script>
+
+<div class="modal fade" id="modal-Chart5" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Kantor</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="table_kode_kantor">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    <?php   
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+
+        $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
+        $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+        
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $this->db->group_by('rfm_new_detail.kode_kantor');
+        $this->db->order_by('rfm_new_detail.kode_kantor', 'asc');
+
+        $rfmGrouped = $this->db->get(TB_DETAIL)->result();
+    ?>
+
+    var ctx_ = document.getElementById("myChart6").getContext("2d");
+    var data_ = {
+        labels: [
+            <?php 
+                foreach($rfmGrouped as $r):
+                    $data = array();
+                    $data = $r->kode_area;
+                    echo json_encode($data).",";
+                endforeach;
+            ?>
+        ],
+        datasets:
+        [{
+            data: [
+                <?php
+                    foreach($rfmGrouped as $r):
+                        $data = array();
+                        $data = $r->total_by_area;
+                        echo json_encode($data).",";
+                    endforeach;
+                ?>
+            ],
+            backgroundColor: [
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                ],
+                hoverBackgroundColor: 'rgb(187,185,190)',
+                hoverBorderColor: 'rgb(0, 0, 0, 1)',
+        }]
+    };
+    var myBarChartApplication = new Chart(ctx_, {
+        type: 'pie',
+        data: data_,
+        options: {
+            legend: {
+                display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#table_kode_area').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfmList.forEach( (rfm) => {
+                    if (rfm.kode_area == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+                        $('#table_kode_area').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart6').modal('show');
+            },
+            responsive: true,
+            title:{
+                display:true,
+                text:'RFM Chart'
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                    var dataLabel = data.labels[tooltipItem.index];
+                    var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} | ` + (data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] / <?php echo count($rfmList)?> * 100).toLocaleString()+'%';
+                    if (Chart.helpers.isArray(dataLabel)) {
+                        dataLabel = dataLabel.slice();
+                        dataLabel[0] += value;
+                    } else {
+                        dataLabel += value;
+                    }
+                    return dataLabel;
+                    }
+                }
+            }
+        }
+    });
+
+</script>
+
+<div class="modal fade" id="modal-Chart6" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Area</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="table_kode_area">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 

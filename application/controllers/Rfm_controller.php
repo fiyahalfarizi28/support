@@ -2311,9 +2311,9 @@ class Rfm_controller extends CI_Controller {
         $endDate = date('Y-m-d', strtotime($second_date));
 
         if ($request_status != "SEMUANYA") {
-            $customStatus = "(RFM.request_date BETWEEN '$startDate' AND '$endDate') AND (RFM.request_status = '$request_status')";
+            $customStatus = "(RFM.request_date >= '$startDate' AND RFM.request_date <= '$endDate') AND (RFM.request_status = '$request_status')";
         } else {
-            $customStatus = "RFM.request_date BETWEEN '$startDate' AND '$endDate'";
+            $customStatus = "RFM.request_date >= '$startDate' AND RFM.request_date <= '$endDate'";
         }
 
         if(!$SESSION_USER_ID)

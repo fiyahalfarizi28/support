@@ -60,7 +60,7 @@ class Rfp_model extends ci_model{
         ";
         $this->db->select($qry);
         $this->db->from('view_rfp_new_detail');
-
+        
         if(empty($_POST['search']['value'])) {
             $this->db->where('request_status !=', STT_DONE);
             $this->db->where('request_status !=', STT_REJECT);

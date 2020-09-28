@@ -104,6 +104,8 @@ define('TB_USER','view_user');
 define('TB_PARAMETER','parameter');
 define('TB_DETAIL','rfm_new_detail');
 define('TB_RFP','rfp_new_detail');
+define('TB_VIEW_RFM', 'view_rfm_new_detail');
+define('TB_VIEW_RFP', 'view_rfp_new_detail');
 define('TB_ATTACHMENT_RFM','rfm_new_attachment');
 define('TB_ATTACHMENT_RFP','rfp_new_attachment');
 define('TB_ATTACHMENT_PROJECT','rfp_project_attachment');

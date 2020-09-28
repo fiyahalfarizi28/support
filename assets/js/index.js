@@ -137,6 +137,19 @@ $(document).ready(function(){
     });
     //===================================
 
+    // $('#modal-create-daily').on('show.bs.modal', function (e) {
+    //     var data = $(e.relatedTarget).data('id');
+    //     $.ajax({
+    //         type : 'post',
+    //         url : 'dailyreport_controller/btn_create',
+    //         data :  'idx='+ data,
+    //         cache: false,
+    //         success : function(res) {
+    //             $('#view-create-task').html(res);
+    //         }
+    //     });
+    // })
+
     $('#modal-create-rfm').on('show.bs.modal', function (e) {
         var data = $(e.relatedTarget).data('id');
         $.ajax({
@@ -335,9 +348,23 @@ $('#modal-task-rfp').on('show.bs.modal', function (e) {
         type : 'post',
         url : 'project_controller/btn_create',
         data :  'idx='+ data,
+        
         cache: false,
         success : function(res) {
             $('#view-modal-task').html(res);
+        }
+    });
+})
+
+$('#modal-task-activity').on('show.bs.modal', function (e) {
+    var data = $(e.relatedTarget).data('id');
+    $.ajax({
+        type : 'post',
+        url : 'project_controller/btn_activity',
+        data :  'idx='+ data,
+        cache: false,
+        success : function(res) {
+            $('#view-task-activity').html(res);
         }
     });
 })
@@ -508,7 +535,6 @@ function format_tb_detail_rfp(row)
     '</table>';
 }
 
-
 //-----Adds an element to the document-------
 function addElement(parentId, elementTag, elementId, html) {
     var p = document.getElementById(parentId);
@@ -532,6 +558,35 @@ function addFile() {
     addElement('files', 'p', 'file-' + fileId, html);
 }
 //-----Adds an element to the document-------
+
+// function post_request_dr() {
+//     var form = $('#frm-create-task')[0];
+//     var data = new FormData(form);
+//     $.ajax({
+//         type: "post",
+//         url: "dailyreport_controller/post_request_dr",
+//         data: data,
+//         processData: false,
+//         contentType: false,
+//         cache: false,
+//         dataType: "json",
+//         beforeSend: function() {
+//             $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+//         },
+//         success: function (res) {
+//             var isValid = res.isValid,
+//                 isPesan = res.isPesan;
+//             if(isValid == 0) {
+//                 $('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request_dr()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
+//                 $('.pesan').html(isPesan);
+//             } else {
+//                 $('.pesan').html(isPesan);
+//                 $('#modal-create-daily').modal('hide');
+//                 reload_table();
+//             }
+//         }
+//     });
+// }
 
 //-----create new rfm post request-------
 function post_request() {
@@ -891,6 +946,38 @@ function post_assign_task() {
             }else {
                 $('.pesan').html(isPesan);
                 $('#modal-task-rfp').modal('hide');
+                setTimeout (()=> window.location.reload(), 2000);
+            }
+        }
+    });
+}
+
+function add_activity() {
+    var form = $('#frm-activity')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "post",
+        url: "project_controller/add_activity",
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        dataType: "json",
+        beforeSend: function() {
+            $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+        },
+        success: function (res) {
+            var isValid = res.isValid,
+                isPesan = res.isPesan;
+
+            console.log(isValid);
+            console.log(isPesan);
+            if(isValid == 0) {
+                $('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_activity()" class="btn btn-success"><i class="fa fa-check"></i> Kirim</a>');
+                $('.pesan').html(isPesan);
+            }else {
+                $('.pesan').html(isPesan);
+                $('#modal-task-activity').modal('hide');
                 setTimeout (()=> window.location.reload(), 2000);
             }
         }

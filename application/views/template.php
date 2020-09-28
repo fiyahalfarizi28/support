@@ -82,7 +82,7 @@
 
                             if($this->session->userdata('USER_JABATAN') === 'HEAD IT' || $this->session->userdata('USER_JABATAN') === 'SUPERVISOR IT' || $this->session->userdata('USER_JABATAN') === 'DIREKSI') {
                                 echo "<li class='list-group-item'><a href='".base_url('project')."'><i class='far fa-calendar-plus'></i> PROJECT</a></li>";
-                                echo "<li class='list-group-item'><a href='".base_url('report')."'><i class='far fa-file-alt'></i> REPORT</a></li>";
+                                echo "<li class='list-group-item'><a href='".base_url('report_rfm')."'><i class='far fa-file-alt'></i> REPORT</a></li>";
                             }
                             
                             if(in_array($this->session->userdata('USER_ID'), $menu)) {

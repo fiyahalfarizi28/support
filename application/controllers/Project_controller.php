@@ -33,8 +33,12 @@ class Project_controller extends CI_Controller {
             );
 
             $data['DataTaskList'] = $this->rfm_model->get_crud($array_crud);
-
-            $this->template->load('template','project/table',$data);
+            
+            if ($this->session->userdata('USER_JABATAN')==='HEAD IT' || $this->session->userdata('USER_JABATAN')==='SUPERVISOR IT' || $this->session->userdata('USER_JABATAN')==='DIREKSI') {
+                $this->template->load('template','project/table', $data);
+            } else {
+                $this->template->load('template','project/daily', $data);
+            }
         } else {
             $this->load->view('login/form_login');
         }
@@ -50,7 +54,6 @@ class Project_controller extends CI_Controller {
         
         $array_crud = array(
             'table' => TB_PROJECT,
-            'where' => array('id !=' => KODE_LAINNYA),
         );
         $data['projectList'] = $this->rfp_model->get_crud($array_crud);
 
@@ -60,6 +63,31 @@ class Project_controller extends CI_Controller {
         $data['userList'] = $this->rfp_model->get_crud($array_crud);
 
         $this->load->view('project/form_create', $data);
+    }
+
+    public function btn_activity()
+    {
+        $id = $this->input->post('idx');
+        $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        
+        $array_crud = array(
+            'table' => TB_TASK,
+            'where' => array(
+                'id' => $id
+            )
+        );
+        $row = $this->rfp_model->get_crud($array_crud)->row();
+        $data['rows'] = $row;
+
+        if($SESSION_USER_ID === $row->assign_to)
+        {
+            $data['disabled'] = "";
+            $data['readonly'] = "readonly";
+            $data['onclick'] = "add_activity()";
+            $data['btnText'] = "Kirim";
+        }
+
+        $this->load->view('project/add_activity', $data);
     }
 
     public function getTask()
