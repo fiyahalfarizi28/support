@@ -144,25 +144,7 @@
 
     activities2.addEventListener("change", function() {
         var data = $('#project_id').val();
-        if (data === '42' || data === '49') {
-            activities3.addEventListener("change", function() {
-
-            var optionSelected = $("option:selected", this).text();
-
-                if  (optionSelected == "SUPPORT DATA HUMAN ERROR") {
-                    $("#collapseRisk").collapse('show');
-                    $('#risk_type').prop('disabled', false);
-                } else {    
-                    $("#collapseRisk").collapse('hide');
-                    $('#risk_type').prop('disabled', 'disabled');
-                }
-
-            });
-        } else {
-            $("#collapseRisk").collapse('hide');
-            $('#risk_type').prop('disabled', 'disabled');
-        }
-        
+    
         $("#collapseRisk").collapse('hide');
         $('#risk_type').prop('disabled', 'disabled');
         var arrayProblem2 = <?php echo json_encode($problem_type->result()) ?>; 
@@ -194,5 +176,22 @@
             });
         }
     });
+        
+    activities3.addEventListener("change", function() {
+        var optionSelected = $("option:selected", this).text();
+        var selectedProject = $("#project_id").val();
+        var flagMicroBPROrCentro = (selectedProject == '6' || selectedProject == '13');
+
+        if (optionSelected == "SUPPORT DATA HUMAN ERROR" && flagMicroBPROrCentro) {
+            $("#collapseRisk").collapse('show');
+            $('#risk_type').prop('disabled', false);
+        } else {    
+            $("#collapseRisk").collapse('hide');
+            $('#risk_type').prop('disabled', 'disabled');
+        }
+
+    });
+
+
 
 </script>   

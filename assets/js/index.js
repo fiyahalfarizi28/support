@@ -299,6 +299,19 @@ $(document).ready(function(){
         });
     })
 
+    $('#modal-assign-rfp').on('show.bs.modal', function (e) {
+        var data = $(e.relatedTarget).data('id');
+        $.ajax({
+            type : 'post',
+            url : 'rfp_controller/btn_assign',
+            data :  'idx='+ data,
+            cache: false,
+            success : function(res) {
+                $('#view-assign-rfp').html(res);
+            }
+        });
+    })
+
 })
 
 //PROJECT =============================
@@ -776,6 +789,38 @@ function set_rating_request() {
     });
 }
 
+function post_assign_rfp() {
+    var form = $('#frm-create')[0];
+    var data = new FormData(form);
+    $.ajax({
+        type: "post",
+        url: "rfp_controller/set_assign_task",
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        dataType: "json",
+        beforeSend: function() {
+            $('.btn_post_request').html('<a href="javascript:void(0)" class="btn btn-secondary"><i class="fas fa-spinner fa-pulse"></i> Proses</a>');
+        },
+        success: function (res) {
+            var isValid = res.isValid,
+                isPesan = res.isPesan;
+
+            console.log(isValid);
+            console.log(isPesan);
+            if(isValid == 0) {
+                $('.btn_post_request').html('<a href="javascript:void(0)" onclick="post_request()" class="btn btn-success"><i class="fa fa-check"></i> Assign</a>');
+                $('.pesan').html(isPesan);
+            }else {
+                $('.pesan').html(isPesan);
+                $('#modal-assign-rfp').modal('hide');
+                setTimeout (()=> window.location.reload(), 2000);
+            }
+        }
+    });
+}
+
 //-----create new task post request-------
 function post_assign_task() {
     var form = $('#frm-create')[0];
@@ -803,7 +848,7 @@ function post_assign_task() {
             }else {
                 $('.pesan').html(isPesan);
                 $('#modal-task-rfp').modal('hide');
-                // reload_table();
+                setTimeout (()=> window.location.reload(), 2000);
             }
         }
     });
@@ -812,12 +857,18 @@ function post_assign_task() {
 //-------------------------------------
 
 function export_to_excel() {
-    var prm_month = $('select[name="month"]').val();
-    var prm_year = $('select[name="year"]').val();
-    var today = new Date();
-    var mm = String(today.getMonth() + 1).padStart(2, '0')
-    if(prm_month==='') prm_month = mm;
+    var tanggal_awal = $("#tanggal_awal").val();
+    var tanggal_akhir = $("#tanggal_akhir").val();
+    var request_status = $('select[name="request_status"]').val();
 
-    window.open('rfm_controller/export_to_excel/'+prm_month+'/'+prm_year);
+    if (tanggal_awal == "" || tanggal_akhir == "" || request_status == null)
+    {
+        alert('Harap isi Tanggal Awal, Tanggal Akhir dan Request Status!');
+    } else if (tanggal_akhir < tanggal_awal)
+    {
+        alert('Input Tanggal Akhir Salah!');
+    } else {
+    window.open('rfm_controller/export_to_excel/'+tanggal_awal+'/'+tanggal_akhir+'/'+request_status);
+    }
 }
 //-------------------------------------

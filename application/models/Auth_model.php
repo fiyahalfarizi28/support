@@ -1,7 +1,7 @@
 <?php
 class Auth_model extends ci_model {
 
-    var $table = TB_USER;
+    var $table = 'dpm_online.'.TB_USER;
     var $column_order = array(null, 'nama', 'user', 'divisi_id', 'jabatan');
     var $column_search = array('nama', 'user', 'divisi_id', 'jabatan');
     var $order = array('nama' => 'asc');

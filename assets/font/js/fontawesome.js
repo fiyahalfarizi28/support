@@ -138,7 +138,7 @@
   var _WINDOW = {};
   var _DOCUMENT = {};
   var _MUTATION_OBSERVER = null;
-  var _PERFORMANCE = {
+  var _PROFILE = {
     mark: noop,
     measure: noop
   };
@@ -147,7 +147,7 @@
     if (typeof window !== 'undefined') _WINDOW = window;
     if (typeof document !== 'undefined') _DOCUMENT = document;
     if (typeof MutationObserver !== 'undefined') _MUTATION_OBSERVER = MutationObserver;
-    if (typeof performance !== 'undefined') _PERFORMANCE = performance;
+    if (typeof performance !== 'undefined') _PROFILE = performance;
   } catch (e) {}
 
   var _ref = _WINDOW.navigator || {},
@@ -157,7 +157,7 @@
   var WINDOW = _WINDOW;
   var DOCUMENT = _DOCUMENT;
   var MUTATION_OBSERVER = _MUTATION_OBSERVER;
-  var PERFORMANCE = _PERFORMANCE;
+  var PROFILE = _PROFILE;
   var IS_BROWSER = !!WINDOW.document;
   var IS_DOM = !!DOCUMENT.documentElement && !!DOCUMENT.head && typeof DOCUMENT.addEventListener === 'function' && typeof DOCUMENT.createElement === 'function';
   var IS_IE = ~userAgent.indexOf('MSIE') || ~userAgent.indexOf('Trident/');
@@ -1064,7 +1064,7 @@
 
   var noop$1 = function noop() {};
 
-  var p = config.measurePerformance && PERFORMANCE && PERFORMANCE.mark && PERFORMANCE.measure ? PERFORMANCE : {
+  var p = config.measurePerformance && PROFILE && PROFILE.mark && PROFILE.measure ? PROFILE : {
     mark: noop$1,
     measure: noop$1
   };

@@ -108,7 +108,7 @@ class Um_controller extends ci_controller{
     {
         $this->load->model('rfm_model');
         $arr = array(
-            'table' => TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'divisi_id' => 'IT',
                 'flg_block' => 'N',

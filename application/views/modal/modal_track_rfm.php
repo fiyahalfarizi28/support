@@ -103,7 +103,7 @@
 
     if($r->assign_date != NULL) {
       $class_assign ="done";
-      $nama_pic = $this->db->where('user_id', $r->assign_to)->get('dpm_online.'.TB_USER)->row()->nama;
+      $nama_pic = $this->db->where('user_id', $r->assign_to)->get(TB_USER)->row()->nama;
       $title_assign = "RFM dengan No. $r->no_rfm telah di-assign ke $nama_pic";
       if ($r->assign_date != NULL && $r->result_status=="PENDING")
       {
@@ -111,14 +111,14 @@
         $title_progress= "Menunggu dikerjakan oleh $nama_pic";
       } else if ($r->done_date == NULL && $r->result_status == "ON PROGRESS"){
         $class_progress ="active";
-        $nama_pic = $this->db->where('user_id', $r->assign_to)->get('dpm_online.'.TB_USER)->row()->nama;
+        $nama_pic = $this->db->where('user_id', $r->assign_to)->get(TB_USER)->row()->nama;
         $title_progress= "RFM dengan No. $r->no_rfm sedang dikerjakan oleh $nama_pic";
       } else if ($r->done_date != NULL && $r->result_status == "DONE")
       {
         $class_progress = "done";
         $class_confirmed = "active";
         $title_progress= "RFM dengan No. $r->no_rfm telah selesai dikerjakan";
-        $nama_requestor = $this->db->where('user_id', $r->request_by)->get('dpm_online.'.TB_USER)->row()->nama;
+        $nama_requestor = $this->db->where('user_id', $r->request_by)->get(TB_USER)->row()->nama;
         $title_confirmed= "RFM dengan No. $r->no_rfm telah selesai dikerjakan, menunggu konfirmasi dari $nama_requestor";
       }
     } else {

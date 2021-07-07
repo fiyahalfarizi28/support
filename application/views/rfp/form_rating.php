@@ -108,7 +108,7 @@
         
         <?php if(!empty($rows->done_notes)): ?>
         <div class="form-group">
-            <label>Notes : <?php echo $notes_name_done->nama." | ".$rows->done_date ?></label>
+            <label>Notes : <?php echo $notes_name_receive->nama." | ".$rows->done_date ?></label>
             <textarea placeholder="Notes..." rows="2" class="form-control" style="resize: none" readonly><?php echo $rows->done_notes ?></textarea>
         </div>
         <?php endif ?>

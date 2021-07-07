@@ -190,6 +190,30 @@
     </div>
 </div>
 
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>GRAFIK RFM KUMULATIF</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart9"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <b>GRAFIK RFP KUMULATIF</b>
+            </div>
+            <div class="card-body">
+                <canvas id="myChart10"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
     $tb_detail = TB_DETAIL;
     $Q = "SELECT DISTINCT MONTH(`request_date`) AS bulan FROM `rfm_new_detail` WHERE YEAR(`request_date`) BETWEEN '2019' AND YEAR(CURDATE()) ORDER BY MONTH(`request_date`) ASC";
@@ -376,30 +400,6 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <b>GRAFIK RFM KUMULATIF</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart9"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <b>GRAFIK RFP KUMULATIF</b>
-            </div>
-            <div class="card-body">
-                <canvas id="myChart10"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-3">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
                 <b>PERSENTASE RFM BERDASARKAN APLIKASI</b>
             </div>
             <div class="card-body">
@@ -496,6 +496,7 @@
     <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+        $userList = $this->db->get('dpm_online.'.TB_USER)->result();
     
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -504,8 +505,10 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
+        $this->db->join(TB_PROJECT." as Project", "Project.id = rfm_new_detail.project_id");
 
         $rfmList = $this->db->get(TB_DETAIL)->result();
+        
         
         $this->db->select("COUNT(*) AS jmlh_rfm");
         $this->db->where('request_status !=', STT_ON_QUEUE);
@@ -543,40 +546,43 @@
                         $data = $counter;
                         echo json_encode($data).",";
                     endforeach;
+
                 ?>
+
+                
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -589,6 +595,66 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tableRfm').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                
+                rfmList.forEach( (rfm) => {
+                    if (rfm.project_name == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#tableRfm').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart1').modal('show');
+
+            },            
             responsive: true,
             title:{
                 display:true,
@@ -613,9 +679,43 @@
         }
     });
 
-//==================================================
+</script>
 
-<?php 
+<div class="modal fade" id="modal-Chart1" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tableRfm">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    <?php 
     $this->db->select("COUNT(*) AS jmlh_rfm");
     $this->db->where('request_status !=', STT_ON_QUEUE);
     $this->db->where('request_status !=', STT_REJECT);
@@ -624,8 +724,8 @@
         $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
         $this->db->where("YEAR(request_date)", $val_tahun);
     }
+    ?>
     
-?>
     var ctx_ = document.getElementById("myChart2").getContext("2d");
     var data_ = {
         labels: [
@@ -655,37 +755,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -698,6 +798,72 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tablePTrfm').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var problem_type_id;
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+                var problemTypeList = <?php echo json_encode($problemTypeList); ?>;
+
+                problemTypeList.forEach( (problem) => {
+                    if (label == problem.problem_type) {
+                        problem_type_id = problem.id;
+                    }
+                })
+                
+                rfmList.forEach( (rfm) => {
+                    if (rfm.problem_type == problem_type_id) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var problem_type;
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+                        $('#tablePTrfm').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart2').modal('show');
+
+            }, 
             responsive: true,
             title:{
                 display:true,
@@ -724,11 +890,46 @@
         }
     });
 
-//==================================================
+</script>
 
-<?php
+<div class="modal fade" id="modal-Chart2" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail Problem Type</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablePTrfm">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    <?php
         $applicationList = $this->db->get(TB_PROJECT)->result();
         $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+        $userList = $this->db->get('dpm_online.'.TB_USER)->result();
 
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
@@ -737,6 +938,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
+        $this->db->join(TB_PROJECT." as Project", "Project.id = rfp_new_detail.project_id");
         
         $rfpList = $this->db->get(TB_RFP)->result();
 
@@ -748,7 +950,7 @@
             $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
             $this->db->where("YEAR(request_date)", $val_tahun);
         }
-?>
+    ?>
 
     var ctx_ = document.getElementById("myChart3").getContext("2d");
     var data_ = {
@@ -779,37 +981,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -821,6 +1023,57 @@
         options: {
             legend: {
                 display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#tableRfp').empty();
+                var label = this.data.labels[item[0]["_index"]];
+                var rfpList = <?php echo json_encode($rfpList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfpList.forEach( (rfp) => {
+                    if (rfp.project_name == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfp.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfp.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+                        })
+
+
+                        $('#tableRfp').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfp.no_rfp}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfp.request_status}
+                                </td>
+                                <td>
+                                    ${rfp.result_status}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart3').modal('show');
+
             },
             responsive: true,
             title:{
@@ -844,18 +1097,52 @@
             }
         }
     });
-//==================================================
 
-<?php 
-    $this->db->select("COUNT(*) AS jmlh_rfp");
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
-    if(!empty($post_monthAwal && $post_monthAkhir)) {
-        $this->db->where("MONTH(request_date) >=", $post_monthAwal);
-        $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
-        $this->db->where("YEAR(request_date)", $val_tahun);
-    }
-?>
+</script>
+
+<div class="modal fade" id="modal-Chart3" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 225px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width: 900px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFP</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tableRfp">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    <?php 
+        $this->db->select("COUNT(*) AS jmlh_rfp");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+    ?>
 
     var ctx_ = document.getElementById("myChart4").getContext("2d");
     var data_ = {
@@ -886,37 +1173,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -929,6 +1216,66 @@
             legend: {
                 display: false
             },
+            'onClick' : function (evt, item) {
+                $('#tablePTrfp').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var problem_type_id;
+                var rfpList = <?php echo json_encode($rfpList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+                var problemTypeList = <?php echo json_encode($problemTypeList); ?>;
+
+                problemTypeList.forEach( (problem) => {
+                    if (label == problem.problem_type) {
+                        problem_type_id = problem.id;
+                    }
+                })
+
+                rfpList.forEach( (rfp) => {
+                    if (rfp.problem_type == problem_type_id) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var date = new Date(rfp.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+                        var problem_type;
+
+                        userList.forEach( (user) => {
+                            if (rfp.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+                        })
+
+
+                        $('#tablePTrfp').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfp.no_rfp}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfp.request_status}
+                                </td>
+                                <td>
+                                    ${rfp.result_status}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart4').modal('show');
+
+            }, 
             responsive: true,
             title:{
                 display:true,
@@ -955,12 +1302,52 @@
         }
     });
 
-//==================================================
+</script>
 
-    <?php 
+<div class="modal fade" id="modal-Chart4" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail Problem Type</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablePTrfp">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    <?php
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+        $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_kk, view_app_kode_kantor.nama_kantor AS nama_kantor");
-        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
-
+        $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+        
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
 
@@ -999,37 +1386,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -1041,6 +1428,63 @@
         options: {
             legend: {
                 display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#table_kode_kantor').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfmList.forEach( (rfm) => {
+                    if (rfm.nama_kantor == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+                        $('#table_kode_kantor').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart5').modal('show');
             },
             responsive: true,
             title:{
@@ -1065,12 +1509,54 @@
         }
     });
 
-//==================================================
+</script>
 
-<?php 
+<div class="modal fade" id="modal-Chart5" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Kantor</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="table_kode_kantor">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    <?php   
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $rfmList = $this->db->join(TB_KODE_KANTOR, TB_KODE_KANTOR.".kode_kantor=".TB_DETAIL.".kode_kantor")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+
         $this->db->select("COUNT(rfm_new_detail.kode_kantor) AS total_by_area, view_app_kode_kantor.kode_area AS kode_area");
-        $this->db->join('view_app_kode_kantor', 'view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor');
-
+        $this->db->join(TB_KODE_KANTOR." as view_app_kode_kantor", "view_app_kode_kantor.kode_kantor = rfm_new_detail.kode_kantor");
+        
         $this->db->where('request_status !=', STT_ON_QUEUE);
         $this->db->where('request_status !=', STT_REJECT);
 
@@ -1109,37 +1595,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -1151,6 +1637,63 @@
         options: {
             legend: {
                 display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#table_kode_area').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfmList.forEach( (rfm) => {
+                    if (rfm.kode_area == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+                        $('#table_kode_area').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart6').modal('show');
             },
             responsive: true,
             title:{
@@ -1175,9 +1718,51 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart6" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Area</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="table_kode_area">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
     <?php 
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+
+        $rfmList = $this->db->join('dpm_online.'.TB_USER, 'dpm_online.'.TB_USER.".user_id=".TB_DETAIL.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_DETAIL)->result();
+
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
         $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfm_new_detail.request_by');
 
@@ -1220,37 +1805,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -1262,6 +1847,63 @@
         options: {
             legend: {
                 display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#tablerfm_divisi').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfmList = <?php echo json_encode($rfmList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfmList.forEach( (rfm) => {
+                    if (rfm.divisi_id == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfm.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfm.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfm.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+                        $('#tablerfm_divisi').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfm.no_rfm}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfm.request_status}
+                                </td>
+                                <td>
+                                    ${rfm.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart7').modal('show');
             },
             responsive: true,
             title:{
@@ -1286,9 +1928,51 @@
         }
     });
 
-//==================================================
+</script>
+
+<div class="modal fade" id="modal-Chart7" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFM Berdasarkan Divisi</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablerfm_divisi">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
 
     <?php 
+        if(!empty($post_monthAwal && $post_monthAkhir)) {
+            $this->db->where("MONTH(request_date) >=", $post_monthAwal);
+            $this->db->where("MONTH(request_date) <=", $post_monthAkhir);
+            $this->db->where("YEAR(request_date)", $val_tahun);
+        }
+        
+        $rfpList = $this->db->join('dpm_online.'.TB_USER, 'dpm_online.'.TB_USER.".user_id=".TB_RFP.".request_by")->where('request_status !=', STT_ON_QUEUE)->where('request_status !=', STT_REJECT)->get(TB_RFP)->result();
+
         $this->db->select("COUNT(dpm_online.user.divisi_id) AS total_by_div, dpm_online.user.divisi_id AS divisi");
         $this->db->join('dpm_online.user', 'dpm_online.user.user_id = ticket_support.rfp_new_detail.request_by');
 
@@ -1331,37 +2015,37 @@
                 ?>
             ],
             backgroundColor: [
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
-                "rgb(243,204,111)",
-                "rgb(210,220,226)",
-                "rgb(179,221,209)",
-                "rgb(207,235,248)",
-                "rgb(247,185,147)",
-                "rgb(239,228,172)",
-                "rgb(246,207,200)",
-                "rgb(232,150,148)",
-                "rgb(254,231,218)",
-                "rgb(255,203,134)",
-                "rgb(232,229,194)",
-                "rgb(244,226,226)",
-                "rgb(226,240,196)",
-                "rgb(255,231,155)",
-                "rgb(194,239,233)",
-                "rgb(233,213,190)",
-                "rgb(254,229,189)",
-                "rgb(233,210,225)",
-                "rgb(240,180,212)",
-                "rgb(200,230,200)",
-                "rgb(182,184,181)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
+                "rgb(247, 201, 89)",
+                "rgb(68, 124, 158)",
+                "rgb(78, 245, 197)",
+                "rgb(158, 143, 186)",
+                "rgb(250, 187, 135)",
+                "rgb(247, 227, 126)",
+                "rgb(247, 197, 188)",
+                "rgb(166, 88, 86)",
+                "rgb(247, 205, 181)",
+                "rgb(255, 203, 134)",
+                "rgb(201, 197, 143)",
+                "rgb(240, 185, 185)",
+                "rgb(192, 209, 157)",
+                "rgb(247, 217, 121)",
+                "rgb(147, 230, 218)",
+                "rgb(240, 203, 161)",
+                "rgb(247, 183, 166)",
+                "rgb(219, 162, 199)",
+                "rgb(141, 207, 136)",
+                "rgb(209, 118, 88)",
+                "rgb(163, 163, 163)",
                 ],
                 hoverBackgroundColor: 'rgb(187,185,190)',
                 hoverBorderColor: 'rgb(0, 0, 0, 1)',
@@ -1373,6 +2057,64 @@
         options: {
             legend: {
                 display: false
+            },
+            'onClick' : function (evt, item) {
+                $('#tablerfp_divisi').empty();
+                
+                var label = this.data.labels[item[0]["_index"]];
+                var rfpList = <?php echo json_encode($rfpList); ?>;
+                var userList = <?php echo json_encode($userList); ?>;
+
+                rfpList.forEach( (rfp) => {
+                    if (rfp.divisi_id == label) {
+                        var nama_requestor;
+                        var jabatan_requestor;
+                        var nama_pic = "-";
+                        var date = new Date(rfp.request_date);
+                        var formattedDate = `${String(date.getDate()).length == 1 ? "0"+date.getDate() : date.getDate()}-${String(date.getMonth()+1).length == 1 ? "0"+ (date.getMonth()+1) : date.getMonth()+1}-${date.getFullYear()}`;
+
+                        userList.forEach( (user) => {
+                            if (rfp.request_by == user.user_id) {
+                                nama_requestor = user.nama;
+                                jabatan_requestor = user.jabatan;
+                            }
+
+                            if (rfp.assign_to == user.user_id) {
+                                nama_pic = user.nama;
+                            }
+                        })
+
+
+                        $('#tablerfp_divisi').append(`
+                            <tr>
+                                <td>
+                                    ${nama_requestor}
+                                </td>
+                                <td>
+                                    ${jabatan_requestor}
+                                </td>
+                                <td>
+                                    ${rfp.no_rfp}
+                                </td>
+                                <td>
+                                    ${formattedDate}
+                                </td>
+                                <td>
+                                    ${rfp.request_status}
+                                </td>
+                                <td>
+                                    ${rfp.result_status}
+                                </td>
+                                <td>
+                                    ${nama_pic}
+                                </td>
+                            </tr>
+                        `);
+
+                    }
+                })
+
+                $('#modal-Chart8').modal('show');
             },
             responsive: true,
             title:{
@@ -1396,22 +2138,56 @@
             }
         }
     });
-//==================================================
+</script>
 
-<?php
-    $applicationList = $this->db->get(TB_PROJECT)->result();
-    $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+<div class="modal fade" id="modal-Chart8" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-left: 180px">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detail RFP Berdasarkan Divisi</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
 
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
-    $rfmList = $this->db->get(TB_DETAIL)->result();
-    
-    $this->db->select("COUNT(*) AS jmlh_rfm");
-    $this->db->where('request_status !=', STT_ON_QUEUE);
-    $this->db->where('request_status !=', STT_REJECT);
+            <div class="modal-body">
+                <table style="margin-left: auto; margin-right: auto">
+                    <thead class ="table">
+                        <tr>
+                            <th>REQUEST BY</th>
+                            <th>JABATAN</th>
+                            <th>NO.RFM</th>
+                            <th>DATE</th>
+                            <th>REQUEST STATUS</th>
+                            <th>RESULT STATUS</th>
+                            <th>PIC</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody class ="table" id="tablerfp_divisi">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-    $jmlh_rfm = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
-?>
+<script>
+
+    <?php
+        $applicationList = $this->db->get(TB_PROJECT)->result();
+        $problemTypeList = $this->db->get(TB_PROBLEM_TYPE)->result();
+
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+        $rfmList = $this->db->get(TB_DETAIL)->result();
+        
+        $this->db->select("COUNT(*) AS jmlh_rfm");
+        $this->db->where('request_status !=', STT_ON_QUEUE);
+        $this->db->where('request_status !=', STT_REJECT);
+
+        $jmlh_rfm = $this->db->get(TB_DETAIL)->row()->jmlh_rfm;
+    ?>
 
     var ctx_ = document.getElementById("myChart9").getContext("2d");
     var data_ = {
@@ -1432,8 +2208,10 @@
         ],
         datasets:
         [{
+            label: 'Kumulatif',
             fill: false,
-            borderColor: "#b3ddd1",
+            borderColor: "#9bc1eb",
+            backgroundColor: "#9bc1eb",
             data: [
                 <?php
                     $data = array();
@@ -1459,8 +2237,10 @@
             ],
         },
         {
+            label: 'RFM',
             fill: false,
             borderColor: "#e89694",
+            backgroundColor: "#e89694",
             data: [
                 <?php
                     $data = array();
@@ -1489,7 +2269,9 @@
         data: data_,
         options: {
             legend: {
-                display: false
+                labels : {
+                    useLineStyle: true,
+                },
             },
             responsive: true,
             title:{
@@ -1507,7 +2289,7 @@
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
-                    var dataLabel = "RFM ";
+                    var dataLabel = "Total RFM ";
                     var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} `;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();
@@ -1557,8 +2339,10 @@
         ],
         datasets:
         [{
+            label: 'Kumulatif',
             fill: false,
-            borderColor: "#b3ddd1",
+            borderColor: "#9bc1eb",
+            backgroundColor: "#9bc1eb",
             data: [
                 <?php
                     $data = array();
@@ -1584,8 +2368,10 @@
             ],
         },
         {
+            label: 'RFP',
             fill: false,
             borderColor: "#e89694",
+            backgroundColor: "#e89694",
             data: [
                 <?php
                     $data = array();
@@ -1614,7 +2400,9 @@
         data: data_,
         options: {
             legend: {
-                display: false
+                labels : {
+                    useLineStyle: true,
+                },
             },
             responsive: true,
             title:{
@@ -1632,7 +2420,7 @@
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
-                    var dataLabel = "RFP ";
+                    var dataLabel = "Total RFP ";
                     var value = `: ${data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]} `;
                     if (Chart.helpers.isArray(dataLabel)) {
                         dataLabel = dataLabel.slice();

@@ -55,3 +55,9 @@
         <div class="modal-content" id="view-rating-rfp"></div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-assign-rfp">
+    <div class="modal-dialog modal-lg" style="margin-left: 200px">
+        <div class="modal-content" style="width:980px;"id="view-assign-rfp"></div>
+    </div>
+</div>

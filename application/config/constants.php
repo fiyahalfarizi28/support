@@ -101,7 +101,7 @@ define('PASS_ONLINE','test123!');
 // define('PASS_ONLINE','qJ7ysIkg8ce!');
 
 define('TB_USER','user');
-define('TB_PARAMETER','parameter');
+define('TB_PARAMETER','dpm_online.parameter');
 define('TB_DETAIL','rfm_new_detail');
 define('TB_RFP','rfp_new_detail');
 define('TB_ATTACHMENT_RFM','rfm_new_attachment');

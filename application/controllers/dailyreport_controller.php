@@ -70,6 +70,14 @@ class Dailyreport_controller extends ci_controller{
              } else {
                 $data['taskList'] = $this->db->query($QTask);
              }
+
+            $array_crud = array(
+                'select' => '*',
+                'table' => TB_TASK,
+            );
+
+            $data['DataTaskList'] = $this->daily_report_model->get_crud($array_crud);
+
 			
             $this->template->load('template','daily_report/table', $data);
         } else {
@@ -114,6 +122,7 @@ class Dailyreport_controller extends ci_controller{
         $task_id = null;
         $rfm_id = null;
         $rfp_id = null;
+        $done_date = null;
         $done_notes = null;
         $comment = null;
         $status = $this->input->post('status');
@@ -172,7 +181,19 @@ class Dailyreport_controller extends ci_controller{
                 $update_project = $this->db->update(TB_PROJECT, $array_update_project);
 
                 $no_rfp = $this->db->where('id', $task_id)->get(TB_TASK)->row()->no_rfp;
-                $rfp_id = $this->db->where('no_rfp', $no_rfp)->get(TB_RFP)->row()->id;
+            }
+
+            if ($status == STT_DONE)
+            {
+                $array_update_task = array(
+                    'update_by'         => $this->session->userdata('USER_ID'),
+                    'done_date'         => $date_now,
+                    'last_update'       => $date_now,
+                );
+    
+                $this->db->where('id', $task_id);
+                $update_task = $this->db->update(TB_TASK, $array_update_task);
+
             }
 
             $array_insert = array(
@@ -210,7 +231,7 @@ class Dailyreport_controller extends ci_controller{
                 
                 if (!empty($task_id)) {
                     $array_update_task = array(
-                        'result_status' => $status,
+                        'status' => $status,
                         'update_by'    => $this->session->userdata('USER_ID'),
                         'last_update'     => $date_now,
                     );

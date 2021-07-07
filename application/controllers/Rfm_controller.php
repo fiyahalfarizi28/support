@@ -133,7 +133,7 @@ class Rfm_controller extends CI_Controller {
                 else
                 {
                     $array_crud = array(
-                        'table' => 'dpm_online.'.TB_USER,
+                        'table' => ('dpm_online.'.TB_USER),
                         'where' => array('user_id' => $field->request_upline_by),
                     );
                     $app_by = $this->rfm_model->get_crud($array_crud)->row()->nama;
@@ -153,7 +153,7 @@ class Rfm_controller extends CI_Controller {
 
             if($field->request_by === $SESSION_USER_ID AND $field->request_status === STT_ON_QUEUE) {
                 $SESSION_USER_JABATAN = $this->session->userdata('USER_JABATAN');
-                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT' || $SESSION_USER_JABATAN==='DIREKSI')
+                if($SESSION_USER_JABATAN==='HEAD IT'|| $SESSION_USER_JABATAN==='SUPERVISOR IT')
                 {
                     $btn_option = $btn_edit.$btn_option;
                 }
@@ -433,7 +433,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -443,7 +443,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -453,7 +453,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->request_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -561,7 +561,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->approve_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -571,7 +571,7 @@ class Rfm_controller extends CI_Controller {
         $explode_notes_name = explode(":", $row->receive_by);
         $notes_name = array_search($SESSION_USER_ID, $explode_notes_name);
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array(
                 'user_id' => $explode_notes_name[$notes_name]
             )
@@ -579,7 +579,7 @@ class Rfm_controller extends CI_Controller {
         $data['notes_name_receive'] = $this->rfm_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => TB_USER,
             'where' => array(
                 'user_id' => $row->assign_to
             )
@@ -1035,6 +1035,7 @@ class Rfm_controller extends CI_Controller {
         $request_type = $this->input->post('request_type');
         $table_destination = TB_DETAIL;
         $problem_type = $this->input->post('problem_type');
+        $project_id = $this->input->post('project_id');
 
         $project_id = $this->input->post('project_id');
         $subject = $this->input->post('subject');
@@ -1495,7 +1496,7 @@ class Rfm_controller extends CI_Controller {
         $get_detail = $this->rfm_model->get_crud($array_crud)->row();
         
         $array_crud = array(
-            'table' => 'dpm_online.'.TB_USER,
+            'table' => ('dpm_online.'.TB_USER),
             'where' => array('user_id' => $get_detail->request_by),
         );
         $get_user = $this->rfm_model->get_crud($array_crud)->row();
@@ -1763,28 +1764,6 @@ class Rfm_controller extends CI_Controller {
             'project_id'     => $project_id
         );
         $insert_data = $this->db->where('id', $id_rfm)->update(TB_DETAIL, $array_insert);
-
-
-        if ($problem_type == KODE_PERUBAHAN_APLIKASI || $problem_type == KODE_PENAMBAHAN_APLIKASI) {
-            $no_rfm = $this->db->where('id', $id_rfm)->get(TB_DETAIL)->row()->no_rfm;
-
-            $array_insert = array(
-                'task_name'         => $subject,
-                'description'       => $detail,
-                'create_date'       => $date_now,
-                'project_id'        => $project_id,
-                'create_by'         => $SESSION_USER_ID,
-                'no_rfm'            => $no_rfm,
-                'assign_to'         => $assign_pic,
-                'assign_date'       => $date_now,
-                'target_date'       => $target_date,
-                'status'            => STT_PENDING,
-                'update_by'         => $assign_pic,
-            );
-    
-            $insert_data_task = $this->db->insert(TB_TASK, $array_insert);
-
-        }
 
         if(!$insert_data) {
             $isValid = 0;
@@ -2076,41 +2055,66 @@ class Rfm_controller extends CI_Controller {
                 )
         );
         $done = $this->rfm_model->get_crud($array_crud)->row()->total;
-
+        
+        if ($SESSION_USER_JABATAN == 'IT STAFF') {
+            echo $assigned;
+        } else {
         echo $upline + $approve + $assign + $assigned + $done;
+        }
     }
 
-    public function export_to_excel($month='', $year='')
+    public function export_to_excel($first_date='', $second_date='', $request_status='')
     {
         $SESSION_USER_ID = $this->session->userdata('USER_ID');
+        $startDate = date('Y-m-d', strtotime($first_date));
+        $endDate = date('Y-m-d', strtotime($second_date));
+
+        if ($request_status != "SEMUANYA") {
+            $customStatus = "(RFM.request_date BETWEEN '$startDate' AND '$endDate') AND (RFM.request_status = '$request_status')";
+        } else {
+            $customStatus = "RFM.request_date BETWEEN '$startDate' AND '$endDate'";
+        }
+
         if(!$SESSION_USER_ID)
         {
             redirect(base_url());
         }
-        if(empty($month)) $month = "MONTH(CURDATE())";
+
+        if (empty($first_date) || empty($second_date)) {
+            die();
+        }
 
         $Q = "SELECT 
-                no_rfm AS `no_rfm`,
-                e.nama AS `pic`,
-                d.nama AS `request_by`,
-                b.`problem_type` AS `problem_type`,
-                `subject` AS `subject`,
-                rfm_detail AS `detail`,
-                request_status AS `status`,
-                request_date  AS `date`
+                RFM.no_rfm AS `no_rfm`,
+                USER.nama AS `request_by`,
+                RFM.request_date  AS `date`,
+                PROJECT.project_name AS `project_name`,
+                PROBLEM_TYPE.`problem_type` AS `problem_type`,
+                RFM.`subject` AS `subject`,
+                RFM.rfm_detail AS `detail`,
+                RFM.request_status AS `status`,
+                PIC.nama AS `pic`
             FROM
-                rfm_new_detail a 
-                LEFT JOIN rfm_new_problem_type b 
-                ON a.problem_type = b.id
-                LEFT JOIN `user` d
-                ON a.request_by = d.user_id
-                LEFT JOIN `user` e
-                ON a.assign_to = e.user_id
+                ticket_support.rfm_new_detail RFM
+                LEFT JOIN ticket_support.rfm_new_problem_type PROBLEM_TYPE
+                ON RFM.problem_type = PROBLEM_TYPE.id
+                LEFT JOIN ticket_support.project PROJECT
+                ON RFM.project_id = PROJECT.id
+                LEFT JOIN dpm_online.user USER
+                ON RFM.request_by = USER.user_id
+                LEFT JOIN dpm_online.user PIC
+                ON RFM.assign_to = PIC.user_id
             WHERE
-                MONTH(a.request_date)='$month' AND
-                YEAR(a.request_date)='$year'
+                $customStatus
+            ORDER BY
+                RFM.request_date ASC
         ";
+    
         $data['row'] = $this->db->query($Q)->result();
+        $data['startDate'] = $startDate;
+        $data['endDate'] = $endDate;
+        $data['first_date'] = $first_date;
+        $data['second_date'] = $second_date;
         $this->load->view('export_to_excel', $data);
     }
 
